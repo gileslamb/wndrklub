@@ -386,6 +386,50 @@ section {
   font-size: 18px;
   color: var(--ink-soft);
 }
+.why-section .container {
+  max-width: 1200px;
+  margin: 0 auto;
+  text-align: center;
+}
+.why-section .eyebrow {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 24px;
+}
+.why-section h3 {
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  font-size: clamp(32px, 4.2vw, 52px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 48px;
+  max-width: 26ch;
+  margin-left: auto; margin-right: auto;
+}
+.why-section h3 em { font-style: italic; }
+.why-copy {
+  max-width: 60ch;
+  margin: 0 auto 56px;
+  text-align: left;
+}
+.why-copy p {
+  font-size: clamp(16px, 1.3vw, 19px);
+  line-height: 1.65;
+  color: var(--ink-soft);
+  margin-bottom: 24px;
+}
+.why-copy p.closing {
+  font-family: 'Caveat', cursive;
+  font-size: 24px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+  text-align: center;
+  margin-top: 40px;
+  margin-bottom: 0;
+}
 .manifesto-section {
   background: var(--ink);
   color: var(--paper);
@@ -446,6 +490,19 @@ section {
   margin-bottom: 6px;
 }
 .colophon a:hover { color: var(--heart); }
+.colophon .supporter {
+  display: block;
+  margin-bottom: 0;
+  opacity: 0.75;
+  transition: opacity 0.3s ease;
+}
+.colophon .supporter:hover { opacity: 1; }
+.colophon .supporter img {
+  width: 170px;
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
 .colophon .signoff {
   margin-top: 48px;
   padding-top: 24px;
@@ -801,6 +858,34 @@ section {
   </div>
 </section>
 
+<section class="why-section">
+  <div class="container">
+    <div class="eyebrow">Why Scotland. Why now.</div>
+    <h3>Scotland has built something rare &mdash; a national screen curriculum that takes children&rsquo;s filmmaking seriously from the earliest years.</h3>
+
+    <div class="why-copy">
+      <p>WndrKlub is designed to live inside that ambition. It teaches sequencing, visual storytelling and media literacy through hands-on making &mdash; exactly what Screen Scotland&rsquo;s Film and Screen Education curriculum asks for. It supports intentional play, child-led creativity and responsive adult facilitation &mdash; exactly what Realising the Ambition calls for.</p>
+      <p>It gives teachers a tool that works without specialist training, without equipment, without a screen in the room. A five-minute episode, a folded piece of paper, and a pencil. That is the whole kit.</p>
+      <p class="closing">Most children watch. Few of them make.<br>WndrKlub changes that ratio.</p>
+    </div>
+
+    <div class="flipbook-grammar">
+      <div class="item">
+        <strong>Film &amp; Screen Education</strong>
+        <span>Screen Scotland &mdash; sequencing, visual storytelling, media literacy. Taught panel by panel.</span>
+      </div>
+      <div class="item">
+        <strong>Realising the Ambition</strong>
+        <span>Education Scotland &mdash; intentional play, child-led making, responsive facilitation. Built into every handoff.</span>
+      </div>
+      <div class="item">
+        <strong>Curriculum for Excellence, Early Level</strong>
+        <span>Confidence, collaboration, emotional expression. One frame at a time.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="manifesto-section">
   <div>
     <div class="lines">
@@ -820,16 +905,14 @@ section {
       <p style="margin-top:12px;color:var(--ink-soft);font-size:13px;">This is the Living Bible, version 0.1, demo build. The site grows phase by phase as the property develops.</p>
     </div>
     <div>
-      <h5>For Commissioners</h5>
-      <a href="#">Read the proposal</a>
-      <a href="#">Sample episode</a>
-      <a href="#">Pitch deck (PDF)</a>
+      <h5>Contact</h5>
+      <a href="mailto:hello@curiousdreamers.com">Get in touch</a>
     </div>
     <div>
-      <h5>For Collaborators</h5>
-      <a href="#">Artists &amp; illustrators</a>
-      <a href="#">Sound &amp; music</a>
-      <a href="#">Get in touch</a>
+      <h5>Supported by</h5>
+      <a class="supporter" href="https://www.screenscotland.com" target="_blank" rel="noopener">
+        <img src="img/screen-scotland-logo.png" alt="Screen Scotland / Sgr&igrave;n Alba">
+      </a>
     </div>
   </div>
   <div class="signoff">made one frame at a time</div>
