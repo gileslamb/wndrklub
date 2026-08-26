@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>WndrKlub. Music — Animation Test (Confidential)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,400&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper: #f5f1e8;
+  --paper-deep: #ede5d3;
+  --ink: #1a1814;
+  --ink-soft: #3a3530;
+  --heart: #c8292e;
+  --accent: #d4a437;
+  --shadow: rgba(26, 24, 20, 0.12);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: 'Fraunces', Georgia, serif;
+  background: var(--paper);
+  color: var(--ink);
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  padding: 6vh 5vw 10vh;
+}
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.5;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200' viewBox='0 0 200 200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.09 0 0 0 0 0.08 0 0 0 0.08 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  mix-blend-mode: multiply;
+}
+.wrap { max-width: 660px; margin: 0 auto; position: relative; z-index: 2; }
+
+/* ── Header ─────────────────────────────────────────── */
+.mark {
+  font-weight: 600;
+  font-size: 18px;
+  letter-spacing: -0.01em;
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 40px;
+}
+.mark::after {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--heart);
+  border-radius: 50%;
+}
+h1 {
+  font-weight: 900;
+  font-size: clamp(38px, 7vw, 62px);
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  margin-bottom: 18px;
+}
+h1 .dot { color: var(--heart); }
+.standfirst {
+  font-family: 'Caveat', cursive;
+  font-size: clamp(20px, 2.4vw, 26px);
+  color: var(--ink-soft);
+  font-weight: 500;
+  line-height: 1.35;
+  max-width: 34ch;
+  margin-bottom: 34px;
+}
+.meta {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 44px;
+}
+.meta::before {
+  content: '';
+  width: 28px; height: 1px; background: var(--ink-soft);
+}
+
+/* ── Confidentiality notice ─────────────────────────── */
+.notice {
+  border: 1px solid var(--heart);
+  border-left-width: 4px;
+  border-radius: 3px;
+  padding: 20px 24px;
+  margin-bottom: 48px;
+  background: rgba(200, 41, 46, 0.04);
+}
+.notice-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--heart);
+  margin-bottom: 10px;
+}
+.notice p {
+  font-size: 15.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  margin-bottom: 9px;
+}
+.notice p:last-child { margin-bottom: 0; }
+.notice strong { color: var(--ink); font-weight: 700; }
+
+/* ── Tracks ─────────────────────────────────────────── */
+.section-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(26,24,20,0.15);
+  margin-bottom: 4px;
+}
+.track {
+  padding: 22px 0;
+  border-bottom: 1px solid rgba(26,24,20,0.1);
+}
+.track-head { display: flex; align-items: center; gap: 16px; }
+.play-btn {
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 15px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  padding-left: 3px;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.play-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.play-btn.playing { background: var(--heart); border-color: var(--heart); color: var(--paper); padding-left: 0; }
+.track-body { flex: 1; min-width: 0; }
+.track-name {
+  font-family: 'Caveat', cursive;
+  font-size: 27px;
+  font-weight: 700;
+  line-height: 1.05;
+  display: block;
+}
+.track-sub {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  opacity: 0.75;
+}
+.dl-btn {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  text-decoration: none;
+  border: 1px solid rgba(26,24,20,0.22);
+  border-radius: 99px;
+  padding: 8px 15px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.dl-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+
+.scrub {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.wave-wrap {
+  position: relative;
+  flex: 1;
+  height: 34px;
+  cursor: pointer;
+}
+.wave-canvas { display: block; width: 100%; height: 34px; }
+.time {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-soft);
+  opacity: 0.7;
+  white-space: nowrap;
+  min-width: 82px;
+  text-align: right;
+}
+
+/* ── Footer ─────────────────────────────────────────── */
+.foot {
+  margin-top: 48px;
+  padding-top: 26px;
+  border-top: 1px solid rgba(26,24,20,0.15);
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--ink-soft);
+}
+.foot a { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; }
+.foot .tip { margin-bottom: 14px; }
+
+@media (max-width: 620px) {
+  body { padding: 5vh 6vw 8vh; }
+  .track-head { flex-wrap: wrap; gap: 14px; }
+  .track-name { white-space: nowrap; font-size: 25px; }
+  .dl-btn {
+    order: 3;
+    flex: 0 0 calc(100% - 60px);
+    margin: 2px 0 0 60px;
+    text-align: center;
+    padding: 10px 15px;
+  }
+  .time { min-width: 0; font-size: 10px; }
+  .meta { gap: 14px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="mark">WndrKlub</div>
+
+  <h1>Music for the<br>animation test<span class="dot">.</span></h1>
+  <p class="standfirst">Three tracks. The music is the underlying logic — motion follows it, not the other way round.</p>
+  <div class="meta">
+    <span>Curious Dreamers</span>
+    <span>Music: Giles Lamb</span>
+    <span>Private link</span>
+  </div>
+
+  <div class="notice">
+    <div class="notice-label">Confidential — do not share</div>
+    <p><strong>This music must not be shared, forwarded, reposted or published.</strong> It is unreleased and supplied to you solely for the WndrKlub animation test.</p>
+    <p>Do not upload it to social platforms, showreels, cloud folders, AI training tools or any public site — including as the soundtrack to work in progress. Please don't pass this link on; if someone else needs access, ask us and we'll send it to them directly.</p>
+    <p>All rights reserved &copy; Giles Lamb / Curious Dreamers. Delete your copies when the test is complete.</p>
+  </div>
+
+  <div class="section-label">The tracks</div>
+
+  <div class="track" data-id="ko-mandi">
+    <div class="track-head">
+      <button class="play-btn" aria-label="Play Ko Mandi">&#9654;</button>
+      <div class="track-body">
+        <span class="track-name">Ko Mandi</span>
+        <span class="track-sub">MP3 &middot; <span class="size">—</span></span>
+      </div>
+      <a class="dl-btn" href="/api/track?id=ko-mandi&dl=1">Download</a>
+    </div>
+    <div class="scrub">
+      <div class="wave-wrap"><canvas class="wave-canvas"></canvas></div>
+      <span class="time">0:00 / —:—</span>
+    </div>
+  </div>
+
+  <div class="track" data-id="luma-luma">
+    <div class="track-head">
+      <button class="play-btn" aria-label="Play Luma Luma">&#9654;</button>
+      <div class="track-body">
+        <span class="track-name">Luma Luma</span>
+        <span class="track-sub">MP3 &middot; <span class="size">—</span></span>
+      </div>
+      <a class="dl-btn" href="/api/track?id=luma-luma&dl=1">Download</a>
+    </div>
+    <div class="scrub">
+      <div class="wave-wrap"><canvas class="wave-canvas"></canvas></div>
+      <span class="time">0:00 / —:—</span>
+    </div>
+  </div>
+
+  <div class="track" data-id="zippa-zappa">
+    <div class="track-head">
+      <button class="play-btn" aria-label="Play Zippa Zappa">&#9654;</button>
+      <div class="track-body">
+        <span class="track-name">Zippa Zappa</span>
+        <span class="track-sub">MP3 &middot; <span class="size">—</span></span>
+      </div>
+      <a class="dl-btn" href="/api/track?id=zippa-zappa&dl=1">Download</a>
+    </div>
+    <div class="scrub">
+      <div class="wave-wrap"><canvas class="wave-canvas"></canvas></div>
+      <span class="time">0:00 / —:—</span>
+    </div>
+  </div>
+
+  <div class="foot">
+    <p class="tip">Tip: hit Download for the full-quality file — streaming here is for reference. Click anywhere on a waveform to scrub.</p>
+    <p>Questions, or need a stem, an alt mix or a different length? <a href="mailto:giles@gileslamb.com">giles@gileslamb.com</a></p>
+  </div>
+
+</div>
+
+<script>
+(function () {
+  const fmt = s => (isFinite(s) ? Math.floor(s / 60) + ':' + String(Math.floor(s % 60)).padStart(2, '0') : '—:—');
+
+  let audioCtx = null;
+  let current  = null;
+  const items  = [];
+
+  document.querySelectorAll('.track').forEach(el => {
+    const id     = el.dataset.id;
+    const btn    = el.querySelector('.play-btn');
+    const canvas = el.querySelector('.wave-canvas');
+    const wrap   = el.querySelector('.wave-wrap');
+    const time   = el.querySelector('.time');
+    const size   = el.querySelector('.size');
+
+    const audio = new Audio();
+    audio.preload = 'metadata';
+    audio.src = '/api/track?id=' + id;
+
+    const item = { id, audio, btn, canvas, time, analyser: null, node: null };
+    items.push(item);
+
+    audio.addEventListener('loadedmetadata', () => {
+      time.textContent = '0:00 / ' + fmt(audio.duration);
+      size.textContent = fmt(audio.duration);
+    });
+    audio.addEventListener('timeupdate', () => {
+      time.textContent = fmt(audio.currentTime) + ' / ' + fmt(audio.duration);
+    });
+    audio.addEventListener('ended', () => setStopped(item));
+
+    wrap.addEventListener('click', e => {
+      if (!isFinite(audio.duration)) return;
+      const r = wrap.getBoundingClientRect();
+      audio.currentTime = Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)) * audio.duration;
+    });
+
+    btn.addEventListener('click', () => {
+      if (current && current !== item) { current.audio.pause(); setStopped(current); }
+      if (audio.paused) {
+        connect(item);
+        audio.play().then(() => {
+          btn.innerHTML = '&#9208;';
+          btn.classList.add('playing');
+          current = item;
+          draw(item);
+        }).catch(err => console.error('Play failed:', err));
+      } else {
+        audio.pause();
+        setStopped(item);
+      }
+    });
+
+    fit(canvas);
+    flat(canvas);
+  });
+
+  function setStopped(item) {
+    item.btn.innerHTML = '&#9654;';
+    item.btn.classList.remove('playing');
+    if (current === item) current = null;
+    flat(item.canvas);
+  }
+
+  function connect(item) {
+    if (item.analyser) { audioCtx.resume(); return; }
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    audioCtx.resume();
+    const src = audioCtx.createMediaElementSource(item.audio);
+    const an  = audioCtx.createAnalyser();
+    an.fftSize = 2048;
+    src.connect(an);
+    an.connect(audioCtx.destination);
+    item.analyser = an;
+    item.buf = new Uint8Array(an.fftSize);
+  }
+
+  function fit(canvas) {
+    const dpr = window.devicePixelRatio || 1;
+    const r = canvas.getBoundingClientRect();
+    canvas.width  = Math.max(1, Math.round(r.width  * dpr));
+    canvas.height = Math.max(1, Math.round(r.height * dpr));
+    canvas.getContext('2d').setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function flat(canvas) {
+    const c = canvas.getContext('2d');
+    const W = canvas.clientWidth, H = canvas.clientHeight;
+    c.clearRect(0, 0, W, H);
+    c.strokeStyle = 'rgba(26,24,20,0.22)';
+    c.lineWidth = 1.5;
+    c.beginPath();
+    c.moveTo(0, H / 2);
+    c.lineTo(W, H / 2);
+    c.stroke();
+  }
+
+  function draw(item) {
+    const c = item.canvas.getContext('2d');
+    (function frame() {
+      if (item.audio.paused) { flat(item.canvas); return; }
+      const W = item.canvas.clientWidth, H = item.canvas.clientHeight;
+      c.clearRect(0, 0, W, H);
+
+      // progress fill
+      const p = isFinite(item.audio.duration) ? item.audio.currentTime / item.audio.duration : 0;
+      c.fillStyle = 'rgba(212,164,55,0.16)';
+      c.fillRect(0, 0, W * p, H);
+
+      item.analyser.getByteTimeDomainData(item.buf);
+      c.strokeStyle = '#c8292e';
+      c.lineWidth = 1.5;
+      c.lineJoin = 'round';
+      c.beginPath();
+      const step = item.buf.length / W;
+      for (let i = 0; i < W; i++) {
+        const v = (item.buf[Math.floor(i * step)] - 128) / 128;
+        const y = H / 2 + v * H * 0.44;
+        if (i === 0) c.moveTo(i, y); else c.lineTo(i, y);
+      }
+      c.stroke();
+      requestAnimationFrame(frame);
+    })();
+  }
+
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      items.forEach(i => { fit(i.canvas); if (i.audio.paused) flat(i.canvas); });
+    }, 150);
+  });
+})();
+</script>
+</body>
+</html>
