@@ -25,7 +25,7 @@ export default async function handler(req) {
     'Cache-Control': 'public, max-age=3600',
     'X-Robots-Tag': 'noindex, nofollow',
   });
-  for (const h of ['content-length', 'content-range', 'etag', 'last-modified']) {
+  for (const h of ['content-range', 'etag', 'last-modified']) {
     const v = upstream.headers.get(h);
     if (v) headers.set(h, v);
   }
@@ -34,5 +34,11 @@ export default async function handler(req) {
     headers.set('Cache-Control', 'no-store');
   }
 
-  return new Response(upstream.body, { status: upstream.status, headers });
+  // Buffer rather than pipe upstream.body: a streamed body is sent chunked and
+  // loses Content-Length, and without it the browser cannot size the file, so
+  // <audio> never resolves duration and loops range requests forever.
+  const body = await upstream.arrayBuffer();
+  headers.set('Content-Length', String(body.byteLength));
+
+  return new Response(body, { status: upstream.status, headers });
 }
