@@ -10,7 +10,7 @@
 <script>
 if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
   document.documentElement.classList.add('hc-pending');
-  setTimeout(() => document.documentElement.classList.remove('hc-pending'), 4000);
+  setTimeout(() => document.documentElement.classList.remove('hc-pending'), 3000);  // fail open
 }
 </script>
 <style>
@@ -92,15 +92,15 @@ section {
   0%, 100% { transform: translateY(0) rotate(-0.5deg); }
   50% { transform: translateY(-6px) rotate(0.5deg); }
 }
-.cover-text h1 {
-  font-family: 'Fraunces', serif;
-  font-weight: 900;
-  font-size: clamp(64px, 11vw, 160px);
-  line-height: 0.92;
-  letter-spacing: -0.04em;
-  margin-bottom: 24px;
+.sr-only {
+  position: absolute !important;
+  width: 1px !important; height: 1px !important;
+  margin: -1px !important; padding: 0 !important;
+  overflow: hidden !important;
+  clip: rect(0 0 0 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
 }
-.cover-text h1 .dot { color: var(--heart); }
 .cover-text .subtitle {
   font-family: 'Caveat', cursive;
   font-size: clamp(24px, 2.4vw, 32px);
@@ -496,27 +496,57 @@ section {
 @keyframes lemon-spin {
   to { transform: rotate(360deg); }
 }
-/* ── Hero title: hand-drawn letter cards that resolve into the title ── */
-.cover-text h1 { position: relative; }
-.hc-pending .cover-text h1, .hc-pending .cover-text h1 .dot,
-.cover-text h1.hc-playing, .cover-text h1.hc-playing .dot { color: transparent; }
-.hc-layer {
-  position: absolute; inset: 0;
-  pointer-events: none;
+/* ── Hero logo: hand-drawn letters on cards ──────────── */
+/* The markup is the finished logo; the script only flies the cards into it. */
+.hc-wrap { container-type: inline-size; margin-bottom: 30px; }
+.hc-logo {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.11em;
+  width: max-content;
+  padding: 0.1em 0 0.04em;
+  font-family: 'Fraunces', serif;
+  font-weight: 900;
+  font-variation-settings: 'opsz' 144;
+  font-size: min(13.2cqw, 128px);
+  line-height: 1;
   color: var(--ink);
 }
-.hc-card { position: absolute; opacity: 0; }
+.hc-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 1.14em;
+  padding: 0 0.085em;
+  transform: rotate(var(--r, 0deg));
+  will-change: transform;
+}
 .hc-frame {
   position: absolute; inset: 0;
-  background: rgba(251, 249, 243, 0.68);
-  border: 1.5px solid rgba(26, 24, 20, 0.6);
+  background: rgba(251, 249, 243, 0.7);
+  border: 1.5px solid rgba(26, 24, 20, 0.62);
   border-radius: 3px;
   box-shadow: 0 2px 10px rgba(26, 24, 20, 0.1);
 }
-.hc-glyph { position: absolute; white-space: pre; }
-.hc-clean { opacity: 0; }
-.hc-dot { position: absolute; color: var(--heart); white-space: pre; opacity: 0; }
-.hc-blob { position: absolute; overflow: visible; fill: var(--heart); }
+.hc-letter {
+  position: relative;
+  display: block;
+  transform: translate(var(--gx, 0), var(--gy, 0)) rotate(var(--gr, 0deg));
+  -webkit-text-stroke: var(--sw, 0.006em) var(--ink);
+}
+.hc-dot {
+  position: relative;
+  flex: none;
+  width: 0.5em; height: 0.5em;
+  margin: 0 0 0.1em -0.02em;
+  overflow: visible;
+  fill: var(--heart);
+  filter: url(#pencil-1);
+  transform-origin: 50% 80%;
+}
+.hc-pending .hc-logo { visibility: hidden; }
 /* ── TEMP hero switcher: remove before merge ─────────── */
 .hero-switch {
   position: fixed;
@@ -890,9 +920,9 @@ section {
 <div class="frame-mark">wndrklub</div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
-  <filter id="pencil-1"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter>
-  <filter id="pencil-2"><feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" seed="11"/><feDisplacementMap in="SourceGraphic" scale="3.5"/></filter>
-  <filter id="pencil-3"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="27"/><feDisplacementMap in="SourceGraphic" scale="4.5"/></filter>
+  <filter id="pencil-1"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="2"/></filter>
+  <filter id="pencil-2"><feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" seed="11"/><feDisplacementMap in="SourceGraphic" scale="2.5"/></filter>
+  <filter id="pencil-3"><feTurbulence type="fractalNoise" baseFrequency="0.045" numOctaves="2" seed="27"/><feDisplacementMap in="SourceGraphic" scale="2.5"/></filter>
 </svg>
 
 <div class="mini-player" id="miniPlayer" role="region" aria-label="Music player">
@@ -921,7 +951,20 @@ section {
     <img src="img/wndrer_figure.png" alt="The Wndr(er)">
   </div>
   <div class="cover-text">
-    <h1 id="heroTitle">WndrKlub<span class="dot">.</span></h1>
+    <div class="hc-wrap">
+      <h1 class="sr-only" id="heroTitle">WndrKlub.</h1>
+      <div class="hc-logo" aria-hidden="true">
+        <span class="hc-card" style="--r:-2.0deg"><span class="hc-frame"></span><span class="hc-letter" style="--gx:0.01em;--gy:-0.01em;--gr:-1.5deg;--sw:0.008em;filter:url(#pencil-1)">W</span></span>
+        <span class="hc-card" style="--r:1.4deg"><span class="hc-frame"></span><span class="hc-letter" style="--gx:0;--gy:0.012em;--gr:2.0deg;--sw:0.005em;filter:url(#pencil-2)">n</span></span>
+        <span class="hc-card" style="--r:-0.8deg"><span class="hc-frame"></span><span class="hc-letter" style="--gx:-0.01em;--gy:0;--gr:-1.0deg;--sw:0.01em;filter:url(#pencil-3)">d</span></span>
+        <span class="hc-card" style="--r:2.1deg"><span class="hc-frame"></span><span class="hc-letter" style="--gx:0.008em;--gy:0.01em;--gr:1.6deg;--sw:0.006em;filter:url(#pencil-1)">r</span></span>
+        <span class="hc-card" style="--r:-1.5deg"><span class="hc-frame"></span><span class="hc-letter" style="--gx:0;--gy:-0.012em;--gr:-2.2deg;--sw:0.009em;filter:url(#pencil-2)">K</span></span>
+        <span class="hc-card" style="--r:1.0deg"><span class="hc-frame"></span><span class="hc-letter" style="--gx:-0.008em;--gy:0;--gr:1.2deg;--sw:0.005em;filter:url(#pencil-3)">l</span></span>
+        <span class="hc-card" style="--r:-2.3deg"><span class="hc-frame"></span><span class="hc-letter" style="--gx:0.01em;--gy:0.01em;--gr:-0.8deg;--sw:0.008em;filter:url(#pencil-1)">u</span></span>
+        <span class="hc-card" style="--r:1.7deg"><span class="hc-frame"></span><span class="hc-letter" style="--gx:0;--gy:-0.008em;--gr:1.8deg;--sw:0.006em;filter:url(#pencil-2)">b</span></span>
+        <svg class="hc-dot" viewBox="-20 -20 40 40"><g class="hc-dot-main"><path d="M9.7 -6.4Q11.8 -3.6 11.5 -0.3Q11.3 3.1 9.9 6.4Q8.6 9.6 5.2 10.7Q1.9 11.8 -1.6 11.6Q-5.0 11.4 -8.1 9.4Q-11.2 7.4 -11.5 3.8Q-11.8 0.2 -11.1 -3.1Q-10.4 -6.4 -7.6 -8.4Q-4.9 -10.4 -1.7 -11.5Q1.6 -12.6 4.7 -10.9Q7.7 -9.2 9.7 -6.4Z"/></g><g class="hc-spat" data-x="16.5" data-y="-9.5"><path d="M18.2 -10.4Q19.0 -9.5 18.2 -8.7Q17.4 -7.9 16.4 -7.8Q15.4 -7.7 14.8 -8.6Q14.1 -9.5 14.6 -10.7Q15.2 -11.8 16.3 -11.5Q17.5 -11.3 18.2 -10.4Z"/></g><g class="hc-spat" data-x="-17" data-y="4.5"><path d="M-15.7 3.6Q-15.4 4.5 -15.7 5.3Q-16.1 6.1 -16.9 5.9Q-17.7 5.7 -18.1 5.1Q-18.6 4.5 -18.2 3.7Q-17.9 3.0 -16.9 2.9Q-16.0 2.8 -15.7 3.6Z"/></g><g class="hc-spat" data-x="13.5" data-y="12"><path d="M14.5 11.4Q14.7 12.0 14.4 12.6Q14.2 13.2 13.5 13.2Q12.7 13.3 12.6 12.7Q12.4 12.0 12.6 11.4Q12.9 10.9 13.5 10.8Q14.2 10.7 14.5 11.4Z"/></g><g class="hc-spat" data-x="-8" data-y="-16"><path d="M-7.1 -16.5Q-6.7 -16.0 -7.1 -15.6Q-7.5 -15.1 -8.0 -15.1Q-8.6 -15.0 -8.9 -15.5Q-9.3 -16.0 -8.9 -16.4Q-8.5 -16.8 -8.0 -16.9Q-7.4 -17.0 -7.1 -16.5Z"/></g><g class="hc-spat" data-x="19.5" data-y="2.5"><path d="M20.1 2.2Q20.4 2.5 20.2 2.9Q20.0 3.4 19.6 3.3Q19.1 3.2 18.9 2.8Q18.6 2.5 18.8 2.1Q19.0 1.7 19.4 1.8Q19.9 1.9 20.1 2.2Z"/></g></svg>
+      </div>
+    </div>
     <p class="subtitle">A curious series of short films inspiring young people <br>to tell stories full of wonder.</p>
     <div class="lemon-wrap" aria-hidden="true">
       <div class="lemon-spin"></div>
@@ -1197,215 +1240,138 @@ document.querySelectorAll('section').forEach((s, i) => {
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-// ── Hero title: hand-drawn letter cards land, line up, and resolve ──────
+// ── Hero logo: hand-drawn letter cards fly into the finished logo ───────
+// The markup is the final logo (cards in a line, frames on, splatted dot);
+// this only animates the cards into it. Motion runs on requestAnimationFrame
+// with eased tweens so every card visibly travels and lands.
 // Variants (temporary, for comparison; ?hero=a|b|c):
-//   a "unshuffle": stack, fan out, slide into line
-//   b "deal":      each card lands straight in place, then straightens
-//   c "snap":      stack, then all spring into line at once
+//   a "unshuffle": pile up, fan out, slide into line
+//   b "deal":      each card lands straight in its place, then settles
+//   c "snap":      pile up, then all spring into line at once
 const heroCards = (() => {
-  const h1 = document.getElementById('heroTitle');
-  const root = document.documentElement;
+  const logo  = document.querySelector('.hc-logo');
+  const root  = document.documentElement;
+  const cards = [...logo.querySelectorAll('.hc-card')];
+  const dot   = logo.querySelector('.hc-dot');
+  const blob  = dot.querySelector('.hc-dot-main');
+  const spats = [...dot.querySelectorAll('.hc-spat')];
   const j = (n) => (Math.random() * 2 - 1) * n;
-  const wait = (ms) => new Promise(r => setTimeout(r, ms));
-  const pose = (dx, dy, a, s = 1) => `translate(${dx}px, ${dy}px) rotate(${a}deg) scale(${s})`;
-  let run = 0;          // bumped on replay so a stale sequence stops
+  const ease = {
+    out:    (t) => 1 - Math.pow(1 - t, 3),
+    inOut:  (t) => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2,
+    in:     (t) => t * t,
+    spring: (t) => t === 1 ? 1 : 1 - Math.exp(-6 * t) * Math.cos(9.5 * t),
+    pulse:  (t) => Math.sin(Math.PI * t),            // there and back
+  };
+  let run = 0;                                       // bumped on replay
 
-  // One box per character of the real title, relative to the h1. The cards
-  // are laid over these exact boxes, so the hand-off at the end is seamless.
-  function measure() {
-    const base = h1.getBoundingClientRect();
-    const range = document.createRange();
-    const walker = document.createTreeWalker(h1, NodeFilter.SHOW_TEXT);
-    const boxes = [];
-    for (let node; (node = walker.nextNode());) {
-      for (let i = 0; i < node.length; i++) {
-        range.setStart(node, i);
-        range.setEnd(node, i + 1);
-        const r = range.getBoundingClientRect();
-        boxes.push({ ch: node.data[i], x: r.left - base.left, y: r.top - base.top, w: r.width, h: r.height });
-      }
-    }
-    // Baseline, for placing the dot's splat on the dot rather than its box.
-    const probe = document.createElement('span');
-    probe.style.cssText = 'display:inline-block;width:0;height:0;vertical-align:baseline';
-    h1.appendChild(probe);
-    const baseline = probe.getBoundingClientRect().top - base.top;
-    probe.remove();
-    return { boxes, baseline, fs: parseFloat(getComputedStyle(h1).fontSize) };
-  }
-
-  function glyph(ch, cls, b, offX, offY) {
-    const g = document.createElement('span');
-    g.className = 'hc-glyph ' + cls;
-    g.textContent = ch;
-    g.style.cssText = `left:${offX}px;top:${offY}px;line-height:${b.h}px;height:${b.h}px`;
-    return g;
-  }
-
-  function build({ boxes, baseline, fs }) {
-    const layer = document.createElement('span');
-    layer.className = 'hc-layer';
-    layer.setAttribute('aria-hidden', 'true');
-    const padX = fs * 0.07, padY = fs * 0.02;
-    const cards = boxes.slice(0, -1).map((b, i) => {
-      const card = document.createElement('span');
-      card.className = 'hc-card';
-      const w = b.w + fs * 0.04 + padX * 2;     // + letter-spacing the box leaves off
-      card.style.cssText = `left:${b.x - padX}px;top:${b.y - padY}px;width:${w}px;height:${b.h + padY * 2}px;z-index:${i + 1}`;
-      const frame = document.createElement('span');
-      frame.className = 'hc-frame';
-      // The hand-drawn letter: its own tilt, nudge, pencil wobble and stroke.
-      const drawn = glyph(b.ch, 'hc-drawn', b, padX, padY);
-      drawn.style.transform = `translate(${j(fs * 0.02).toFixed(1)}px, ${j(fs * 0.02).toFixed(1)}px) rotate(${j(4).toFixed(1)}deg)`;
-      drawn.style.filter = `url(#pencil-${1 + Math.floor(Math.random() * 3)})`;
-      drawn.style.webkitTextStroke = `${(0.4 + Math.random() * 1.6).toFixed(2)}px var(--ink)`;
-      const clean = glyph(b.ch, 'hc-clean', b, padX, padY);
-      card.append(frame, drawn, clean);
-      card.cx = b.x + b.w / 2;
-      card.cy = b.y + b.h / 2;
-      layer.appendChild(card);
-      return card;
-    });
-    const db = boxes[boxes.length - 1];
-    const dot = glyph('.', 'hc-dot', db, db.x, db.y);
-    const dotX = db.x + (db.w + fs * 0.04) / 2, dotY = baseline - fs * 0.11;
-    dot.style.transformOrigin = `${dotX - db.x}px ${dotY - db.y}px`;
-    layer.appendChild(dot);
-    // Ink splat: a few irregular blobs that burst out and shrink back in.
-    const blobs = Array.from({ length: 11 }, (_, i) => {
-      const size = fs * (0.08 + Math.random() * 0.13);
-      const pts = Array.from({ length: 7 }, (_, k) => {
-        const t = (k / 7) * Math.PI * 2, r = 7 + Math.random() * 3;
-        return [Math.cos(t) * r, Math.sin(t) * r];
+  // Drive fn(e) from 0→1 over ms on requestAnimationFrame; stops if replayed.
+  function tween(ms, easing, fn) {
+    const my = run;
+    return new Promise(resolve => {
+      const t0 = performance.now();
+      requestAnimationFrame(function frame(now) {
+        if (my !== run) return resolve(false);
+        const k = Math.min(1, (now - t0) / ms);
+        fn(easing(k));
+        k < 1 ? requestAnimationFrame(frame) : resolve(true);
       });
-      const d = pts.map((p, k) => {
-        const q = pts[(k + 1) % pts.length];
-        return `${k ? '' : `M${((p[0] + pts.at(-1)[0]) / 2).toFixed(1)} ${((p[1] + pts.at(-1)[1]) / 2).toFixed(1)}`}Q${p[0].toFixed(1)} ${p[1].toFixed(1)} ${((p[0] + q[0]) / 2).toFixed(1)} ${((p[1] + q[1]) / 2).toFixed(1)}`;
-      }).join('') + 'Z';
-      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      svg.setAttribute('viewBox', '-10 -10 20 20');
-      svg.setAttribute('class', 'hc-blob');
-      svg.style.cssText = `left:${dotX - size / 2}px;top:${dotY - size / 2}px;width:${size}px;height:${size}px;opacity:0`;
-      svg.innerHTML = `<path d="${d}"/>`;
-      const ang = (i / 11) * Math.PI * 2 + j(0.3);
-      const dist = fs * (0.28 + Math.random() * 0.36);
-      svg.dx = Math.cos(ang) * dist;
-      svg.dy = Math.sin(ang) * dist * 0.8 - fs * 0.04;
-      layer.appendChild(svg);
-      return svg;
     });
-    h1.appendChild(layer);
-    return { layer, cards, dot, blobs };
   }
+  const wait = (ms) => tween(ms, (t) => t, () => {});
 
-  function reset() {
-    run++;
-    h1.querySelector('.hc-layer')?.remove();
-    h1.classList.remove('hc-playing');
+  // A card's pose is relative to its resting place in the line.
+  function set(c, p) {
+    Object.assign(c.p, p);
+    c.style.transform = `translate(${c.p.x}px, ${c.p.y}px) rotate(${c.p.r}deg) scale(${c.p.s})`;
+    c.style.opacity = c.p.o;
+  }
+  function move(c, to, ms, easing = ease.out) {
+    const from = { ...c.p };
+    return tween(ms, easing, (e) => {
+      const p = {};
+      for (const k in to) p[k] = from[k] + (to[k] - from[k]) * e;
+      set(c, p);
+    });
+  }
+  const slap = (c) => tween(130, ease.pulse, (e) => set(c, { s: 1 - 0.065 * e }));
+
+  function rest() {
+    cards.forEach(c => { c.style.transform = ''; c.style.opacity = ''; });
+    dot.style.transform = ''; dot.style.opacity = '';
+    blob.removeAttribute('transform');
+    spats.forEach(g => { g.removeAttribute('transform'); g.removeAttribute('opacity'); });
   }
 
   async function play(variant) {
-    reset();
-    const my = run;
-    const alive = () => my === run;
-    const m = measure();
-    const { layer, cards, dot, blobs } = build(m);
-    const { boxes, fs } = m;
-    h1.classList.add('hc-playing');
-    root.classList.remove('hc-pending');
-
-    // Where the pile sits: about a third of the way along the word.
-    const first = boxes[0], last = boxes[boxes.length - 2];
-    const pileX = first.x + (last.x + last.w - first.x) * 0.3;
-    const pileY = first.y + first.h / 2;
+    run++;
+    const fs = parseFloat(getComputedStyle(logo).fontSize);
+    const width = logo.offsetWidth;
     cards.forEach(c => {
-      c.pile = { dx: pileX - c.cx + j(fs * 0.05), dy: pileY - c.cy + j(fs * 0.035), a: j(9) };
-      c.dealt = { dx: 0, dy: j(fs * 0.03), a: j(6) };
+      c.rest = parseFloat(c.style.getPropertyValue('--r')) || 0;
+      c.cx = c.offsetLeft + c.offsetWidth / 2;
+      c.pile = { x: width * 0.3 - c.cx + j(fs * 0.04), y: j(fs * 0.03), r: j(7) };
+      c.p = { x: 0, y: 0, r: 0, s: 1, o: 0 };
+      set(c, {});
     });
+    dot.style.opacity = '0';
+    root.classList.remove('hc-pending');
+    if (!(await wait(100))) return;
 
-    // 1. Cards land one on top of the other, each with a small slap.
-    const step = variant === 'b' ? 150 : 125;
+    // 1. Cards land one on top of the other: travel in, a small slap, a breath.
     for (const c of cards) {
-      if (!alive()) return;
-      const p = variant === 'b' ? c.dealt : c.pile;
-      c.at = p;
-      c.animate([
-        { transform: pose(p.dx + fs * 0.08, p.dy - fs * 0.32, p.a - 7, 1.3), opacity: 0 },
-        { transform: pose(p.dx, p.dy, p.a, 0.9), opacity: 1, offset: 0.55 },
-        { transform: pose(p.dx, p.dy, p.a, 1.035), opacity: 1, offset: 0.8 },
-        { transform: pose(p.dx, p.dy, p.a, 1), opacity: 1 },
-      ], { duration: 230, easing: 'ease-out', fill: 'forwards' });
-      await wait(step);
+      const at = variant === 'b' ? { x: 0, y: 0, r: c.rest + j(5) } : c.pile;
+      set(c, { x: at.x + fs * 0.12, y: at.y - fs * 0.6, r: at.r - 9, s: 1.2, o: 0 });
+      move(c, { x: at.x, y: at.y, r: at.r, s: 1, o: 1 }, 250).then(ok => ok && slap(c));
+      if (!(await wait(400))) return;
     }
-    await wait(140);
-    if (!alive()) return;
+    if (!(await wait(120))) return;
 
-    // 2. Into line.
-    const home = pose(0, 0, 0);
+    // 2. Into the line.
     if (variant === 'a') {
       const mid = (cards.length - 1) / 2;
-      cards.forEach((c, i) => {
-        const f = { dx: c.pile.dx + (i - mid) * fs * 0.05, dy: c.pile.dy + Math.abs(i - mid) * fs * 0.012, a: (i - mid) * 6 };
-        c.animate([{ transform: pose(c.pile.dx, c.pile.dy, c.pile.a) }, { transform: pose(f.dx, f.dy, f.a) }],
-          { duration: 220, easing: 'cubic-bezier(.3,.7,.3,1)', fill: 'forwards' });
-        c.at = f;
-      });
-      await wait(240);
-      if (!alive()) return;
-      cards.forEach((c, i) => c.animate([{ transform: pose(c.at.dx, c.at.dy, c.at.a), opacity: 1 }, { transform: home, opacity: 1 }],
-        { duration: 460, delay: i * 35, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'forwards' }));
-      await wait(460 + cards.length * 35 - 120);
+      await Promise.all(cards.map((c, i) => move(c, {
+        x: c.p.x + (i - mid) * fs * 0.07, y: c.p.y + Math.abs(i - mid) * fs * 0.015, r: (i - mid) * 6,
+      }, 280, ease.inOut)));
+      const slide = cards.map((c, i) => wait(i * 35).then(ok => ok && move(c, { x: 0, y: 0, r: c.rest }, 560, ease.inOut)));
+      await wait(560 + (cards.length - 1) * 35 - 200);
+      startDot();
+      await Promise.all(slide);
     } else if (variant === 'b') {
-      cards.forEach((c, i) => c.animate([{ transform: pose(c.at.dx, c.at.dy, c.at.a), opacity: 1 }, { transform: home, opacity: 1 }],
-        { duration: 300, delay: i * 25, easing: 'cubic-bezier(.3,.7,.3,1)', fill: 'forwards' }));
-      await wait(300 + cards.length * 25 - 100);
+      await Promise.all(cards.map((c, i) => wait(i * 30).then(ok => ok && move(c, { x: 0, y: 0, r: c.rest }, 420, ease.inOut))));
+      startDot();
     } else {
-      cards.forEach(c => {
-        const p = c.at;
-        c.animate([
-          { transform: pose(p.dx, p.dy, p.a), opacity: 1 },
-          { transform: pose(-p.dx * 0.1, -p.dy * 0.1, -p.a * 0.35), opacity: 1, offset: 0.55 },
-          { transform: pose(p.dx * 0.035, p.dy * 0.035, p.a * 0.12), opacity: 1, offset: 0.8 },
-          { transform: home, opacity: 1 },
-        ], { duration: 640, easing: 'cubic-bezier(.25,.7,.35,1)', fill: 'forwards' });
-      });
+      const moves = cards.map(c => move(c, { x: 0, y: 0, r: c.rest }, 900, ease.spring));
       await wait(560);
+      startDot();
+      await Promise.all(moves);
     }
-    if (!alive()) return;
+  }
 
-    // 3. Frames fade; the drawn letters clean up into the site font.
-    const fade = { duration: 340, easing: 'ease-out', fill: 'forwards' };
-    cards.forEach(c => {
-      c.querySelector('.hc-frame').animate([{ opacity: 1 }, { opacity: 0 }], fade);
-      c.querySelector('.hc-drawn').animate([{ opacity: 1 }, { opacity: 0 }], fade);
-      c.querySelector('.hc-clean').animate([{ opacity: 0 }, { opacity: 1 }], fade);
+  // 3. The dot drops, squashes on impact, and a few spatters flick out.
+  async function startDot() {
+    const my = run;
+    const fs = parseFloat(getComputedStyle(logo).fontSize);
+    dot.style.opacity = '1';
+    spats.forEach(g => g.setAttribute('opacity', '0'));
+    const fell = await tween(260, ease.in, (e) => { dot.style.transform = `translateY(${(-fs * 0.9 * (1 - e)).toFixed(1)}px)`; });
+    if (!fell || my !== run) return;
+    spats.forEach(g => {
+      const x = +g.dataset.x, y = +g.dataset.y;
+      tween(260, ease.out, (e) => {
+        g.setAttribute('opacity', '1');
+        g.setAttribute('transform', `translate(${(-x * (1 - e)).toFixed(2)} ${(-y * (1 - e)).toFixed(2)})`);
+      });
     });
-    await wait(180);
-    if (!alive()) return;
-
-    // 4. The dot lands last and splats.
-    dot.animate([
-      { transform: `translateY(${-fs * 0.7}px) scale(0.6)`, opacity: 0 },
-      { transform: 'translateY(0) scale(1.5, 0.55)', opacity: 1, offset: 0.45 },
-      { transform: 'scale(0.82, 1.22)', opacity: 1, offset: 0.68 },
-      { transform: 'scale(1.06, 0.95)', opacity: 1, offset: 0.85 },
-      { transform: 'scale(1)', opacity: 1 },
-    ], { duration: 460, easing: 'cubic-bezier(.3,.6,.3,1)', fill: 'forwards' });
-    blobs.forEach(b => b.animate([
-      { transform: 'translate(0,0) scale(0.3)', opacity: 1 },
-      { transform: `translate(${b.dx}px, ${b.dy}px) scale(1.15)`, opacity: 1, offset: 0.3 },
-      { transform: `translate(${b.dx * 0.85}px, ${b.dy * 0.85}px) scale(0.85)`, opacity: 1, offset: 0.5 },
-      { transform: 'translate(0,0) scale(0)', opacity: 1 },
-    ], { duration: 560, delay: 190 + Math.random() * 40, easing: 'cubic-bezier(.2,.8,.3,1)', fill: 'forwards' }));
-    await wait(820);
-    if (!alive()) return;
-
-    // 5. Hand over to the real title.
-    reset();
+    await tween(420, (t) => t, (t) => {
+      const d = Math.exp(-5 * t) * Math.cos(10 * t);  // damped squash and stretch
+      dot.style.transform = `scale(${(1 + 0.32 * d).toFixed(3)}, ${(1 - 0.28 * d).toFixed(3)})`;
+    });
+    if (my === run) rest();
   }
 
   function start(variant) {
-    if (reduceMotion) { root.classList.remove('hc-pending'); return; }
+    if (reduceMotion) { root.classList.remove('hc-pending'); return; }   // the still logo
     (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => play(variant));
   }
   return { start };
