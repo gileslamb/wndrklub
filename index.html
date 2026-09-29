@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WndrKlub. Living Bible (Demo)</title>
+<title>WndrKlub.</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -102,20 +102,6 @@ section {
   font-weight: 500;
   margin-bottom: 48px;
   line-height: 1.3;
-}
-.cover-text .meta {
-  font-family: 'Inter', sans-serif;
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--ink-soft);
-  display: flex;
-  gap: 24px;
-  align-items: center;
-}
-.cover-text .meta::before {
-  content: '';
-  width: 32px; height: 1px; background: var(--ink-soft);
 }
 .scroll-cue {
   position: absolute;
@@ -421,15 +407,6 @@ section {
   color: var(--ink-soft);
   margin-bottom: 24px;
 }
-.why-copy p.closing {
-  font-family: 'Caveat', cursive;
-  font-size: 24px;
-  line-height: 1.4;
-  color: var(--ink-soft);
-  text-align: center;
-  margin-top: 40px;
-  margin-bottom: 0;
-}
 .manifesto-section {
   background: var(--ink);
   color: var(--paper);
@@ -452,14 +429,16 @@ section {
 .manifesto-section .line:nth-child(2) { color: var(--heart); font-weight: 500; }
 .manifesto-section .line:nth-child(3) { color: var(--accent); font-weight: 500; }
 .manifesto-section .footnote {
-  margin-top: 64px;
-  font-family: 'Caveat', cursive;
-  font-size: 24px;
-  color: rgba(245,241,232,0.6);
-  max-width: 32ch;
-  margin-left: auto; margin-right: auto;
-  line-height: 1.4;
+  display: block;
+  width: 180px;
+  max-width: 50vw;
+  margin: 64px auto 0;
+  padding: 8px;
+  background: var(--paper);
+  transform: rotate(-2deg);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.35);
 }
+.manifesto-section .footnote img { display: block; width: 100%; height: auto; }
 .colophon {
   background: var(--paper-deep);
   padding: 80px 8vw 60px;
@@ -503,169 +482,84 @@ section {
   height: auto;
   display: block;
 }
-.colophon .signoff {
-  margin-top: 48px;
-  padding-top: 24px;
-  border-top: 1px solid var(--rule);
-  text-align: center;
-  font-family: 'Caveat', cursive;
-  font-size: 20px;
-  color: var(--ink-soft);
-}
-/* ── Lemon Music Player ─────────────────────────────── */
-.lemon-player-wrapper {
-  position: relative;
-  display: inline-flex;
-  flex-direction: column;
-  align-items: flex-end;
-  margin-top: 40px;
-}
-.lemon-btn {
-  position: relative;
-  display: inline-flex;
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
+/* ── Lemon (hero curiosity) ─────────────────────────── */
+.lemon-wrap {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 36px;
 }
 .lemon-spin {
   width: 324px;
   height: 324px;
+  max-width: 70vw;
+  max-height: 70vw;
   background-image: url('https://imagedelivery.net/GhryEtlvYEhygxHE3JS6Bg/6bd50905-2e97-4265-3bc2-bdbd14d43600/public');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
 }
-.lemon-btn.spinning .lemon-spin {
-  animation: lemon-spin 7s linear infinite;
-}
+.lemon-spin:hover { animation: lemon-spin 7s linear infinite; }
 @keyframes lemon-spin {
   to { transform: rotate(360deg); }
 }
-.play-sticker {
-  position: absolute;
-  bottom: 28px;
-  right: -18px;
-  font-family: 'Caveat', cursive;
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--heart);
-  background: var(--paper);
+/* ── Title boil (pencil flipbook on load) ───────────── */
+.cover-text h1.boiling { white-space: nowrap; }
+.cover-text h1 .ch { display: inline-block; }
+.cover-text h1.boiling .ch {
+  -webkit-text-stroke: var(--sw, 0px) var(--ink);
+  transform: translate(var(--dx, 0), var(--dy, 0)) rotate(var(--r, 0deg));
+}
+.cover-text h1.boiling .dot { -webkit-text-stroke-color: var(--heart); }
+/* ── Mini player (fixed, top right) ─────────────────── */
+.mini-player {
+  position: fixed;
+  top: 18px; right: 24px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 14px 5px 5px;
+  background: rgba(245, 241, 232, 0.88);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(26,24,20,0.14);
+  border-radius: 99px;
+  box-shadow: 0 6px 20px rgba(26,24,20,0.08);
+}
+.mini-player button {
+  width: 30px; height: 30px;
+  border-radius: 50%;
   border: 1.5px solid var(--ink);
-  border-radius: 99px;
-  padding: 2px 12px;
-  transform: rotate(12deg);
-  pointer-events: none;
-  white-space: nowrap;
-  box-shadow: 2px 2px 0 rgba(26,24,20,0.12);
-  line-height: 1.6;
-}
-.music-panel {
-  position: absolute;
-  bottom: calc(100% + 14px);
-  right: 0;
-  background: rgba(245, 241, 232, 0.9);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(26,24,20,0.12);
-  border-radius: 18px;
-  padding: 16px 18px 12px;
-  width: 272px;
-  box-shadow: 0 12px 40px rgba(26,24,20,0.18), 0 0 0 1px rgba(26,24,20,0.05);
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(10px);
-  transition: opacity 0.28s ease, transform 0.28s ease;
-  z-index: 200;
-}
-.music-panel.open {
-  opacity: 1;
-  pointer-events: all;
-  transform: translateY(0);
-}
-.panel-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(26,24,20,0.08);
-}
-.panel-title {
-  font-family: 'Caveat', cursive;
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--ink-soft);
-  letter-spacing: 0.02em;
-}
-.mute-btn {
-  background: none;
-  border: 1px solid rgba(26,24,20,0.18);
-  border-radius: 99px;
-  padding: 3px 11px;
-  font-family: 'Inter', sans-serif;
-  font-size: 10px;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  cursor: pointer;
-  color: var(--ink-soft);
-  line-height: 1.6;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
-}
-.mute-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-.mute-btn.muted { background: var(--heart); color: var(--paper); border-color: var(--heart); }
-.close-panel-btn {
-  width: 26px; height: 26px;
-  border-radius: 50%;
-  border: 1px solid rgba(26,24,20,0.2);
-  background: none;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 16px;
-  color: var(--ink-soft);
-  line-height: 1;
-  padding: 0;
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
-  flex-shrink: 0;
-}
-.close-panel-btn:hover { background: var(--heart); color: var(--paper); border-color: var(--heart); }
-.panel-controls { display: flex; align-items: center; gap: 8px; }
-.track-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 9px 0;
-  border-bottom: 1px solid rgba(26,24,20,0.06);
-}
-.track-item:last-child { border-bottom: none; padding-bottom: 2px; }
-.track-play-btn {
-  width: 36px; height: 36px;
-  border-radius: 50%;
-  border: 2px solid var(--ink);
   background: transparent;
   color: var(--ink);
   cursor: pointer;
-  font-size: 13px;
   display: flex; align-items: center; justify-content: center;
+  padding: 0;
   flex-shrink: 0;
-  padding-left: 2px;
+  -webkit-tap-highlight-color: transparent;
   transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
-.track-play-btn:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-.track-play-btn.playing { background: var(--heart); border-color: var(--heart); color: var(--paper); padding-left: 0; }
-.track-info { flex: 1; min-width: 0; }
-.track-name {
+.mini-player button svg { width: 12px; height: 12px; fill: currentColor; }
+.mini-player button:hover { background: var(--ink); color: var(--paper); }
+.mini-player button:focus-visible { outline: 2px solid var(--heart); outline-offset: 2px; }
+.mini-player .mp-next { border-color: transparent; width: 26px; }
+.mini-player .mp-next:hover { background: none; color: var(--heart); }
+.mini-player.playing .mp-toggle { background: var(--heart); border-color: var(--heart); color: var(--paper); }
+.mini-player .mp-name {
   font-family: 'Caveat', cursive;
-  font-size: 17px;
+  font-size: 19px;
   font-weight: 500;
+  line-height: 1;
   color: var(--ink);
-  display: block;
-  margin-bottom: 3px;
-  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 13ch;
+  padding-left: 2px;
 }
-.waveform-canvas {
-  display: block;
-  width: 100%;
-  height: 24px;
-}
+.mini-player .mp-icon-pause { display: none; }
+.mini-player.playing .mp-icon-play { display: none; }
+.mini-player.playing .mp-icon-pause { display: block; }
 /* ── Wndr(er) Quote ─────────────────────────────────── */
 .wndrer-quote {
   background: var(--ink);
@@ -701,6 +595,134 @@ section {
   letter-spacing: -0.02em;
   color: rgba(245,241,232,0.65);
 }
+/* ── Visual worlds (Dixie pose sheets as comic panels) ─ */
+.panels-section .header,
+.films-section .header {
+  text-align: center;
+  margin-bottom: 56px;
+}
+.panels-section h3,
+.films-section h3 {
+  font-family: 'Fraunces', serif;
+  font-weight: 500;
+  font-size: clamp(36px, 5vw, 56px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.comic {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 14px;
+  background: var(--paper);
+  box-shadow: 0 30px 60px var(--shadow), 0 0 0 1px rgba(26,24,20,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.comic-row {
+  display: flex;
+  gap: 14px;
+  height: clamp(160px, 24vw, 330px);
+}
+.comic-row.short { height: clamp(120px, 16vw, 220px); }
+.comic-panel {
+  flex: var(--grow, 1) 1 0;
+  min-width: 0;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.comic-panel img {
+  width: 100%; height: 100%;
+  object-fit: contain;
+  display: block;
+}
+/* ── Exploring animation (storyboard of test films) ── */
+.storyboard {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px 32px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}
+.sb-panel { margin: 0; }
+.sb-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+}
+.sb-head .sb-no {
+  font-weight: 600;
+  color: var(--ink);
+  border: 1.5px solid var(--ink);
+  padding: 2px 7px;
+  letter-spacing: 0.1em;
+}
+.sb-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border: 3px solid var(--ink);
+  background: var(--ink);
+  overflow: hidden;
+}
+.sb-frame iframe {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  border: 0;
+}
+.sb-poster {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  padding: 0; border: 0;
+  background: var(--ink);
+  cursor: pointer;
+  display: block;
+}
+.sb-poster img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+.sb-poster:hover img { transform: scale(1.03); }
+.sb-poster .sb-play {
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 64px; height: 64px;
+  margin: -32px 0 0 -32px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2px solid var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 3px 3px 0 rgba(26,24,20,0.25);
+  transition: background 0.2s, color 0.2s;
+  color: var(--ink);
+}
+.sb-poster .sb-play svg { width: 20px; height: 20px; fill: currentColor; margin-left: 4px; }
+.sb-poster:hover .sb-play { background: var(--heart); border-color: var(--heart); color: var(--paper); }
+.sb-poster:focus-visible { outline: 3px solid var(--heart); outline-offset: 3px; }
+.sb-caption {
+  font-family: 'Caveat', cursive;
+  font-size: 24px;
+  color: var(--ink);
+  padding: 8px 2px 0;
+  border-bottom: 1px solid rgba(26,24,20,0.25);
+  line-height: 1.3;
+}
+@media (prefers-reduced-motion: reduce) {
+  .cover-figure img, .scroll-cue::after, .flipbook .frames img, .lemon-spin:hover { animation: none; }
+  .flipbook .frames img:first-child { opacity: 1; }
+  .sb-poster img, .world-card { transition: none; }
+}
 @media (max-width: 900px) {
   .cover { grid-template-columns: 1fr; gap: 24px; padding-top: 16vh;}
   .cover-figure { height: 40vh; order: -1; }
@@ -710,6 +732,15 @@ section {
   .flipbook-grammar { grid-template-columns: 1fr; }
   .colophon-grid { grid-template-columns: 1fr; gap: 32px; }
   section { padding: 8vh 6vw; }
+  .cover-text .subtitle br { display: none; }
+  .comic-row, .comic-row.short { flex-direction: column; height: auto; }
+  .comic-panel { flex: none; aspect-ratio: 16 / 9; }
+  .storyboard { grid-template-columns: 1fr; gap: 32px; }
+}
+@media (max-width: 520px) {
+  .frame-mark { top: 22px; left: 18px; font-size: 16px; }
+  .mini-player { top: 14px; right: 12px; padding-right: 10px; }
+  .mini-player .mp-name { max-width: 11ch; font-size: 17px; }
 }
 </style>
 </head>
@@ -717,59 +748,42 @@ section {
 
 <div class="frame-mark">wndrklub</div>
 
+<div class="mini-player" id="miniPlayer" role="region" aria-label="Music player">
+  <button class="mp-toggle" id="mpToggle" aria-label="Play">
+    <svg class="mp-icon-play" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.5 6z"/></svg>
+    <svg class="mp-icon-pause" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 1.5h3v9H2zM7 1.5h3v9H7z"/></svg>
+  </button>
+  <button class="mp-next" id="mpNext" aria-label="Next track">
+    <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 1.5v9L7 6zM7 1.5v9L12 6z" transform="translate(-0.5 0)"/></svg>
+  </button>
+  <span class="mp-name" id="mpName" aria-live="polite">Zippa Zappa</span>
+</div>
+
 <section class="cover">
   <div class="cover-figure">
     <img src="img/wndrer_figure.png" alt="The Wndr(er)">
   </div>
   <div class="cover-text">
-    <h1>WndrKlub<span class="dot">.</span></h1>
-    <p class="subtitle">A curious creative philosophy<br>for 3 to 7 year olds.</p>
-    <div class="meta">Living Bible &middot; v0.1 &middot; May &rsquo;26</div>
-    <div style="display:flex;justify-content:flex-end;margin-top:36px;">
-      <div class="lemon-player-wrapper">
-        <div class="music-panel" id="musicPanel">
-          <div class="panel-header">
-            <span class="panel-title">wndrklub sounds</span>
-            <div class="panel-controls">
-              <button class="mute-btn" id="muteBtn">mute</button>
-              <button class="close-panel-btn" id="closePanelBtn">&times;</button>
-            </div>
-          </div>
-          <div class="track-item" data-src="https://pub-62329d1c692e4122ba80031b097b5d1b.r2.dev/Ko%20mandi%20main%202.mp3">
-            <button class="track-play-btn">&#9654;</button>
-            <div class="track-info">
-              <span class="track-name">Ko Mandi</span>
-              <canvas class="waveform-canvas" width="188" height="24"></canvas>
-            </div>
-          </div>
-          <div class="track-item" data-src="https://pub-62329d1c692e4122ba80031b097b5d1b.r2.dev/luma%20luma%20sha%20Na%20Mi%20v2.mp3">
-            <button class="track-play-btn">&#9654;</button>
-            <div class="track-info">
-              <span class="track-name">Luma Luma</span>
-              <canvas class="waveform-canvas" width="188" height="24"></canvas>
-            </div>
-          </div>
-          <div class="track-item" data-src="https://pub-62329d1c692e4122ba80031b097b5d1b.r2.dev/zippa%20zappa%20v5.mp3">
-            <button class="track-play-btn">&#9654;</button>
-            <div class="track-info">
-              <span class="track-name">Zippa Zappa</span>
-              <canvas class="waveform-canvas" width="188" height="24"></canvas>
-            </div>
-          </div>
-        </div>
-        <div class="lemon-btn" id="lemonBtn">
-          <div class="lemon-spin"></div>
-          <span class="play-sticker">play me</span>
-        </div>
-      </div>
+    <h1 id="heroTitle" aria-label="WndrKlub.">WndrKlub<span class="dot">.</span></h1>
+    <p class="subtitle">A curious series of short films inspiring young people <br>to tell stories full of wonder.</p>
+    <div class="lemon-wrap" aria-hidden="true">
+      <div class="lemon-spin"></div>
     </div>
   </div>
   <div class="scroll-cue">scroll</div>
 </section>
 
 <section class="question">
-  <p class="preamble">A creative philosophy. A living art gallery of the everyday. Inviting children to ask themselves, simply&hellip;</p>
+  <p class="preamble">Enter into a living art gallery of the everyday. Inviting children to ask themselves, simply&hellip;</p>
   <h2>How do <em>you</em><br>see the world?</h2>
+</section>
+
+<section class="wndrer-quote">
+  <div class="wndrer-quote-inner">
+    <div class="wq-label">Wndr(er).</div>
+    <p class="wq-line1">The Wndr(er) is a filmmaker before they know the word.</p>
+    <p class="wq-line2">They pause where others move on,<br>framing the ordinary<br>until it becomes extraordinary.</p>
+  </div>
 </section>
 
 <section class="wndrer-section">
@@ -782,14 +796,6 @@ section {
     <p>The sway of trees in the wind. The reflection of clouds on water. The shadow stretching across a doorway. The texture of a weathered wall. The ripple of movement in a busy street. The way sound and silence shape a moment.</p>
     <p class="questions">What&rsquo;s the story here? How does this moment feel? Who are we meant to be watching, and what happens next?</p>
     <p>They see life not as a blur, but as a series of shots and scenes, each one carefully framed by perspective and emotion. To them, every ordinary moment holds structure: a beginning, a middle, an end, and a feeling beating quietly at its heart.</p>
-  </div>
-</section>
-
-<section class="wndrer-quote">
-  <div class="wndrer-quote-inner">
-    <div class="wq-label">Wndr(er).</div>
-    <p class="wq-line1">The Wndr(er) is a filmmaker before they know the word.</p>
-    <p class="wq-line2">They pause where others move on,<br>framing the ordinary<br>until it becomes extraordinary.</p>
   </div>
 </section>
 
@@ -858,6 +864,75 @@ section {
   </div>
 </section>
 
+<section class="panels-section" id="visual-worlds">
+  <div class="header">
+    <h3>Visual worlds.</h3>
+  </div>
+  <div class="comic">
+    <div class="comic-row">
+      <div class="comic-panel" style="--grow:2"><img src="img/dixie/dixie-01.webp" alt="Dixie pose sheet, page 1" loading="lazy" width="1600" height="900"></div>
+      <div class="comic-panel" style="--grow:3"><img src="img/dixie/dixie-02.webp" alt="Dixie pose sheet, page 2" loading="lazy" width="1600" height="900"></div>
+    </div>
+    <div class="comic-row">
+      <div class="comic-panel" style="--grow:3"><img src="img/dixie/dixie-03.webp" alt="Dixie pose sheet, page 3" loading="lazy" width="1600" height="900"></div>
+      <div class="comic-panel" style="--grow:2"><img src="img/dixie/dixie-04.webp" alt="Dixie pose sheet, page 4" loading="lazy" width="1600" height="900"></div>
+    </div>
+    <div class="comic-row short">
+      <div class="comic-panel" style="--grow:1"><img src="img/dixie/dixie-05.webp" alt="Dixie pose sheet, page 5" loading="lazy" width="1600" height="900"></div>
+      <div class="comic-panel" style="--grow:1"><img src="img/dixie/dixie-06.webp" alt="Dixie pose sheet, page 6" loading="lazy" width="1600" height="900"></div>
+      <div class="comic-panel" style="--grow:1"><img src="img/dixie/dixie-07.webp" alt="Dixie pose sheet, page 7" loading="lazy" width="1600" height="900"></div>
+    </div>
+  </div>
+</section>
+
+<section class="films-section" id="exploring-animation">
+  <div class="header">
+    <h3>Exploring animation.</h3>
+  </div>
+  <div class="storyboard">
+    <figure class="sb-panel">
+      <div class="sb-head"><span class="sb-no">01</span><span>Animation test</span></div>
+      <div class="sb-frame" data-uid="1e0f09ef391c967ca296489c47d49d4a" data-poster="20s">
+        <button class="sb-poster" aria-label="Play Brooke Cant&rsquo;s animation test">
+          <img src="https://customer-3aa0vwfgpylhsylu.cloudflarestream.com/1e0f09ef391c967ca296489c47d49d4a/thumbnails/thumbnail.jpg?time=20s&amp;height=720" alt="" loading="lazy">
+          <span class="sb-play"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.5 6z"/></svg></span>
+        </button>
+      </div>
+      <figcaption class="sb-caption">01 Brooke Cant</figcaption>
+    </figure>
+    <figure class="sb-panel">
+      <div class="sb-head"><span class="sb-no">02</span><span>Animation test</span></div>
+      <div class="sb-frame" data-uid="c440e434e1ab7a1e00a69b14e7ecd945" data-poster="1s">
+        <button class="sb-poster" aria-label="Play Jacob Cunningham&rsquo;s animation test">
+          <img src="https://customer-3aa0vwfgpylhsylu.cloudflarestream.com/c440e434e1ab7a1e00a69b14e7ecd945/thumbnails/thumbnail.jpg?time=1s&amp;height=720" alt="" loading="lazy">
+          <span class="sb-play"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.5 6z"/></svg></span>
+        </button>
+      </div>
+      <figcaption class="sb-caption">02 Jacob Cunningham</figcaption>
+    </figure>
+    <figure class="sb-panel">
+      <div class="sb-head"><span class="sb-no">03</span><span>Animation test</span></div>
+      <div class="sb-frame" data-uid="b49254889bc7fb4d2b1185db7a40d658" data-poster="2s">
+        <button class="sb-poster" aria-label="Play Joshua Shire&rsquo;s animation test">
+          <img src="https://customer-3aa0vwfgpylhsylu.cloudflarestream.com/b49254889bc7fb4d2b1185db7a40d658/thumbnails/thumbnail.jpg?time=2s&amp;height=720" alt="" loading="lazy">
+          <span class="sb-play"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.5 6z"/></svg></span>
+        </button>
+      </div>
+      <figcaption class="sb-caption">03 Joshua Shire</figcaption>
+    </figure>
+    <figure class="sb-panel">
+      <div class="sb-head"><span class="sb-no">04</span><span>Animation test</span></div>
+      <div class="sb-frame" data-uid="9ec574aa703835bf396985b5e0b37e10" data-poster="0s">
+        <button class="sb-poster" aria-label="Play Lily Kromer&rsquo;s animation test">
+          <img src="https://customer-3aa0vwfgpylhsylu.cloudflarestream.com/9ec574aa703835bf396985b5e0b37e10/thumbnails/thumbnail.jpg?time=0s&amp;height=720" alt="" loading="lazy">
+          <span class="sb-play"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.5 6z"/></svg></span>
+        </button>
+      </div>
+      <figcaption class="sb-caption">04 Lily Kromer</figcaption>
+    </figure>
+  </div>
+</section>
+
 <section class="why-section">
   <div class="container">
     <div class="eyebrow">Why Scotland. Why now.</div>
@@ -865,7 +940,6 @@ section {
 
     <div class="why-copy">
       <p>WndrKlub is designed to live inside that ambition. It develops sequencing, visual storytelling and media literacy, aligning directly with Screen Scotland&rsquo;s Film and Screen Education curriculum. It supports intentional play, child-led creativity and attuned adult facilitation, exactly what Realising the Ambition calls for.</p>
-      <p class="closing">Most children watch.<br>WndrKlub inspires them to see.</p>
     </div>
 
     <div class="flipbook-grammar">
@@ -889,7 +963,7 @@ section {
       <div class="line">Notice.</div>
       <div class="line">Create.</div>
     </div>
-    <p class="footnote">In a world saturated with moving images,<br>we give children the power to slow it all down.</p>
+    <figure class="footnote"><img src="img/dixie/dixie-08-footnote.webp" alt="The Wndr(er), mid-tumble" loading="lazy"></figure>
   </div>
 </section>
 
@@ -897,12 +971,11 @@ section {
   <div class="colophon-grid">
     <div>
       <h5>WndrKlub.</h5>
-      <p>A creative philosophy and screen-education property for 3 to 7 year olds. Made in Glasgow by Curious Dreamers.</p>
-      <p style="margin-top:12px;color:var(--ink-soft);font-size:13px;">This is the Living Bible, version 0.1, demo build. The site grows phase by phase as the property develops.</p>
+      <p>Made in Glasgow by Curious Dreamers.</p>
     </div>
     <div>
       <h5>Contact</h5>
-      <a href="mailto:hello@curiousdreamers.com">Get in touch</a>
+      <a href="mailto:hello@curiousdreamers.com">hello@curiousdreamers.com</a>
     </div>
     <div>
       <h5>Supported by</h5>
@@ -911,7 +984,6 @@ section {
       </a>
     </div>
   </div>
-  <div class="signoff">made one frame at a time</div>
 </footer>
 
 <script>
@@ -932,155 +1004,131 @@ document.querySelectorAll('section').forEach((s, i) => {
   revealObserver.observe(s);
 });
 
-// \u2500\u2500 Lemon Music Player \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-const lemonBtn   = document.getElementById('lemonBtn');
-const musicPanel = document.getElementById('musicPanel');
-const muteBtn    = document.getElementById('muteBtn');
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-let panelOpen  = false;
-let muted      = false;
-let currentIdx = null;
-const tracks   = [];
+// ── Title boil: pencil-flipbook frames on load, then settle ──────────────
+(function titleBoil() {
+  const h1 = document.getElementById('heroTitle');
+  if (!h1 || reduceMotion) return;
+  const clean = h1.innerHTML;
+  const FRAMES = 6, FPS = 10;
+  const j = (n) => (Math.random() * 2 - 1) * n;
 
-function updateSpin() {
-  lemonBtn.classList.toggle('spinning', panelOpen || currentIdx !== null);
-}
-
-function fadeAndClose() {
-  panelOpen = false;
-  musicPanel.classList.remove('open');
-  if (currentIdx === null) { updateSpin(); return; }
-  const o = tracks[currentIdx];
-  const vol = o.audio.volume;
-  const t0 = Date.now();
-  const dur = 1200;
-  (function fade() {
-    const p = Math.min((Date.now() - t0) / dur, 1);
-    o.audio.volume = vol * (1 - p);
-    if (p < 1) { requestAnimationFrame(fade); return; }
-    o.audio.pause();
-    o.audio.volume = 1;
-    o.audio.currentTime = 0;
-    o.btn.innerHTML = '&#9654;';
-    o.btn.classList.remove('playing');
-    currentIdx = null;
-    updateSpin();
-  })();
-  updateSpin();
-}
-
-lemonBtn.addEventListener('click', () => {
-  if (panelOpen) { fadeAndClose(); } else {
-    panelOpen = true;
-    musicPanel.classList.add('open');
-    updateSpin();
+  function run() {
+    // One inline-block span per letter so each can wobble on its own.
+    h1.innerHTML = [...'WndrKlub'].map(c => `<span class="ch" aria-hidden="true">${c}</span>`).join('')
+      + '<span class="ch dot" aria-hidden="true">.</span>';
+    h1.classList.add('boiling');
+    const chars = h1.querySelectorAll('.ch');
+    let f = 0;
+    (function frame() {
+      if (f === FRAMES) {
+        h1.classList.remove('boiling');
+        h1.innerHTML = clean;
+        return;
+      }
+      const sw = 0.5 + Math.random() * 2.5;
+      h1.style.transform = `translate(${j(3)}px, ${j(2)}px) rotate(${j(0.8)}deg)`;
+      chars.forEach(ch => {
+        ch.style.setProperty('--dx', j(0.025).toFixed(3) + 'em');
+        ch.style.setProperty('--dy', j(0.025).toFixed(3) + 'em');
+        ch.style.setProperty('--r', j(4).toFixed(2) + 'deg');
+        ch.style.setProperty('--sw', (sw + j(0.6)).toFixed(2) + 'px');
+      });
+      f++;
+      setTimeout(frame, 1000 / FPS);
+    })();
+    setTimeout(() => { h1.style.transform = ''; }, (FRAMES * 1000) / FPS);
   }
-});
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(run);
+})();
 
-document.getElementById('closePanelBtn').addEventListener('click', (e) => {
-  e.stopPropagation();
-  fadeAndClose();
-});
+// ── Mini player ──────────────────────────────────────────────────────────
+const R2 = 'https://pub-62329d1c692e4122ba80031b097b5d1b.r2.dev/';
+const PLAYLIST = [
+  { name: 'Zippa Zappa', key: 'zippa%20zappa%20v5.mp3' },
+  { name: 'Wndr Water',  key: 'Wndr%20Water_esxpriotowrtion%20v1.mp3' },
+  { name: 'Luma Luma',   key: 'luma%20luma%20sha%20Na%20Mi%20v2.mp3' },
+  { name: 'Ko Mandi',    key: 'Ko%20mandi%20main%202.mp3' },
+];
 
-muteBtn.addEventListener('click', () => {
-  muted = !muted;
-  tracks.forEach(t => { if (t.audio) t.audio.volume = muted ? 0 : 1; });
-  muteBtn.textContent = muted ? 'unmute' : 'mute';
-  muteBtn.classList.toggle('muted', muted);
-});
-
-function drawFlat(canvas) {
-  const c = canvas.getContext('2d');
-  c.clearRect(0, 0, canvas.width, canvas.height);
-  c.strokeStyle = 'rgba(26,24,20,0.2)';
-  c.lineWidth = 1.5;
-  c.beginPath();
-  c.moveTo(0, canvas.height / 2);
-  c.lineTo(canvas.width, canvas.height / 2);
-  c.stroke();
-}
-
-function drawAnimWave(canvas, audio) {
-  const c = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
-  let t = 0;
-  function frame() {
-    if (audio.paused) { drawFlat(canvas); return; }
-    t += 0.018;
-    c.clearRect(0, 0, W, H);
-    c.strokeStyle = '#c8292e';
-    c.lineWidth = 1.5;
-    c.lineJoin = 'round';
-    c.beginPath();
-    for (let i = 0; i <= W; i++) {
-      const y = H / 2
-        + Math.sin(i * 0.07 + t * 3.8) * H * 0.28
-        + Math.sin(i * 0.13 + t * 5.5) * H * 0.10;
-      if (i === 0) c.moveTo(i, y); else c.lineTo(i, y);
-    }
-    c.stroke();
-    requestAnimationFrame(frame);
-  }
-  frame();
-}
-
-musicPanel.querySelectorAll('.track-item').forEach((el, idx) => {
-  const canvas = el.querySelector('.waveform-canvas');
-  const btn    = el.querySelector('.track-play-btn');
-  drawFlat(canvas);
-
+const player = (() => {
+  const el     = document.getElementById('miniPlayer');
+  const toggle = document.getElementById('mpToggle');
+  const name   = document.getElementById('mpName');
+  // Same loading approach as music.html: straight from R2, which answers
+  // range requests, so the browser can size the file and resolve duration.
   const audio = new Audio();
   audio.preload = 'none';
-  audio.src = el.dataset.src;
-  tracks[idx] = { audio, btn, canvas };
+  let idx = 0;
 
-  btn.addEventListener('click', (e) => {
-    e.stopPropagation();
+  function load(i) {
+    idx = (i + PLAYLIST.length) % PLAYLIST.length;
+    audio.src = R2 + PLAYLIST[idx].key;
+    name.textContent = PLAYLIST[idx].name;
+  }
+  function setUI() {
+    const on = !audio.paused;
+    el.classList.toggle('playing', on);
+    toggle.setAttribute('aria-label', on ? 'Pause' : 'Play');
+  }
+  function play() {
+    if (!audio.src) load(idx);
+    films.stop();
+    audio.play().catch(err => {
+      // Skipping tracks quickly interrupts the previous play(); that's expected.
+      if (err.name !== 'AbortError') console.error('Play failed:', err);
+    });
+  }
+  function pause() { audio.pause(); }
 
-    if (currentIdx !== null && currentIdx !== idx) {
-      const o = tracks[currentIdx];
-      o.audio.pause();
-      o.audio.currentTime = 0;
-      o.btn.innerHTML = '&#9654;';
-      o.btn.classList.remove('playing');
-    }
+  toggle.addEventListener('click', () => audio.paused ? play() : pause());
+  document.getElementById('mpNext').addEventListener('click', () => {
+    const wasPlaying = !audio.paused;
+    load(idx + 1);
+    if (wasPlaying) play();
+  });
+  audio.addEventListener('ended', () => { load(idx + 1); play(); });
+  audio.addEventListener('play', setUI);
+  audio.addEventListener('pause', setUI);
 
-    if (audio.paused) {
-      audio.volume = muted ? 0 : 1;
-      audio.play()
-        .then(() => {
-          btn.innerHTML = '&#9208;';
-          btn.classList.add('playing');
-          currentIdx = idx;
-          updateSpin();
-          drawAnimWave(canvas, audio);
-        })
-        .catch(err => console.error('Play failed:', err));
-    } else {
-      audio.pause();
-      btn.innerHTML = '&#9654;';
-      btn.classList.remove('playing');
-      currentIdx = null;
-      updateSpin();
-    }
+  name.textContent = PLAYLIST[0].name;
+  return { pause };
+})();
+
+// ── Exploring animation: click a poster to swap in the Stream player ─────
+const films = (() => {
+  const STREAM = 'https://customer-3aa0vwfgpylhsylu.cloudflarestream.com/';
+  let active = null; // { frame, poster }
+
+  function stop() {
+    if (!active) return;
+    active.frame.querySelector('iframe')?.remove();
+    active.frame.appendChild(active.poster);
+    active = null;
+  }
+
+  document.querySelectorAll('.sb-frame').forEach(frame => {
+    const poster = frame.querySelector('.sb-poster');
+    poster.addEventListener('click', () => {
+      stop();
+      player.pause();
+      const uid = frame.dataset.uid;
+      const thumb = `${STREAM}${uid}/thumbnails/thumbnail.jpg?time=${frame.dataset.poster}&height=720`;
+      const iframe = document.createElement('iframe');
+      iframe.src = `${STREAM}${uid}/iframe?autoplay=true&poster=${encodeURIComponent(thumb)}`;
+      iframe.allow = 'accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen';
+      iframe.allowFullscreen = true;
+      iframe.title = poster.getAttribute('aria-label').replace(/^Play /, '');
+      poster.remove();
+      frame.appendChild(iframe);
+      active = { frame, poster };
+      iframe.focus();
+    });
   });
 
-  audio.addEventListener('ended', () => {
-    btn.innerHTML = '&#9654;';
-    btn.classList.remove('playing');
-    if (currentIdx === idx) { currentIdx = null; updateSpin(); }
-  });
-});
-
-// Scroll-fade: reduce volume as user scrolls away from cover
-const coverSection = document.querySelector('.cover');
-window.addEventListener('scroll', () => {
-  if (currentIdx === null || muted) return;
-  const bottom = coverSection.getBoundingClientRect().bottom;
-  const fadeStart = window.innerHeight * 0.75;
-  const vol = Math.max(0, Math.min(1, bottom / fadeStart));
-  tracks[currentIdx].audio.volume = vol;
-}, { passive: true });
+  return { stop };
+})();
 </script>
 </body>
 </html>

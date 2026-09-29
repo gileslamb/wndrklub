@@ -1,0 +1,19 @@
+.DS_Store
+.vercel
+node_modules
+*.log
+.env
+.env.local
+.wrangler/
+
+# media (kept out of git; hosted on R2 / Stream)
+img/movies/
+img/Music/
+*.pdf
+*.mp4
+*.mov
+*.mp3
+
+# private project material (public repo)
+CLAUDE.md
+docs/

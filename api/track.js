@@ -6,6 +6,7 @@ const TRACKS = {
   'ko-mandi':    { key: 'Ko%20mandi%20main%202.mp3',        file: 'WndrKlub - Ko Mandi.mp3' },
   'luma-luma':   { key: 'luma%20luma%20sha%20Na%20Mi%20v2.mp3', file: 'WndrKlub - Luma Luma.mp3' },
   'zippa-zappa': { key: 'zippa%20zappa%20v5.mp3',           file: 'WndrKlub - Zippa Zappa.mp3' },
+  'wndr-water':  { key: 'Wndr%20Water_esxpriotowrtion%20v1.mp3', file: 'WndrKlub - Wndr Water.mp3' },
 };
 
 export default async function handler(req) {
