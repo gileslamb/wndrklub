@@ -149,36 +149,24 @@ section {
 }
 .question h2 em { font-style: italic; font-weight: 500; }
 .wndrer-section {
-  display: grid;
-  grid-template-columns: 1fr 1.2fr;
-  gap: 6vw;
-  align-items: center;
+  background: var(--ink);
+  color: var(--paper);
 }
-.wndrer-image { position: relative; }
-.wndrer-image img {
-  width: 100%; height: auto;
-  /* keeping a very gentle drop shadow for grounding, not a box */
-  filter: drop-shadow(0 12px 24px rgba(26,24,20,0.08));
-}
-.wndrer-image .caption {
-  position: absolute;
-  bottom: -30px; right: 0;
-  font-family: 'Caveat', cursive;
-  font-size: 22px;
-  color: var(--ink-soft);
-  transform: rotate(-2deg);
+.wndrer-text {
+  max-width: 62ch;
+  margin: 0 auto;
 }
 .wndrer-text .eyebrow {
   font-family: 'Inter', sans-serif;
   font-size: 11px;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--ink-soft);
+  color: rgba(245,241,232,0.6);
   margin-bottom: 24px;
   display: flex; align-items: center; gap: 12px;
 }
 .wndrer-text .eyebrow::before {
-  content: ''; width: 24px; height: 1px; background: var(--ink-soft);
+  content: ''; width: 24px; height: 1px; background: rgba(245,241,232,0.6);
 }
 .wndrer-text h3 {
   font-family: 'Fraunces', serif;
@@ -192,13 +180,13 @@ section {
 .wndrer-text p {
   font-size: clamp(16px, 1.3vw, 19px);
   line-height: 1.65;
-  color: var(--ink-soft);
+  color: rgba(245,241,232,0.75);
   margin-bottom: 18px;
   max-width: 50ch;
 }
 .wndrer-text p.questions {
   font-style: italic;
-  color: var(--ink);
+  color: var(--paper);
   border-left: 2px solid var(--heart);
   padding-left: 20px;
   margin: 28px 0;
@@ -482,35 +470,213 @@ section {
   height: auto;
   display: block;
 }
-/* ── Lemon (hero curiosity) ─────────────────────────── */
-.lemon-wrap {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 36px;
+/* ── Hero flipbook: the title riffled onto paper pages ─ */
+.cover-text h1.fb {
+  font-size: inherit;
+  line-height: 1;
+  letter-spacing: normal;
+  margin: 0 0 32px;
 }
-.lemon-spin {
-  width: 324px;
-  height: 324px;
-  max-width: 70vw;
-  max-height: 70vw;
+.fb-book {
+  display: block;
+  position: relative;
+  width: min(100% - 16px, 680px);
+  margin-left: 16px;             /* room for the binding tape */
+  aspect-ratio: 12 / 5;
+  container-type: inline-size;
+  transition: transform 0.5s ease;
+}
+.fb-book.riffling { transform: rotate(-1.2deg) translateY(-3px); }
+.fb-sheet, .fb-page {
+  position: absolute; inset: 0;
+  background: #fbf9f3;
+  border: 1px solid rgba(26,24,20,0.16);
+  border-radius: 2px 7px 7px 2px;
+}
+/* Loose pages behind the top one: squared up while riffling, splayed at rest */
+.fb-sheet {
+  transform-origin: 0 100%;
+  box-shadow: 0 2px 8px rgba(26,24,20,0.08);
+  transition: transform 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.25);
+}
+.fb-sheet:nth-child(1) { transform: rotate(-6.5deg); background: #f3eee2; }
+.fb-sheet:nth-child(2) { transform: rotate(-4deg); background: #f7f3ea; }
+.fb-sheet:nth-child(3) { transform: rotate(-1.8deg); }
+.fb-book.riffling .fb-sheet:nth-child(1) { transform: translate(7px, 6px); }
+.fb-book.riffling .fb-sheet:nth-child(2) { transform: translate(4.5px, 4px); }
+.fb-book.riffling .fb-sheet:nth-child(3) { transform: translate(2px, 2px); }
+.fb-stack { position: absolute; inset: 0; perspective: 1600px; }
+.fb-page {
+  display: flex;
+  align-items: center;
+  padding: 0 6cqw;
+  overflow: hidden;
+  box-shadow: 0 14px 34px var(--shadow);
+  transform-origin: 0 50%;
+  backface-visibility: hidden;
+}
+.fb-page.flip {
+  transform: rotateY(-95deg) skewY(-3deg);
+  opacity: 0;
+  transition: transform 0.12s ease-in, opacity 0.08s 0.06s;
+}
+.fb-page img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.fb-word {
+  display: block;
+  font-family: 'Fraunces', serif;
+  font-weight: 900;
+  font-size: 19cqw;
+  font-variation-settings: 'opsz' 144;   /* same display cut at every width */
+  line-height: 1;
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+  color: var(--ink);
+}
+.fb-word .dot { color: var(--heart); -webkit-text-stroke-color: var(--heart); }
+.fb-bind {
+  position: absolute;
+  left: -16px; top: -5px; bottom: -5px;
+  width: 20px;
+  background:
+    repeating-linear-gradient(to bottom, transparent 0 14px, rgba(245,241,232,0.35) 14px 20px) 7px 0 / 2px 100% no-repeat,
+    var(--ink);
+  border-radius: 4px 2px 2px 4px;
+  z-index: 60;
+  box-shadow: 2px 0 4px rgba(26,24,20,0.2);
+}
+/* ── Hero music card ────────────────────────────────── */
+.hero-player {
+  position: relative;
+  max-width: 440px;
+  background: #fbf9f3;
+  border: 1.5px solid var(--ink);
+  border-radius: 14px;
+  padding: 18px 20px 10px;
+  box-shadow: 4px 4px 0 rgba(26,24,20,0.12);
+}
+.hero-player .lemon-spin {
+  position: absolute;
+  top: -52px; right: -44px;
+  width: 120px; height: 120px;
   background-image: url('https://imagedelivery.net/GhryEtlvYEhygxHE3JS6Bg/6bd50905-2e97-4265-3bc2-bdbd14d43600/public');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+  pointer-events: auto;
 }
-.lemon-spin:hover { animation: lemon-spin 7s linear infinite; }
+.hero-player .lemon-spin:hover,
+.hero-player.playing .lemon-spin { animation: lemon-spin 7s linear infinite; }
 @keyframes lemon-spin {
   to { transform: rotate(360deg); }
 }
-/* ── Title boil (pencil flipbook on load) ───────────── */
-.cover-text h1.boiling { white-space: nowrap; }
-.cover-text h1 .ch { display: inline-block; }
-.cover-text h1.boiling .ch {
-  -webkit-text-stroke: var(--sw, 0px) var(--ink);
-  transform: translate(var(--dx, 0), var(--dy, 0)) rotate(var(--r, 0deg));
+.hp-top { display: flex; align-items: center; gap: 10px; }
+.hero-player button { font: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
+.hp-play, .hp-next {
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  padding: 0;
+  flex-shrink: 0;
+  transition: background 0.2s, color 0.2s, border-color 0.2s;
 }
-.cover-text h1.boiling .dot { -webkit-text-stroke-color: var(--heart); }
-/* ── Mini player (fixed, top right) ─────────────────── */
+.hp-play { width: 58px; height: 58px; }
+.hp-play svg { width: 20px; height: 20px; fill: currentColor; }
+.hp-next { width: 44px; height: 44px; border-width: 1.5px; }
+.hp-next svg { width: 16px; height: 16px; fill: currentColor; }
+.hp-play:hover, .hp-next:hover { background: var(--ink); color: var(--paper); }
+.hero-player.playing .hp-play { background: var(--heart); border-color: var(--heart); color: var(--paper); }
+.hp-play:focus-visible, .hp-next:focus-visible, .hp-progress:focus-visible, .hp-list button:focus-visible {
+  outline: 2px solid var(--heart); outline-offset: 2px;
+}
+.hp-now { min-width: 0; flex: 1; padding-left: 6px; }
+.hp-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  opacity: 0.8;
+}
+.hp-name {
+  font-family: 'Caveat', cursive;
+  font-size: 30px;
+  font-weight: 500;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hp-progress {
+  margin: 14px 0 2px;
+  padding: 7px 0;
+  cursor: pointer;
+  touch-action: none;
+}
+.hp-bar {
+  position: relative;
+  height: 4px;
+  background: rgba(26,24,20,0.12);
+  border-radius: 99px;
+}
+.hp-fill {
+  position: absolute; left: 0; top: 0; bottom: 0;
+  width: 0;
+  background: var(--heart);
+  border-radius: 99px;
+}
+.hp-fill::after {
+  content: '';
+  position: absolute;
+  right: -6px; top: 50%;
+  width: 12px; height: 12px;
+  margin-top: -6px;
+  border-radius: 50%;
+  background: var(--heart);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.hero-player.playing .hp-fill::after, .hp-progress:hover .hp-fill::after { opacity: 1; }
+.hp-times {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.hp-list {
+  list-style: none;
+  margin-top: 10px;
+  border-top: 1px solid rgba(26,24,20,0.12);
+}
+.hp-list button {
+  width: 100%;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 8px 2px;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid rgba(26,24,20,0.07);
+  text-align: left;
+  cursor: pointer;
+}
+.hp-list li:last-child button { border-bottom: 0; }
+.hp-list .n, .hp-list .d {
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  color: var(--ink-soft);
+  font-variant-numeric: tabular-nums;
+}
+.hp-list .t { font-family: 'Caveat', cursive; font-size: 21px; line-height: 1.1; }
+.hp-list .d { margin-left: auto; }
+.hp-list button:hover .t { color: var(--heart); }
+.hp-list button[aria-current="true"] .t,
+.hp-list button[aria-current="true"] .n { color: var(--heart); }
+/* ── Mini player (fixed, top right; shown once the card scrolls away) ── */
 .mini-player {
   position: fixed;
   top: 18px; right: 24px;
@@ -525,6 +691,16 @@ section {
   border: 1px solid rgba(26,24,20,0.14);
   border-radius: 99px;
   box-shadow: 0 6px 20px rgba(26,24,20,0.08);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s 0.25s;
+}
+.mini-player.show {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
 .mini-player button {
   width: 30px; height: 30px;
@@ -557,23 +733,32 @@ section {
   max-width: 13ch;
   padding-left: 2px;
 }
-.mini-player .mp-icon-pause { display: none; }
-.mini-player.playing .mp-icon-play { display: none; }
-.mini-player.playing .mp-icon-pause { display: block; }
+.mp-icon-pause { display: none; }
+.playing .mp-icon-play { display: none; }
+.playing .mp-icon-pause { display: block; }
 /* ── Wndr(er) Quote ─────────────────────────────────── */
 .wndrer-quote {
-  background: var(--ink);
-  color: var(--paper);
-  text-align: center;
+  background: #fff;
+  color: var(--ink);
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 6vw;
   align-items: center;
-  padding: 16vh 8vw;
+  padding: 14vh 8vw;
 }
-.wndrer-quote-inner { max-width: 28ch; margin: 0 auto; }
+.wq-figure { display: flex; justify-content: center; }
+.wq-figure img {
+  width: auto;
+  max-width: 100%;
+  max-height: 72vh;
+  object-fit: contain;
+}
+.wndrer-quote-inner { max-width: 30ch; }
 .wndrer-quote .wq-label {
   font-family: 'Caveat', cursive;
-  font-size: 22px;
-  color: rgba(245,241,232,0.5);
-  margin-bottom: 32px;
+  font-size: 24px;
+  color: var(--ink-soft);
+  margin-bottom: 28px;
   letter-spacing: 0.02em;
 }
 .wndrer-quote .wq-line1 {
@@ -583,7 +768,7 @@ section {
   font-size: clamp(26px, 3.5vw, 44px);
   line-height: 1.3;
   letter-spacing: -0.02em;
-  color: var(--paper);
+  color: var(--ink);
   margin-bottom: 20px;
 }
 .wndrer-quote .wq-line2 {
@@ -593,9 +778,9 @@ section {
   font-size: clamp(22px, 2.8vw, 36px);
   line-height: 1.45;
   letter-spacing: -0.02em;
-  color: rgba(245,241,232,0.65);
+  color: var(--ink-soft);
 }
-/* ── Visual worlds (Dixie pose sheets as comic panels) ─ */
+/* ── Visual worlds + Exploring animation headers ───── */
 .panels-section .header,
 .films-section .header {
   text-align: center;
@@ -609,35 +794,55 @@ section {
   line-height: 1.1;
   letter-spacing: -0.02em;
 }
-.comic {
-  max-width: 1200px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 14px;
-  background: var(--paper);
-  box-shadow: 0 30px 60px var(--shadow), 0 0 0 1px rgba(26,24,20,0.06);
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-.comic-row {
-  display: flex;
-  gap: 14px;
-  height: clamp(160px, 24vw, 330px);
-}
-.comic-row.short { height: clamp(120px, 16vw, 220px); }
-.comic-panel {
-  flex: var(--grow, 1) 1 0;
-  min-width: 0;
+.dixie { width: 100%; max-width: 1200px; margin: 0 auto; }
+.dixie-box {
+  aspect-ratio: 1;
   background: #fff;
   border: 3px solid var(--ink);
   border-radius: 2px;
   overflow: hidden;
 }
-.comic-panel img {
-  width: 100%; height: 100%;
-  object-fit: contain;
-  display: block;
+.dixie-box img { width: 100%; height: 100%; object-fit: contain; display: block; }
+/* Static grid: the no-JS and reduced-motion layout, and the base for option B */
+.dixie-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 10px;
+}
+/* Option A, "strip": two full-bleed rows drifting in opposite directions */
+.dixie.strip {
+  max-width: none;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 4px 0;
+}
+.dixie-row {
+  display: flex;
+  gap: 14px;
+  padding-right: 14px;           /* keeps the -50% loop point exact */
+  width: max-content;
+  animation: dixie-left 90s linear infinite;
+}
+.dixie-row.rev { animation-name: dixie-right; }
+.dixie.strip:hover .dixie-row { animation-play-state: paused; }
+.dixie-row .dixie-box { width: clamp(104px, 11vw, 156px); flex: none; }
+@keyframes dixie-left  { from { transform: translateX(0); }    to { transform: translateX(-50%); } }
+@keyframes dixie-right { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+/* Option B, "matrix": poses pop into their boxes, then occasionally swap */
+.dixie.matrix .dixie-box img { transform: scale(0); opacity: 0; }
+.dixie.matrix .dixie-box.on img { animation: pose-pop 0.45s cubic-bezier(0.3, 1.6, 0.5, 1) forwards; }
+.dixie.matrix .dixie-box.on.out img { animation: pose-out 0.2s ease-in forwards; }
+@keyframes pose-pop {
+  from { transform: scale(0) rotate(-10deg); opacity: 0; }
+  to   { transform: scale(1) rotate(0); opacity: 1; }
+}
+@keyframes pose-out {
+  from { transform: scale(1); opacity: 1; }
+  to   { transform: scale(0) rotate(8deg); opacity: 0; }
 }
 /* ── Exploring animation (storyboard of test films) ── */
 .storyboard {
@@ -719,28 +924,35 @@ section {
   line-height: 1.3;
 }
 @media (prefers-reduced-motion: reduce) {
-  .cover-figure img, .scroll-cue::after, .flipbook .frames img, .lemon-spin:hover { animation: none; }
+  .cover-figure img, .scroll-cue::after, .flipbook .frames img,
+  .hero-player .lemon-spin:hover, .hero-player.playing .lemon-spin { animation: none; }
   .flipbook .frames img:first-child { opacity: 1; }
   .sb-poster img, .world-card { transition: none; }
 }
 @media (max-width: 900px) {
   .cover { grid-template-columns: 1fr; gap: 24px; padding-top: 16vh;}
   .cover-figure { height: 40vh; order: -1; }
-  .wndrer-section { grid-template-columns: 1fr; gap: 48px; }
+  .wndrer-quote { grid-template-columns: 1fr; gap: 40px; padding: 10vh 6vw; }
+  .wq-figure img { max-height: 42vh; }
+  .dixie-grid { grid-template-columns: repeat(9, 1fr); gap: 8px; }
+  .hero-player { max-width: none; }
+  .hero-player .lemon-spin { right: -8px; top: -60px; width: 96px; height: 96px; }
   .worlds-grid { grid-template-columns: 1fr; gap: 24px; }
   .world-card:nth-child(n) { transform: none; }
   .flipbook-grammar { grid-template-columns: 1fr; }
   .colophon-grid { grid-template-columns: 1fr; gap: 32px; }
   section { padding: 8vh 6vw; }
   .cover-text .subtitle br { display: none; }
-  .comic-row, .comic-row.short { flex-direction: column; height: auto; }
-  .comic-panel { flex: none; aspect-ratio: 16 / 9; }
   .storyboard { grid-template-columns: 1fr; gap: 32px; }
 }
 @media (max-width: 520px) {
   .frame-mark { top: 22px; left: 18px; font-size: 16px; }
   .mini-player { top: 14px; right: 12px; padding-right: 10px; }
   .mini-player .mp-name { max-width: 11ch; font-size: 17px; }
+  .dixie-grid { grid-template-columns: repeat(6, 1fr); gap: 6px; }
+  .dixie-box { border-width: 2px; }
+  .hp-play { width: 52px; height: 52px; }
+  .hp-name { font-size: 26px; }
 }
 </style>
 </head>
@@ -748,15 +960,21 @@ section {
 
 <div class="frame-mark">wndrklub</div>
 
-<div class="mini-player" id="miniPlayer" role="region" aria-label="Music player">
-  <button class="mp-toggle" id="mpToggle" aria-label="Play">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <filter id="pencil-1"><feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="2" seed="3"/><feDisplacementMap in="SourceGraphic" scale="3"/></filter>
+  <filter id="pencil-2"><feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="2" seed="11"/><feDisplacementMap in="SourceGraphic" scale="3.5"/></filter>
+  <filter id="pencil-3"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="27"/><feDisplacementMap in="SourceGraphic" scale="4.5"/></filter>
+</svg>
+
+<div class="mini-player" id="miniPlayer" role="region" aria-label="Music player (compact)">
+  <button class="mp-toggle" data-action="toggle" aria-label="Play">
     <svg class="mp-icon-play" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.5 6z"/></svg>
     <svg class="mp-icon-pause" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 1.5h3v9H2zM7 1.5h3v9H7z"/></svg>
   </button>
-  <button class="mp-next" id="mpNext" aria-label="Next track">
+  <button class="mp-next" data-action="next" aria-label="Next track">
     <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 1.5v9L7 6zM7 1.5v9L12 6z" transform="translate(-0.5 0)"/></svg>
   </button>
-  <span class="mp-name" id="mpName" aria-live="polite">Zippa Zappa</span>
+  <span class="mp-name" data-track-name>Zippa Zappa</span>
 </div>
 
 <section class="cover">
@@ -764,10 +982,39 @@ section {
     <img src="img/wndrer_figure.png" alt="The Wndr(er)">
   </div>
   <div class="cover-text">
-    <h1 id="heroTitle" aria-label="WndrKlub.">WndrKlub<span class="dot">.</span></h1>
+    <h1 class="fb" id="heroTitle" aria-label="WndrKlub.">
+      <span class="fb-book" aria-hidden="true">
+        <span class="fb-splay"><span class="fb-sheet"></span><span class="fb-sheet"></span><span class="fb-sheet"></span></span>
+        <span class="fb-stack"><span class="fb-page fb-final"><span class="fb-word">WndrKlub<span class="dot">.</span></span></span></span>
+        <span class="fb-bind"></span>
+      </span>
+    </h1>
     <p class="subtitle">A curious series of short films inspiring young people <br>to tell stories full of wonder.</p>
-    <div class="lemon-wrap" aria-hidden="true">
-      <div class="lemon-spin"></div>
+    <div class="hero-player" id="heroPlayer" role="region" aria-label="Music player">
+      <div class="lemon-spin" aria-hidden="true"></div>
+      <div class="hp-top">
+        <button class="hp-play" data-action="toggle" aria-label="Play">
+          <svg class="mp-icon-play" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.5 6z"/></svg>
+          <svg class="mp-icon-pause" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 1.5h3v9H2zM7 1.5h3v9H7z"/></svg>
+        </button>
+        <button class="hp-next" data-action="next" aria-label="Next track">
+          <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M1 1.5v9L7 6zM7 1.5v9L12 6z" transform="translate(-0.5 0)"/></svg>
+        </button>
+        <div class="hp-now">
+          <div class="hp-label">wndrklub sounds</div>
+          <div class="hp-name" data-track-name aria-live="polite">Zippa Zappa</div>
+        </div>
+      </div>
+      <div class="hp-progress" role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div class="hp-bar"><div class="hp-fill"></div></div>
+      </div>
+      <div class="hp-times"><span class="hp-cur">0:00</span><span class="hp-tot">2:36</span></div>
+      <ol class="hp-list">
+      <li><button aria-current="true"><span class="n">01</span><span class="t">Zippa Zappa</span><span class="d">2:36</span></button></li>
+      <li><button><span class="n">02</span><span class="t">Wndr Water</span><span class="d">6:22</span></button></li>
+      <li><button><span class="n">03</span><span class="t">Luma Luma</span><span class="d">4:23</span></button></li>
+      <li><button><span class="n">04</span><span class="t">Ko Mandi</span><span class="d">3:17</span></button></li>
+      </ol>
     </div>
   </div>
   <div class="scroll-cue">scroll</div>
@@ -779,6 +1026,9 @@ section {
 </section>
 
 <section class="wndrer-quote">
+  <div class="wq-figure">
+    <img src="img/wndrer_figure.png" alt="The Wndr(er)" loading="lazy">
+  </div>
   <div class="wndrer-quote-inner">
     <div class="wq-label">Wndr(er).</div>
     <p class="wq-line1">The Wndr(er) is a filmmaker before they know the word.</p>
@@ -787,9 +1037,6 @@ section {
 </section>
 
 <section class="wndrer-section">
-  <div class="wndrer-image">
-    <img src="img/wndrer_figure.png" alt="The Wndr(er)">
-  </div>
   <div class="wndrer-text">
     <div class="eyebrow">Meet the Wndr(er)</div>
     <h3>A film director doesn&rsquo;t just <em>look</em> at the world.<br>They <em>notice</em> it.</h3>
@@ -868,20 +1115,43 @@ section {
   <div class="header">
     <h3>Visual worlds.</h3>
   </div>
-  <div class="comic">
-    <div class="comic-row">
-      <div class="comic-panel" style="--grow:2"><img src="img/dixie/dixie-01.webp" alt="Dixie pose sheet, page 1" loading="lazy" width="1600" height="900"></div>
-      <div class="comic-panel" style="--grow:3"><img src="img/dixie/dixie-02.webp" alt="Dixie pose sheet, page 2" loading="lazy" width="1600" height="900"></div>
-    </div>
-    <div class="comic-row">
-      <div class="comic-panel" style="--grow:3"><img src="img/dixie/dixie-03.webp" alt="Dixie pose sheet, page 3" loading="lazy" width="1600" height="900"></div>
-      <div class="comic-panel" style="--grow:2"><img src="img/dixie/dixie-04.webp" alt="Dixie pose sheet, page 4" loading="lazy" width="1600" height="900"></div>
-    </div>
-    <div class="comic-row short">
-      <div class="comic-panel" style="--grow:1"><img src="img/dixie/dixie-05.webp" alt="Dixie pose sheet, page 5" loading="lazy" width="1600" height="900"></div>
-      <div class="comic-panel" style="--grow:1"><img src="img/dixie/dixie-06.webp" alt="Dixie pose sheet, page 6" loading="lazy" width="1600" height="900"></div>
-      <div class="comic-panel" style="--grow:1"><img src="img/dixie/dixie-07.webp" alt="Dixie pose sheet, page 7" loading="lazy" width="1600" height="900"></div>
-    </div>
+  <div class="dixie dixie-grid" id="dixie" role="img" aria-label="Character pose studies: the Wndr(er) playful, sad, scared, and wrestling a lemon">
+    <div class="dixie-box"><img src="img/dixie/poses/pose-01.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-02.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-03.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-04.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-05.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-06.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-07.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-08.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-09.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-10.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-11.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-12.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-13.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-14.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-15.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-16.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-17.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-18.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-19.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-20.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-21.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-22.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-23.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-24.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-25.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-26.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-27.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-28.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-29.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-30.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-31.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-32.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-33.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-34.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-35.webp" alt="" loading="lazy" width="360" height="360"></div>
+    <div class="dixie-box"><img src="img/dixie/poses/pose-36.webp" alt="" loading="lazy" width="360" height="360"></div>
   </div>
 </section>
 
@@ -1006,44 +1276,135 @@ document.querySelectorAll('section').forEach((s, i) => {
 
 const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-// ── Title boil: pencil-flipbook frames on load, then settle ──────────────
-(function titleBoil() {
-  const h1 = document.getElementById('heroTitle');
-  if (!h1 || reduceMotion) return;
-  const clean = h1.innerHTML;
-  const FRAMES = 6, FPS = 10;
+// ── Hero flipbook ───────────────────────────────────────────────────────
+// One entry per page, in riffle order; the last is the page the book rests on.
+// To swap in hand-drawn frames later, replace the list with image pages, e.g.
+//   const FLIPBOOK_FRAMES = Array.from({ length: 12 }, (_, i) =>
+//     ({ img: `img/flipbook/frame-${String(i + 1).padStart(2, '0')}.png` }));
+const FLIPBOOK_FRAMES = ['W', 'W', 'W', 'Wn', 'Wnd', 'Wndr', 'WndrK', 'WndrKl', 'WndrKlu', 'WndrKlub', 'WndrKlub.']
+  .map(text => ({ text }));
+
+(function heroFlipbook() {
+  const book = document.querySelector('.fb-book');
+  if (!book) return;
+  const stack = book.querySelector('.fb-stack');
+  const rest  = stack.querySelector('.fb-final');
   const j = (n) => (Math.random() * 2 - 1) * n;
 
-  function run() {
-    // One inline-block span per letter so each can wobble on its own.
-    h1.innerHTML = [...'WndrKlub'].map(c => `<span class="ch" aria-hidden="true">${c}</span>`).join('')
-      + '<span class="ch dot" aria-hidden="true">.</span>';
-    h1.classList.add('boiling');
-    const chars = h1.querySelectorAll('.ch');
-    let f = 0;
-    (function frame() {
-      if (f === FRAMES) {
-        h1.classList.remove('boiling');
-        h1.innerHTML = clean;
-        return;
-      }
-      const sw = 0.5 + Math.random() * 2.5;
-      h1.style.transform = `translate(${j(3)}px, ${j(2)}px) rotate(${j(0.8)}deg)`;
-      chars.forEach(ch => {
-        ch.style.setProperty('--dx', j(0.025).toFixed(3) + 'em');
-        ch.style.setProperty('--dy', j(0.025).toFixed(3) + 'em');
-        ch.style.setProperty('--r', j(4).toFixed(2) + 'deg');
-        ch.style.setProperty('--sw', (sw + j(0.6)).toFixed(2) + 'px');
-      });
-      f++;
-      setTimeout(frame, 1000 / FPS);
-    })();
-    setTimeout(() => { h1.style.transform = ''; }, (FRAMES * 1000) / FPS);
+  function fill(page, frame, wobble) {
+    page.textContent = '';
+    let el;
+    if (frame.img) {
+      el = new Image();
+      el.src = frame.img;
+      el.alt = '';
+    } else {
+      el = document.createElement('span');
+      el.className = 'fb-word';
+      el.innerHTML = frame.text.replace(/\.$/, '<span class="dot">.</span>');
+    }
+    if (wobble) {
+      // Hand-flicked, not typeset: each page sits a little differently and
+      // gets its own pencil-wobble filter and stroke weight.
+      el.style.transform = `translate(${j(1.2).toFixed(2)}cqw, ${j(1.5).toFixed(2)}cqw) rotate(${j(2.4).toFixed(2)}deg)`;
+      el.style.filter = `url(#pencil-${1 + Math.floor(Math.random() * 3)})`;
+      if (!frame.img) el.style.webkitTextStroke = `${(Math.random() * 1.8).toFixed(2)}px var(--ink)`;
+    }
+    page.appendChild(el);
   }
-  (document.fonts ? document.fonts.ready : Promise.resolve()).then(run);
+
+  const last = FLIPBOOK_FRAMES[FLIPBOOK_FRAMES.length - 1];
+  if (last.img) fill(rest, last, false);
+  if (reduceMotion) return;          // rest on the splayed still
+
+  book.classList.add('riffling');
+  const pages = FLIPBOOK_FRAMES.slice(0, -1).map((frame, i, all) => {
+    const page = document.createElement('span');
+    page.className = 'fb-page';
+    page.style.zIndex = String(all.length - i + 1);
+    fill(page, frame, true);
+    stack.appendChild(page);
+    return page;
+  });
+
+  function riffle() {
+    let t = 380;                     // the thumb bends the stack
+    pages.forEach((page, i) => {
+      setTimeout(() => page.classList.add('flip'), t);
+      t += 150 - i * 5;              // quickens slightly as the pages go
+    });
+    setTimeout(() => {
+      book.classList.remove('riffling');   // pages splay as the book settles
+      pages.forEach(p => p.remove());
+    }, t + 120);
+  }
+  (document.fonts ? document.fonts.ready : Promise.resolve()).then(riffle);
 })();
 
-// ── Mini player ──────────────────────────────────────────────────────────
+// ── Visual worlds: Dixie poses as a drifting strip (A) or popping matrix (B)
+(function dixiePoses() {
+  const box = document.getElementById('dixie');
+  if (!box || reduceMotion) return;  // static grid
+  const srcs = [...box.querySelectorAll('img')].map(img => img.getAttribute('src'));
+  const shuffle = (a) => {
+    for (let i = a.length - 1; i > 0; i--) {
+      const k = Math.floor(Math.random() * (i + 1));
+      [a[i], a[k]] = [a[k], a[i]];
+    }
+    return a;
+  };
+
+  if (new URLSearchParams(location.search).get('dixie') !== 'grid') {
+    // A: two rows, each duplicated once so translateX(-50%) loops seamlessly.
+    box.className = 'dixie strip';
+    const rows = [[], []];
+    srcs.forEach((src, i) => rows[i % 2].push(src));
+    box.innerHTML = rows.map((row, r) => {
+      const cells = row.concat(row).map((src, i) =>
+        `<div class="dixie-box"${i >= row.length ? ' aria-hidden="true"' : ''}><img src="${src}" alt="" width="360" height="360"></div>`
+      ).join('');
+      return `<div class="dixie-row${r === 0 ? ' rev' : ''}">${cells}</div>`;
+    }).join('');
+    return;
+  }
+
+  // B: pop in, in random order, the first time the grid scrolls into view;
+  // then swap two poses every so often while it stays in view.
+  box.classList.add('matrix');
+  const cells = [...box.querySelectorAll('.dixie-box')];
+  let popped = false, timer = null;
+
+  function swap() {
+    const ready = cells.filter(c => c.classList.contains('on') && !c.classList.contains('out'));
+    if (ready.length < 2) return;
+    const [a, b] = shuffle(ready).slice(0, 2);
+    a.classList.add('out'); b.classList.add('out');
+    setTimeout(() => {
+      const ia = a.querySelector('img'), ib = b.querySelector('img');
+      const tmp = ia.src; ia.src = ib.src; ib.src = tmp;
+      [a, b].forEach(c => {
+        c.classList.remove('out', 'on');
+        void c.offsetWidth;          // restart the pop animation
+        c.classList.add('on');
+      });
+    }, 220);
+  }
+
+  new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting) {
+      if (!popped) {
+        popped = true;
+        shuffle(cells.slice()).forEach((c, i) => setTimeout(() => c.classList.add('on'), 150 + i * 55));
+      }
+      timer = timer || setInterval(swap, 1800);
+    } else {
+      clearInterval(timer);
+      timer = null;
+    }
+  }, { threshold: 0.3 }).observe(box);
+})();
+
+// ── Music: hero card + compact pill, one shared <audio> ──────────────────
 const R2 = 'https://pub-62329d1c692e4122ba80031b097b5d1b.r2.dev/';
 const PLAYLIST = [
   { name: 'Zippa Zappa', key: 'zippa%20zappa%20v5.mp3' },
@@ -1053,24 +1414,40 @@ const PLAYLIST = [
 ];
 
 const player = (() => {
-  const el     = document.getElementById('miniPlayer');
-  const toggle = document.getElementById('mpToggle');
-  const name   = document.getElementById('mpName');
+  const card  = document.getElementById('heroPlayer');
+  const mini  = document.getElementById('miniPlayer');
+  const bar   = card.querySelector('.hp-progress');
+  const fillEl = card.querySelector('.hp-fill');
+  const cur   = card.querySelector('.hp-cur');
+  const tot   = card.querySelector('.hp-tot');
+  const items = [...card.querySelectorAll('.hp-list button')];
   // Same loading approach as music.html: straight from R2, which answers
   // range requests, so the browser can size the file and resolve duration.
   const audio = new Audio();
   audio.preload = 'none';
   let idx = 0;
 
+  const fmt = (t) => isFinite(t) ? `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, '0')}` : '0:00';
+
   function load(i) {
     idx = (i + PLAYLIST.length) % PLAYLIST.length;
     audio.src = R2 + PLAYLIST[idx].key;
-    name.textContent = PLAYLIST[idx].name;
+    document.querySelectorAll('[data-track-name]').forEach(n => { n.textContent = PLAYLIST[idx].name; });
+    items.forEach((b, k) => k === idx ? b.setAttribute('aria-current', 'true') : b.removeAttribute('aria-current'));
+    tot.textContent = items[idx].querySelector('.d').textContent;
+    progress();
+  }
+  function progress() {
+    const p = audio.duration ? audio.currentTime / audio.duration : 0;
+    fillEl.style.width = (p * 100).toFixed(2) + '%';
+    cur.textContent = fmt(audio.currentTime);
+    bar.setAttribute('aria-valuenow', Math.round(p * 100));
+    bar.setAttribute('aria-valuetext', `${fmt(audio.currentTime)} of ${tot.textContent}`);
   }
   function setUI() {
     const on = !audio.paused;
-    el.classList.toggle('playing', on);
-    toggle.setAttribute('aria-label', on ? 'Pause' : 'Play');
+    [card, mini].forEach(el => el.classList.toggle('playing', on));
+    document.querySelectorAll('[data-action="toggle"]').forEach(b => b.setAttribute('aria-label', on ? 'Pause' : 'Play'));
   }
   function play() {
     if (!audio.src) load(idx);
@@ -1081,18 +1458,54 @@ const player = (() => {
     });
   }
   function pause() { audio.pause(); }
-
-  toggle.addEventListener('click', () => audio.paused ? play() : pause());
-  document.getElementById('mpNext').addEventListener('click', () => {
+  function next() {
     const wasPlaying = !audio.paused;
     load(idx + 1);
     if (wasPlaying) play();
+  }
+
+  document.querySelectorAll('[data-action="toggle"]').forEach(b => b.addEventListener('click', () => audio.paused ? play() : pause()));
+  document.querySelectorAll('[data-action="next"]').forEach(b => b.addEventListener('click', next));
+  items.forEach((b, k) => b.addEventListener('click', () => {
+    if (k === idx && audio.src) { audio.paused ? play() : pause(); return; }
+    load(k);
+    play();
+  }));
+
+  // Seek: click or drag the bar, or arrow keys when it has focus.
+  function seekTo(clientX) {
+    if (!isFinite(audio.duration)) return;
+    const r = bar.getBoundingClientRect();
+    audio.currentTime = Math.max(0, Math.min(1, (clientX - r.left) / r.width)) * audio.duration;
+    progress();
+  }
+  bar.addEventListener('pointerdown', (e) => {
+    if (!audio.src) return;
+    bar.setPointerCapture(e.pointerId);
+    seekTo(e.clientX);
+    const move = (ev) => seekTo(ev.clientX);
+    bar.addEventListener('pointermove', move);
+    bar.addEventListener('pointerup', () => bar.removeEventListener('pointermove', move), { once: true });
   });
+  bar.addEventListener('keydown', (e) => {
+    if (!isFinite(audio.duration)) return;
+    const step = { ArrowRight: 5, ArrowUp: 5, ArrowLeft: -5, ArrowDown: -5 }[e.key];
+    if (!step) return;
+    e.preventDefault();
+    audio.currentTime = Math.max(0, Math.min(audio.duration, audio.currentTime + step));
+  });
+
+  audio.addEventListener('timeupdate', progress);
+  audio.addEventListener('loadedmetadata', () => { tot.textContent = fmt(audio.duration); progress(); });
   audio.addEventListener('ended', () => { load(idx + 1); play(); });
   audio.addEventListener('play', setUI);
   audio.addEventListener('pause', setUI);
 
-  name.textContent = PLAYLIST[0].name;
+  // The pill takes over once the card has scrolled out of view.
+  new IntersectionObserver(([entry]) => {
+    mini.classList.toggle('show', !entry.isIntersecting);
+  }).observe(card);
+
   return { pause };
 })();
 
