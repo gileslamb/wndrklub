@@ -547,6 +547,35 @@ section {
   transform-origin: 50% 80%;
 }
 .hc-pending .hc-logo { visibility: hidden; }
+/* Variant D: a loose flipbook made of the same cards (built by the script) */
+.hc-book { position: absolute; left: 0; top: 0; pointer-events: none; perspective: 7em; }
+.hc-page { position: absolute; top: 0; }
+.hc-page-in {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.hc-page-in .hc-frame { box-shadow: none; background: rgba(251, 249, 243, 0.96); }
+.hc-pile {
+  position: absolute; top: 0;
+  border-radius: 3px;
+  box-shadow:
+    1.5px 1.5px 0 #f4efe3, 1.5px 1.5px 0 1px rgba(26,24,20,0.3),
+    3px 3px 0 #f4efe3, 3px 3px 0 1px rgba(26,24,20,0.25),
+    4.5px 4.5px 0 #f4efe3, 4.5px 4.5px 0 1px rgba(26,24,20,0.2),
+    0 8px 18px rgba(26,24,20,0.12);
+}
+.hc-flip { position: absolute; top: 0; transform-style: preserve-3d; transform-origin: 0 100%; }
+.hc-slice { position: absolute; top: 0; transform-style: preserve-3d; transform-origin: 0 50%; }
+.hc-face { position: absolute; inset: 0; overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.hc-face.back { transform: rotateY(180deg); }
+.hc-face > .hc-page-in { right: auto; }
+.hc-shade { position: absolute; inset: 0; background: #1a1814; opacity: 0; }
+.hc-curl-shadow {
+  position: absolute; top: 0;
+  background: linear-gradient(to right, rgba(26,24,20,0.35), rgba(26,24,20,0) 85%);
+  opacity: 0;
+  border-radius: 3px;
+}
 /* ── TEMP hero switcher: remove before merge ─────────── */
 .hero-switch {
   position: fixed;
@@ -760,6 +789,13 @@ section {
   font-size: clamp(36px, 5vw, 56px);
   line-height: 1.1;
   letter-spacing: -0.02em;
+}
+.films-section .intro {
+  font-size: clamp(16px, 1.3vw, 19px);
+  line-height: 1.65;
+  color: var(--ink-soft);
+  max-width: 52ch;
+  margin: 20px auto 0;
 }
 .dixie { width: 100%; max-width: 1200px; margin: 0 auto; }
 .dixie-box {
@@ -1126,6 +1162,7 @@ section {
 <section class="films-section" id="exploring-animation">
   <div class="header">
     <h3>Exploring animation.</h3>
+    <p class="intro">Four young animators trained in Scotland, one brief: tell a story through comic frames. These are their tests.</p>
   </div>
   <div class="storyboard">
     <figure class="sb-panel">
@@ -1230,6 +1267,7 @@ section {
   <button data-v="a" aria-pressed="false">A</button>
   <button data-v="b" aria-pressed="false">B</button>
   <button data-v="c" aria-pressed="false">C</button>
+  <button data-v="d" aria-pressed="false">D</button>
   <button data-v="replay" aria-label="Replay">&#8635;</button>
   <label class="hs-speed">speed
     <input type="range" min="0.5" max="2" step="0.05" value="1" aria-label="Animation speed">
@@ -1266,6 +1304,8 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
 //   a "unshuffle": pile up, fan out, slide into line
 //   b "deal":      each card lands straight in its place, then settles
 //   c "snap":      pile up, then all spring into line at once (default)
+//   d "flipbook":  the cards as a small flipbook, pages bending over one by
+//                  one, then spreading into line
 const heroCards = (() => {
   const logo  = document.querySelector('.hc-logo');
   const root  = document.documentElement;
@@ -1317,7 +1357,11 @@ const heroCards = (() => {
   const slap = (c) => tween(130, ease.pulse, (e) => set(c, { s: 1 - 0.065 * e }));
 
   function rest() {
-    cards.forEach(c => { c.style.transform = ''; c.style.opacity = ''; });
+    logo.querySelector('.hc-book')?.remove();
+    cards.forEach(c => {
+      c.style.transform = ''; c.style.opacity = '';
+      const f = c.querySelector('.hc-frame'); f.style.left = f.style.right = '';
+    });
     dot.style.transform = ''; dot.style.opacity = '';
     blob.removeAttribute('transform');
     spats.forEach(g => { g.removeAttribute('transform'); g.removeAttribute('opacity'); });
@@ -1325,6 +1369,7 @@ const heroCards = (() => {
 
   async function play(variant) {
     run++;
+    rest();
     const fs = parseFloat(getComputedStyle(logo).fontSize);
     const width = logo.offsetWidth;
     cards.forEach(c => {
@@ -1336,6 +1381,7 @@ const heroCards = (() => {
     });
     dot.style.opacity = '0';
     root.classList.remove('hc-pending');
+    if (variant === 'd') return flipbook(fs, width);
     if (!(await wait(100))) return;
 
     // 1. Cards land one on top of the other: travel in, a small slap, a breath.
@@ -1366,6 +1412,148 @@ const heroCards = (() => {
       startDot();
       await Promise.all(moves);
     }
+  }
+
+  // ── Variant D: a loose flipbook of the same cards ──────────────────────
+  // Pages turn from the bottom-right corner over to the left. Each turning
+  // page is cut into vertical slices chained edge to edge, so rotating each
+  // slice a little more than the last bends the paper as it goes over.
+  const SLICES = 10;
+  function pageContent(c, W, H) {
+    const inner = document.createElement('div');
+    inner.className = 'hc-page-in';
+    inner.style.width = W + 'px';
+    inner.style.height = H + 'px';
+    inner.append(document.createElement('span'), c.querySelector('.hc-letter').cloneNode(true));
+    inner.firstChild.className = 'hc-frame';
+    return inner;
+  }
+  function staticPage(c, W, H, x, z) {
+    const pg = document.createElement('div');
+    pg.className = 'hc-page';
+    pg.style.cssText = `left:${x}px;width:${W}px;height:${H}px;z-index:${z}`;
+    pg.appendChild(pageContent(c, W, H));
+    return pg;
+  }
+  function flipper(c, W, H, x) {
+    const el = document.createElement('div');
+    el.className = 'hc-flip';
+    el.style.cssText = `left:${x}px;width:${W}px;height:${H}px;z-index:100`;
+    const w = W / SLICES;
+    const slices = [];
+    let parent = el;
+    for (let i = 0; i < SLICES; i++) {
+      const sl = document.createElement('div');
+      sl.className = 'hc-slice';
+      sl.style.cssText = `left:${i ? w : 0}px;width:${w + 1.5}px;height:${H}px`;   // overlap hides seams
+      for (const side of ['front', 'back']) {
+        const face = document.createElement('div');
+        face.className = 'hc-face ' + side;
+        const inner = pageContent(c, W, H);
+        // front shows its own strip; the back shows the mirrored strip so the
+        // letter reads the right way round once the page lands face-up on the left
+        inner.style.left = (side === 'front' ? -i * w : -(W - (i + 1) * w)) + 'px';
+        const shade = document.createElement('div');
+        shade.className = 'hc-shade';
+        face.append(inner, shade);
+        sl.appendChild(face);
+      }
+      parent.appendChild(sl);
+      slices.push(sl);
+      parent = sl;
+    }
+    el.slices = slices;
+    return el;
+  }
+  function bend(el, p) {
+    // base: the whole page sweeping over; curl: the free edge leading,
+    // strongest mid-turn, flat again as it lands.
+    const base = 180 * ease.inOut(p);
+    const curl = 80 * Math.pow(Math.sin(Math.PI * p), 0.8);
+    let prev = 0;
+    el.slices.forEach((sl, i) => {
+      const a = Math.min(180, base + curl * Math.pow(i / (SLICES - 1), 1.6));
+      sl.style.transform = `rotateY(${-(a - prev)}deg)`;
+      prev = a;
+      const lit = Math.abs(Math.cos(a * Math.PI / 180));
+      sl.querySelectorAll(':scope > .hc-face > .hc-shade').forEach(sh => { sh.style.opacity = ((1 - lit) * 0.28).toFixed(3); });
+    });
+    // the bottom-right corner lifts first
+    el.style.transform = `translateZ(1px) rotateZ(${(-4 * Math.sin(Math.PI * p)).toFixed(2)}deg)`;
+  }
+
+  async function flipbook(fs, width) {
+    const my = run;
+    const H = cards[0].offsetHeight;
+    const W = Math.max(...cards.map(c => c.offsetWidth));
+    const top = cards[0].offsetTop;
+    const hinge = Math.round(width * 0.46);
+    const book = document.createElement('div');
+    book.className = 'hc-book';
+    book.style.cssText = `top:${top}px;width:${width}px;height:${H}px`;
+    const rightPile = document.createElement('div');
+    rightPile.className = 'hc-pile';
+    rightPile.style.cssText = `left:${hinge}px;width:${W}px;height:${H}px`;
+    const leftPile = document.createElement('div');
+    leftPile.className = 'hc-pile';
+    leftPile.style.cssText = `left:${hinge - W}px;width:${W}px;height:${H}px;opacity:0`;
+    const shadow = document.createElement('div');
+    shadow.className = 'hc-curl-shadow';
+    shadow.style.cssText = `left:${hinge}px;height:${H}px;z-index:40`;
+    const pages = cards.map((c, i) => staticPage(c, W, H, hinge, 30 - i));
+    book.append(leftPile, rightPile, ...pages, shadow);
+    logo.appendChild(book);
+
+    // the book drops in
+    await tween(320, ease.out, (e) => {
+      book.style.opacity = e;
+      book.style.transform = `translateY(${(-fs * 0.25 * (1 - e)).toFixed(1)}px)`;
+    });
+    if (!(await wait(260))) return;
+
+    // flip W … u; b is revealed last and stays on the right
+    const flips = cards.length - 1;
+    for (let k = 0; k < flips; k++) {
+      if (my !== run) return;
+      const c = cards[k];
+      const f = flipper(c, W, H, hinge);
+      pages[k].replaceWith(f);
+      if (k === flips - 1) rightPile.style.boxShadow = '0 8px 18px rgba(26,24,20,0.12)';
+      const dur = 560 - k * 38;                   // the thumb getting going
+      const ok = await tween(dur, (t) => t, (p) => {
+        bend(f, p);
+        const lift = Math.sin(Math.PI * p);
+        shadow.style.opacity = (lift * 0.9).toFixed(3);
+        shadow.style.width = (W * Math.max(0.12, Math.cos(Math.PI * ease.inOut(p) / 2))).toFixed(1) + 'px';
+      });
+      if (!ok) return;
+      shadow.style.opacity = '0';
+      f.replaceWith(staticPage(c, W, H, hinge - W, 60 + k));
+      leftPile.style.opacity = '1';
+      if (!(await wait(200 - k * 18))) return;   // a beat to read the next letter
+    }
+    if (!(await wait(160))) return;
+
+    // hand over to the real cards, sitting exactly where the pages are
+    cards.forEach((c, i) => {
+      const x = (i < flips ? hinge - W : hinge) + W / 2 - (c.offsetLeft + c.offsetWidth / 2);
+      const grow = (W - c.offsetWidth) / 2;
+      c.frame = c.querySelector('.hc-frame');
+      c.grow = grow;
+      c.frame.style.left = c.frame.style.right = -grow + 'px';
+      c.p = { x, y: 0, r: 0, s: 1, o: 1 };
+      set(c, {});
+    });
+    book.remove();
+
+    // spread into the line; the pages narrow back to each card's own width
+    const spread = cards.map((c, i) => wait(Math.abs(i - (flips - 1)) * 28).then(ok => ok && Promise.all([
+      move(c, { x: 0, y: 0, r: c.rest }, 720, ease.inOut),
+      tween(720, ease.inOut, (e) => { c.frame.style.left = c.frame.style.right = (-c.grow * (1 - e)).toFixed(2) + 'px'; }),
+    ])));
+    await wait(720 + 7 * 28 - 220);
+    startDot();
+    await Promise.all(spread);
   }
 
   // 3. The dot drops, squashes on impact, and a few spatters flick out.
@@ -1399,7 +1587,7 @@ const heroCards = (() => {
 
 const heroVariant = (() => {
   const v = (new URLSearchParams(location.search).get('hero') || '').toLowerCase();
-  return ['a', 'b', 'c'].includes(v) ? v : 'c';
+  return ['a', 'b', 'c', 'd'].includes(v) ? v : 'c';
 })();
 
 // ── TEMP hero switcher: remove before merge ─────────────────────────────
@@ -1426,7 +1614,7 @@ const heroVariant = (() => {
   });
 
   // Speed: 1× is the built-in timing; right is faster. ?speed= remembers it.
-  const BASE_SECONDS = { a: 5.2, b: 4.9, c: 4.8 };
+  const BASE_SECONDS = { a: 5.2, b: 4.9, c: 4.8, d: 6.4 };
   const slider = bar.querySelector('input[type="range"]');
   const out = bar.querySelector('output');
   const label = () => {
