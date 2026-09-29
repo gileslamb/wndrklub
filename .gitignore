@@ -1,0 +1,13 @@
+.env
+.env.local
+.DS_Store
+.wrangler/
+.vercel
+node_modules
+*.log
+*.mp4
+*.mov
+*.mp3
+*.pdf
+docs/
+CLAUDE.md

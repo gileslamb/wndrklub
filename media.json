@@ -1,0 +1,22 @@
+{
+  "music": {
+    "bucket": "museum-playlist",
+    "base": "https://pub-62329d1c692e4122ba80031b097b5d1b.r2.dev/",
+    "playlist": [
+      { "id": "zippa-zappa", "name": "Zippa Zappa", "url": "https://pub-62329d1c692e4122ba80031b097b5d1b.r2.dev/zippa%20zappa%20v5.mp3" },
+      { "id": "wndr-water",  "name": "Wndr Water",  "url": "https://pub-62329d1c692e4122ba80031b097b5d1b.r2.dev/Wndr%20Water_esxpriotowrtion%20v1.mp3" },
+      { "id": "luma-luma",   "name": "Luma Luma",   "url": "https://pub-62329d1c692e4122ba80031b097b5d1b.r2.dev/luma%20luma%20sha%20Na%20Mi%20v2.mp3" },
+      { "id": "ko-mandi",    "name": "Ko Mandi",    "url": "https://pub-62329d1c692e4122ba80031b097b5d1b.r2.dev/Ko%20mandi%20main%202.mp3" }
+    ]
+  },
+  "films": {
+    "customerDomain": "customer-3aa0vwfgpylhsylu.cloudflarestream.com",
+    "requireSignedURLs": false,
+    "items": [
+      { "n": "01", "name": "Brooke Cant",      "uid": "1e0f09ef391c967ca296489c47d49d4a", "duration": 49.21, "poster": "20s" },
+      { "n": "02", "name": "Jacob Cunningham", "uid": "c440e434e1ab7a1e00a69b14e7ecd945", "duration": 9.96,  "poster": "1s" },
+      { "n": "03", "name": "Joshua Shire",     "uid": "b49254889bc7fb4d2b1185db7a40d658", "duration": 68.33, "poster": "2s" },
+      { "n": "04", "name": "Lily Kromer",      "uid": "9ec574aa703835bf396985b5e0b37e10", "duration": 10,    "poster": "0s" }
+    ]
+  }
+}
