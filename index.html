@@ -633,12 +633,7 @@ h3 em { font-style: italic; }
 .trio .item span { font-size: 15px; color: var(--ink-soft); line-height: 1.5; }
 .grammar .copy { margin-top: 56px; }
 
-/* ── Sound ───────────────────────────────────────────── */
-.sound { background: var(--ink); color: var(--paper); min-height: 80vh; }
-.sound .eyebrow { color: rgba(245,241,232,0.6); }
-.sound h3 { font-style: italic; font-weight: 300; font-size: clamp(44px, 7vw, 104px); letter-spacing: -0.04em; line-height: 1; }
-.sound .copy p { color: rgba(245,241,232,0.78); }
-.sound .copy p em { color: var(--paper); }
+/* ── Music ───────────────────────────────────────────── */
 .listen {
   display: inline-flex;
   align-items: center;
@@ -646,19 +641,29 @@ h3 em { font-style: italic; }
   margin-top: 12px;
   font: 500 13px/1 'Inter', sans-serif;
   letter-spacing: 0.08em;
-  color: var(--paper);
+  color: var(--ink);
   background: none;
-  border: 1.5px solid rgba(245,241,232,0.5);
+  border: 1.5px solid var(--ink);
   border-radius: 99px;
-  padding: 11px 18px 11px 14px;
+  padding: 12px 20px 12px 16px;
   cursor: pointer;
-  transition: background 0.2s, border-color 0.2s;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
 }
 .listen svg { width: 12px; height: 12px; fill: currentColor; }
-.listen:hover, .listen[aria-pressed="true"] { background: var(--heart); border-color: var(--heart); }
-.listen:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
-.sound .shot { width: 100%; max-width: 360px; justify-self: center; box-shadow: 0 16px 40px rgba(0,0,0,0.4); }
-.sound .shot img { aspect-ratio: 1; object-fit: cover; object-position: 62% 88%; }
+.listen:hover, .listen[aria-pressed="true"] { background: var(--heart); border-color: var(--heart); color: var(--paper); }
+.listen:focus-visible { outline: 2px solid var(--heart); outline-offset: 3px; }
+.music-shots { position: relative; }
+.music-shots .shot img { aspect-ratio: 16 / 10; object-fit: cover; object-position: 60% 85%; }
+.music-lemon {
+  position: absolute;
+  top: -22%; right: -4%;
+  width: 46%; height: auto;
+  aspect-ratio: 1;
+  max-width: none; max-height: none;
+  z-index: 2;
+  filter: drop-shadow(0 14px 24px rgba(26,24,20,0.18));
+}
+.shots.music-shots .shot { width: 100%; margin-top: 0; }
 
 /* ── In development ──────────────────────────────────── */
 .dev .header { margin-bottom: 40px; }
@@ -847,7 +852,7 @@ h3 em { font-style: italic; }
   .dixie-grid { grid-template-columns: repeat(9, 1fr); gap: 8px; }
   .storyboard { grid-template-columns: 1fr; gap: 32px; }
   .colophon-grid { grid-template-columns: 1fr; gap: 32px; }
-  .sound .shot { max-width: 260px; }
+  .music-lemon { top: -16%; right: -2%; width: 38%; }
 }
 @media (max-width: 520px) {
   .frame-mark { top: 22px; left: 18px; font-size: 16px; }
@@ -953,13 +958,31 @@ h3 em { font-style: italic; }
     <div class="copy">
       <div class="eyebrow">Meet the Wndr(er)</div>
       <h3>The Wndr(er) is a creative explorer, and the star of the show.</h3>
-      <p>They notice what everyone else walks past: the sway of a tree, the reflection in a window, the sound a door makes when it closes slowly. They pause where others move on, framing the ordinary until it becomes extraordinary.</p>
-      <p class="lead">A filmmaker before they know the word.</p>
+      <p>He notices what everyone else walks past: the sway of a tree, the reflection in a window, the sound a door makes when it closes slowly. He pauses where others move on, framing the ordinary until it becomes extraordinary.</p>
     </div>
     <div class="shots meet-figure">
       <img src="img/wndrer_figure.png" alt="The Wndr(er): a stick figure in a bowler hat with a red heart" loading="lazy">
       <figure class="shot" style="--r:4deg">
         <img src="img/dixie/dixie-08-footnote.webp" alt="The Wndr(er), mid-tumble" loading="lazy" width="374" height="488">
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- MUSIC -->
+<section class="music">
+  <div class="split">
+    <div class="copy">
+      <div class="eyebrow">Music</div>
+      <h3>Anything can be music.</h3>
+      <p>Music threads through every episode. Rhythm, tone and the happy accidents of sound shape the story as much as the pictures do. A dripping tap becomes a beat. A creaky door becomes a melody. Sound becomes music, and music becomes sound.</p>
+      <p>Co-created by composer Giles Lamb, WndrKlub is made to be heard as much as seen: playful, surprising, and built to tickle.</p>
+      <button class="listen" type="button" data-listen aria-pressed="false"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.5 6z"/></svg><span>Play the music</span></button>
+    </div>
+    <div class="shots music-shots">
+      <div class="lemon-spin music-lemon" aria-hidden="true"></div>
+      <figure class="shot" style="--r:-2.4deg">
+        <img src="img/dixie/dixie-03.webp" alt="The Wndr(er) wrestling a lemon, pose by pose" loading="lazy" width="1600" height="900">
       </figure>
     </div>
   </div>
@@ -977,6 +1000,7 @@ h3 em { font-style: italic; }
           <dt>Audience</dt><dd>3 to 7 year olds</dd>
           <dt>Home</dt><dd>Designed for preschool broadcast, with a classroom life beyond it</dd>
           <dt>Style</dt><dd>2D line drawing mixed with live action, collage and found footage</dd>
+          <dt>Music</dt><dd>Original score by Giles Lamb, woven through every episode</dd>
           <dt>Status</dt><dd>In development, supported by Screen Scotland</dd>
           <dt>Made in</dt><dd>Glasgow</dd>
         </dl>
@@ -1084,21 +1108,6 @@ h3 em { font-style: italic; }
 
   <div class="copy">
     <p>Built from the oldest animation tools there are, so children can see how it&rsquo;s made and do it themselves.</p>
-  </div>
-</section>
-
-<!-- SOUND -->
-<section class="sound">
-  <div class="split">
-    <div class="copy">
-      <div class="eyebrow">Sound</div>
-      <h3>Quiet by design.</h3>
-      <p>Sound rewards attention rather than filling silence. <em>Original music by Giles Lamb.</em></p>
-      <button class="listen" type="button" data-listen aria-pressed="false"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.5 6z"/></svg><span>Have a listen</span></button>
-    </div>
-    <figure class="shot" style="--r:-3deg">
-      <img src="img/dixie/dixie-03.webp" alt="The Wndr(er) wrestling a lemon" loading="lazy" width="1600" height="900">
-    </figure>
   </div>
 </section>
 
@@ -1433,7 +1442,7 @@ const player = (() => {
     toggle.setAttribute('aria-label', on ? 'Pause' : 'Play');
     if (listen) {
       listen.setAttribute('aria-pressed', String(on));
-      listen.querySelector('span').textContent = on ? `Playing ${PLAYLIST[idx].name}` : 'Have a listen';
+      listen.querySelector('span').textContent = on ? `Playing ${PLAYLIST[idx].name}` : 'Play the music';
     }
   }
   function play() {
