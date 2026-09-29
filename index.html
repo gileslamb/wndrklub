@@ -554,7 +554,7 @@ section {
   position: absolute; inset: 0;
   display: flex; align-items: center; justify-content: center;
 }
-.hc-page-in .hc-frame { box-shadow: none; background: rgba(251, 249, 243, 0.96); }
+.hc-page-in .hc-frame { box-shadow: none; background: #fbf9f3; }
 .hc-pile {
   position: absolute; top: 0;
   border-radius: 3px;
@@ -1343,7 +1343,7 @@ const heroCards = (() => {
   // A card's pose is relative to its resting place in the line.
   function set(c, p) {
     Object.assign(c.p, p);
-    c.style.transform = `translate(${c.p.x}px, ${c.p.y}px) rotate(${c.p.r}deg) scale(${c.p.s})`;
+    c.style.transform = `translate(${c.p.x}px, ${c.p.y}px) rotate(${c.p.r}deg) scale(${c.p.s * (c.p.fx ?? 1)}, ${c.p.s})`;
     c.style.opacity = c.p.o;
   }
   function move(c, to, ms, easing = ease.out) {
@@ -1361,6 +1361,7 @@ const heroCards = (() => {
     cards.forEach(c => {
       c.style.transform = ''; c.style.opacity = '';
       const f = c.querySelector('.hc-frame'); f.style.left = f.style.right = '';
+      c.querySelector('.hc-back')?.remove();
     });
     dot.style.transform = ''; dot.style.opacity = '';
     blob.removeAttribute('transform');
@@ -1419,20 +1420,21 @@ const heroCards = (() => {
   // page is cut into vertical slices chained edge to edge, so rotating each
   // slice a little more than the last bends the paper as it goes over.
   const SLICES = 10;
-  function pageContent(c, W, H) {
+  function pageContent(c, W, H, blank = false) {
     const inner = document.createElement('div');
     inner.className = 'hc-page-in';
     inner.style.width = W + 'px';
     inner.style.height = H + 'px';
-    inner.append(document.createElement('span'), c.querySelector('.hc-letter').cloneNode(true));
+    inner.append(document.createElement('span'));
+    if (!blank) inner.append(c.querySelector('.hc-letter').cloneNode(true));
     inner.firstChild.className = 'hc-frame';
     return inner;
   }
-  function staticPage(c, W, H, x, z) {
+  function staticPage(c, W, H, x, z, blank = false) {
     const pg = document.createElement('div');
     pg.className = 'hc-page';
     pg.style.cssText = `left:${x}px;width:${W}px;height:${H}px;z-index:${z}`;
-    pg.appendChild(pageContent(c, W, H));
+    pg.appendChild(pageContent(c, W, H, blank));
     return pg;
   }
   function flipper(c, W, H, x) {
@@ -1449,9 +1451,8 @@ const heroCards = (() => {
       for (const side of ['front', 'back']) {
         const face = document.createElement('div');
         face.className = 'hc-face ' + side;
-        const inner = pageContent(c, W, H);
-        // front shows its own strip; the back shows the mirrored strip so the
-        // letter reads the right way round once the page lands face-up on the left
+        // the front carries the letter; the back is plain paper
+        const inner = pageContent(c, W, H, side === 'back');
         inner.style.left = (side === 'front' ? -i * w : -(W - (i + 1) * w)) + 'px';
         const shade = document.createElement('div');
         shade.className = 'hc-shade';
@@ -1528,7 +1529,7 @@ const heroCards = (() => {
       });
       if (!ok) return;
       shadow.style.opacity = '0';
-      f.replaceWith(staticPage(c, W, H, hinge - W, 60 + k));
+      f.replaceWith(staticPage(c, W, H, hinge - W, 60 + k, true));
       leftPile.style.opacity = '1';
       if (!(await wait(200 - k * 18))) return;   // a beat to read the next letter
     }
@@ -1541,17 +1542,36 @@ const heroCards = (() => {
       c.frame = c.querySelector('.hc-frame');
       c.grow = grow;
       c.frame.style.left = c.frame.style.right = -grow + 'px';
-      c.p = { x, y: 0, r: 0, s: 1, o: 1 };
+      if (i < flips) {
+        // turned pages are face-down: cover the letter with the plain back
+        const back = document.createElement('span');
+        back.className = 'hc-frame hc-back';
+        back.style.cssText = `left:${-grow}px;right:${-grow}px;background:#fbf9f3;box-shadow:none;z-index:1`;
+        c.appendChild(back);
+      }
+      c.p = { x, y: 0, r: 0, s: 1, o: 1, fx: 1 };
       set(c, {});
     });
     book.remove();
 
-    // spread into the line; the pages narrow back to each card's own width
-    const spread = cards.map((c, i) => wait(Math.abs(i - (flips - 1)) * 28).then(ok => ok && Promise.all([
-      move(c, { x: 0, y: 0, r: c.rest }, 720, ease.inOut),
-      tween(720, ease.inOut, (e) => { c.frame.style.left = c.frame.style.right = (-c.grow * (1 - e)).toFixed(2) + 'px'; }),
-    ])));
-    await wait(720 + 7 * 28 - 220);
+    // spread into the line; the pages narrow back to each card's own width,
+    // and the face-down ones turn over on the way
+    const spread = cards.map((c, i) => wait(Math.abs(i - (flips - 1)) * 28).then(ok => {
+      if (!ok) return;
+      const from = { ...c.p }, back = c.querySelector('.hc-back');
+      return tween(760, ease.inOut, (e) => {
+        const turn = back ? Math.min(1, e / 0.75) : 1;
+        if (back && turn >= 0.5) back.remove();
+        set(c, {
+          x: from.x * (1 - e), y: 0, r: c.rest * e,
+          fx: back || turn < 1 ? Math.max(0.02, Math.abs(Math.cos(Math.PI * turn))) : 1,
+        });
+        const g = (-c.grow * (1 - e)).toFixed(2) + 'px';
+        c.frame.style.left = c.frame.style.right = g;
+        if (back?.isConnected) back.style.left = back.style.right = g;
+      });
+    }));
+    await wait(760 + 7 * 28 - 220);
     startDot();
     await Promise.all(spread);
   }
