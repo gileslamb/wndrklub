@@ -574,6 +574,20 @@ section {
   cursor: pointer;
 }
 .hero-switch button[aria-pressed="true"] { background: var(--heart); border-color: var(--heart); }
+.hs-speed {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 8px;
+  padding-right: 8px;
+  text-transform: uppercase;
+}
+.hs-speed input { width: 110px; accent-color: var(--heart); }
+.hs-speed output { min-width: 8.5ch; font-variant-numeric: tabular-nums; text-transform: none; }
+@media (max-width: 520px) {
+  .hero-switch { flex-wrap: wrap; border-radius: 16px; right: 16px; row-gap: 6px; padding: 6px 8px 6px 12px; }
+  .hs-speed { margin-left: 0; }
+}
 /* ── end TEMP ─────────────────────────────────────────── */
 /* ── Music player (fixed, top right) ────────────────── */
 .mini-player {
@@ -1217,6 +1231,10 @@ section {
   <button data-v="b" aria-pressed="false">B</button>
   <button data-v="c" aria-pressed="false">C</button>
   <button data-v="replay" aria-label="Replay">&#8635;</button>
+  <label class="hs-speed">speed
+    <input type="range" min="0.5" max="2" step="0.05" value="1" aria-label="Animation speed">
+    <output>1.00&times;</output>
+  </label>
 </div>
 <!-- end TEMP -->
 
@@ -1247,7 +1265,7 @@ const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').match
 // Variants (temporary, for comparison; ?hero=a|b|c):
 //   a "unshuffle": pile up, fan out, slide into line
 //   b "deal":      each card lands straight in its place, then settles
-//   c "snap":      pile up, then all spring into line at once
+//   c "snap":      pile up, then all spring into line at once (default)
 const heroCards = (() => {
   const logo  = document.querySelector('.hc-logo');
   const root  = document.documentElement;
@@ -1264,10 +1282,12 @@ const heroCards = (() => {
     pulse:  (t) => Math.sin(Math.PI * t),            // there and back
   };
   let run = 0;                                       // bumped on replay
+  let pace = 1;                                      // duration multiplier (TEMP speed slider)
 
   // Drive fn(e) from 0→1 over ms on requestAnimationFrame; stops if replayed.
   function tween(ms, easing, fn) {
     const my = run;
+    ms *= pace;
     return new Promise(resolve => {
       const t0 = performance.now();
       requestAnimationFrame(function frame(now) {
@@ -1374,14 +1394,13 @@ const heroCards = (() => {
     if (reduceMotion) { root.classList.remove('hc-pending'); return; }   // the still logo
     (document.fonts ? document.fonts.ready : Promise.resolve()).then(() => play(variant));
   }
-  return { start };
+  return { start, setPace: (p) => { pace = p; } };
 })();
 
 const heroVariant = (() => {
   const v = (new URLSearchParams(location.search).get('hero') || '').toLowerCase();
-  return ['a', 'b', 'c'].includes(v) ? v : 'a';
+  return ['a', 'b', 'c'].includes(v) ? v : 'c';
 })();
-heroCards.start(heroVariant);
 
 // ── TEMP hero switcher: remove before merge ─────────────────────────────
 (function heroSwitcher() {
@@ -1405,8 +1424,33 @@ heroCards.start(heroVariant);
     window.scrollTo({ top: 0 });
     heroCards.start(current);
   });
+
+  // Speed: 1× is the built-in timing; right is faster. ?speed= remembers it.
+  const BASE_SECONDS = { a: 5.2, b: 4.9, c: 4.8 };
+  const slider = bar.querySelector('input[type="range"]');
+  const out = bar.querySelector('output');
+  const label = () => {
+    const sp = +slider.value;
+    out.textContent = `${sp.toFixed(2)}\u00d7 \u00b7 ${(BASE_SECONDS[current] / sp).toFixed(1)}s`;
+  };
+  const fromUrl = parseFloat(new URLSearchParams(location.search).get('speed'));
+  if (fromUrl >= 0.5 && fromUrl <= 2) slider.value = fromUrl;
+  heroCards.setPace(1 / +slider.value);
+  label();
+  bar.addEventListener('click', label);
+  slider.addEventListener('input', label);
+  slider.addEventListener('change', () => {
+    heroCards.setPace(1 / +slider.value);
+    const url = new URL(location.href);
+    url.searchParams.set('speed', (+slider.value).toFixed(2));
+    history.replaceState(null, '', url);
+    window.scrollTo({ top: 0 });
+    heroCards.start(current);
+  });
 })();
 // ── end TEMP ──────────────────────────────────────────────────────────────
+
+heroCards.start(heroVariant);
 
 // ── Visual worlds: Dixie poses as a drifting strip (A) or popping matrix (B)
 (function dixiePoses() {
