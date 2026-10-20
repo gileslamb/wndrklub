@@ -22,3 +22,8 @@ Vercel project `wndrklub-series`, deploys on push to `main`.
 - `img/`: Sacha's artwork (Wndr(er) figure, lemon flipbook frames, episode worlds) and Dixie's pose sheets in `img/dixie/`
 - `media.json`: where the hosted media lives. Music on R2 (`museum-playlist` bucket), test films on Cloudflare Stream. Shared with the main WndrKlub site, nothing re-uploaded.
 - `vercel.json`: deployment config and the noindex header
+
+## Image credits
+
+- `img/faces/goldfish.webp` (+ `@2x`): cut from the WndrKlub bible, page 11.
+- `img/faces/cloud.webp` (+ `@2x`): cut from [BlueSkyWhiteClouds21.jpg](https://commons.wikimedia.org/wiki/File:BlueSkyWhiteClouds21.jpg) by Raysonho @ Open Grid Scheduler / Grid Engine, Wikimedia Commons, [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) (public domain dedication).

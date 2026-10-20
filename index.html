@@ -228,6 +228,7 @@ h3 em { font-style: italic; }
   inset: 0;
   pointer-events: none;
   overflow: hidden;
+  perspective: 700px;
 }
 .lemon-roll {
   position: absolute;
@@ -254,57 +255,92 @@ h3 em { font-style: italic; }
   to { transform: rotate(360deg); }
 }
 
-/* Hero logo: hand-drawn letters on cards. The markup is the finished logo;
-   the script only flies the cards into it. */
+/* Hero title: eight letter cubes, like dice. Each cube is six cream card faces
+   in CSS 3D; the front face carries the finished letter, so the markup is the
+   landed title and the script only tumbles the cubes into it. */
 .hc-wrap { container-type: inline-size; margin-bottom: 30px; }
-.hc-logo {
+.cube-row {
+  --s: min(11.4cqw, 92px);
   position: relative;
   display: flex;
-  align-items: flex-end;
-  gap: 0.11em;
+  gap: calc(var(--s) * 0.1);
   width: max-content;
-  padding: 0.1em 0 0.04em;
-  font-family: 'Fraunces', serif;
-  font-weight: 900;
-  font-variation-settings: 'opsz' 144;
-  font-size: min(13.2cqw, 128px);
-  line-height: 1;
-  color: var(--ink);
+  padding: calc(var(--s) * 0.12) 0 calc(var(--s) * 0.04);
+  perspective: calc(var(--s) * 14);
+  perspective-origin: 50% -60%;
 }
-.hc-card {
+.cube, .stray {
   position: relative;
+  flex: none;
+  width: var(--s);
+  height: var(--s);
+  transform-style: preserve-3d;
+  transform: rotateZ(var(--r, 0deg));          /* a slightly wonky line-up */
+  will-change: transform;
+  transition: opacity 0.12s linear;
+}
+.face {
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 1.14em;
-  padding: 0 0.085em;
-  transform: rotate(var(--r, 0deg));
-  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  font-family: 'Fraunces', serif;
+  font-weight: 900;
+  font-variation-settings: 'opsz' 144;
+  font-size: calc(var(--s) * 0.8);
+  line-height: 1;
+  color: var(--ink);
 }
-.hc-frame {
+.f-front  { transform: translateZ(calc(var(--s) / 2)); }
+.f-back   { transform: rotateY(180deg) translateZ(calc(var(--s) / 2)); }
+.f-right  { transform: rotateY(90deg) translateZ(calc(var(--s) / 2)); }
+.f-left   { transform: rotateY(-90deg) translateZ(calc(var(--s) / 2)); }
+.f-top    { transform: rotateX(90deg) translateZ(calc(var(--s) / 2)); }
+.f-bottom { transform: rotateX(-90deg) translateZ(calc(var(--s) / 2)); }
+/* the card: opaque cream, a wobbly pencil edge (filter set per face) */
+.cf-frame {
   position: absolute; inset: 0;
-  background: rgba(251, 249, 243, 0.7);
+  background: #fbf9f3;
   border: 1.5px solid rgba(26, 24, 20, 0.62);
   border-radius: 3px;
-  box-shadow: 0 2px 10px rgba(26, 24, 20, 0.1);
 }
-.hc-letter {
+/* a flat shade on the faces that aren't the letter face, for depth */
+.f-right .cf-frame, .f-left .cf-frame { box-shadow: inset 0 0 0 999px rgba(26, 24, 20, 0.06); }
+.f-top .cf-frame { box-shadow: inset 0 0 0 999px rgba(26, 24, 20, 0.025); }
+.f-bottom .cf-frame, .f-back .cf-frame { box-shadow: inset 0 0 0 999px rgba(26, 24, 20, 0.09); }
+.cf-letter {
   position: relative;
   display: block;
   transform: translate(var(--gx, 0), var(--gy, 0)) rotate(var(--gr, 0deg));
   -webkit-text-stroke: var(--sw, 0.006em) var(--ink);
 }
-.hc-dot {
+.cf-pic {
   position: relative;
-  flex: none;
-  width: 0.5em; height: 0.5em;
-  margin: 0 0 0.1em -0.02em;
+  width: 80%;
+  height: auto;
+  transform: rotate(var(--gr, 0deg));
+}
+.hc-dot {
+  position: absolute;
+  right: 3%; bottom: 8%;
+  width: 34%; height: 34%;
   overflow: visible;
   fill: var(--heart);
   filter: url(#pencil-1);
   transform-origin: 50% 80%;
 }
-.hc-pending .hc-logo { visibility: hidden; }
+/* the stray cube lives on the lemon's layer, so it can fall past the subtitle */
+.stray {
+  --s: 60px;                                   /* set from the row by the script */
+  position: absolute;
+  left: 0; top: 0;
+  visibility: hidden;
+}
+.stray.placed { visibility: visible; }
+.hc-pending .cube-row { visibility: hidden; }
 
 /* ── Music player (fixed, top right) ────────────────── */
 .mini-player {
@@ -923,17 +959,16 @@ h3 em { font-style: italic; }
   </div>
   <div class="cover-text">
     <div class="hc-wrap">
-      <h1 class="sr-only">WndrKlub</h1>
-      <div class="hc-logo" aria-hidden="true">
-        <span class="hc-card" style="--r:-2.0deg"><span class="hc-frame"></span><span class="hc-letter" style="--gx:0.01em;--gy:-0.01em;--gr:-1.5deg;--sw:0.008em;filter:url(#pencil-1)">W</span></span>
-        <span class="hc-card" style="--r:1.4deg"><span class="hc-frame"></span><span class="hc-letter" style="--gx:0;--gy:0.012em;--gr:2.0deg;--sw:0.005em;filter:url(#pencil-2)">n</span></span>
-        <span class="hc-card" style="--r:-0.8deg"><span class="hc-frame"></span><span class="hc-letter" style="--gx:-0.01em;--gy:0;--gr:-1.0deg;--sw:0.01em;filter:url(#pencil-3)">d</span></span>
-        <span class="hc-card" style="--r:2.1deg"><span class="hc-frame"></span><span class="hc-letter" style="--gx:0.008em;--gy:0.01em;--gr:1.6deg;--sw:0.006em;filter:url(#pencil-1)">r</span></span>
-        <span class="hc-card" style="--r:-1.5deg"><span class="hc-frame"></span><span class="hc-letter" style="--gx:0;--gy:-0.012em;--gr:-2.2deg;--sw:0.009em;filter:url(#pencil-2)">K</span></span>
-        <span class="hc-card" style="--r:1.0deg"><span class="hc-frame"></span><span class="hc-letter" style="--gx:-0.008em;--gy:0;--gr:1.2deg;--sw:0.005em;filter:url(#pencil-3)">l</span></span>
-        <span class="hc-card" style="--r:-2.3deg"><span class="hc-frame"></span><span class="hc-letter" style="--gx:0.01em;--gy:0.01em;--gr:-0.8deg;--sw:0.008em;filter:url(#pencil-1)">u</span></span>
-        <span class="hc-card" style="--r:1.7deg"><span class="hc-frame"></span><span class="hc-letter" style="--gx:0;--gy:-0.008em;--gr:1.8deg;--sw:0.006em;filter:url(#pencil-2)">b</span></span>
-        <svg class="hc-dot" viewBox="-20 -20 40 40"><g class="hc-dot-main"><path d="M9.7 -6.4Q11.8 -3.6 11.5 -0.3Q11.3 3.1 9.9 6.4Q8.6 9.6 5.2 10.7Q1.9 11.8 -1.6 11.6Q-5.0 11.4 -8.1 9.4Q-11.2 7.4 -11.5 3.8Q-11.8 0.2 -11.1 -3.1Q-10.4 -6.4 -7.6 -8.4Q-4.9 -10.4 -1.7 -11.5Q1.6 -12.6 4.7 -10.9Q7.7 -9.2 9.7 -6.4Z"/></g><g class="hc-spat" data-x="16.5" data-y="-9.5"><path d="M18.2 -10.4Q19.0 -9.5 18.2 -8.7Q17.4 -7.9 16.4 -7.8Q15.4 -7.7 14.8 -8.6Q14.1 -9.5 14.6 -10.7Q15.2 -11.8 16.3 -11.5Q17.5 -11.3 18.2 -10.4Z"/></g><g class="hc-spat" data-x="-17" data-y="4.5"><path d="M-15.7 3.6Q-15.4 4.5 -15.7 5.3Q-16.1 6.1 -16.9 5.9Q-17.7 5.7 -18.1 5.1Q-18.6 4.5 -18.2 3.7Q-17.9 3.0 -16.9 2.9Q-16.0 2.8 -15.7 3.6Z"/></g><g class="hc-spat" data-x="13.5" data-y="12"><path d="M14.5 11.4Q14.7 12.0 14.4 12.6Q14.2 13.2 13.5 13.2Q12.7 13.3 12.6 12.7Q12.4 12.0 12.6 11.4Q12.9 10.9 13.5 10.8Q14.2 10.7 14.5 11.4Z"/></g><g class="hc-spat" data-x="-8" data-y="-16"><path d="M-7.1 -16.5Q-6.7 -16.0 -7.1 -15.6Q-7.5 -15.1 -8.0 -15.1Q-8.6 -15.0 -8.9 -15.5Q-9.3 -16.0 -8.9 -16.4Q-8.5 -16.8 -8.0 -16.9Q-7.4 -17.0 -7.1 -16.5Z"/></g><g class="hc-spat" data-x="19.5" data-y="2.5"><path d="M20.1 2.2Q20.4 2.5 20.2 2.9Q20.0 3.4 19.6 3.3Q19.1 3.2 18.9 2.8Q18.6 2.5 18.8 2.1Q19.0 1.7 19.4 1.8Q19.9 1.9 20.1 2.2Z"/></g></svg>
+      <h1 class="sr-only">WndrKlub.</h1>
+      <div class="cube-row" aria-hidden="true">
+        <span class="cube" style="--r:-2.0deg"><span class="face f-front"><span class="cf-frame" style="filter:url(#pencil-2)"></span><span class="cf-letter" style="--gx:0.01em;--gy:-0.01em;--gr:-1.5deg;--sw:0.008em;filter:url(#pencil-1)">W</span></span><span class="face f-back"></span><span class="face f-right"></span><span class="face f-left"></span><span class="face f-top"></span><span class="face f-bottom"></span></span>
+        <span class="cube" style="--r:1.4deg"><span class="face f-front"><span class="cf-frame" style="filter:url(#pencil-3)"></span><span class="cf-letter" style="--gx:0;--gy:0.012em;--gr:2.0deg;--sw:0.005em;filter:url(#pencil-2)">n</span></span><span class="face f-back"></span><span class="face f-right"></span><span class="face f-left"></span><span class="face f-top"></span><span class="face f-bottom"></span></span>
+        <span class="cube" style="--r:-0.8deg"><span class="face f-front"><span class="cf-frame" style="filter:url(#pencil-1)"></span><span class="cf-letter" style="--gx:-0.01em;--gy:0;--gr:-1.0deg;--sw:0.01em;filter:url(#pencil-3)">d</span></span><span class="face f-back"></span><span class="face f-right"></span><span class="face f-left"></span><span class="face f-top"></span><span class="face f-bottom"></span></span>
+        <span class="cube" style="--r:2.1deg"><span class="face f-front"><span class="cf-frame" style="filter:url(#pencil-2)"></span><span class="cf-letter" style="--gx:0.008em;--gy:0.01em;--gr:1.6deg;--sw:0.006em;filter:url(#pencil-1)">r</span></span><span class="face f-back"></span><span class="face f-right"></span><span class="face f-left"></span><span class="face f-top"></span><span class="face f-bottom"></span></span>
+        <span class="cube" style="--r:-1.5deg"><span class="face f-front"><span class="cf-frame" style="filter:url(#pencil-3)"></span><span class="cf-letter" style="--gx:0;--gy:-0.012em;--gr:-2.2deg;--sw:0.009em;filter:url(#pencil-2)">K</span></span><span class="face f-back"></span><span class="face f-right"></span><span class="face f-left"></span><span class="face f-top"></span><span class="face f-bottom"></span></span>
+        <span class="cube" style="--r:1.0deg"><span class="face f-front"><span class="cf-frame" style="filter:url(#pencil-1)"></span><span class="cf-letter" style="--gx:-0.008em;--gy:0;--gr:1.2deg;--sw:0.005em;filter:url(#pencil-3)">l</span></span><span class="face f-back"></span><span class="face f-right"></span><span class="face f-left"></span><span class="face f-top"></span><span class="face f-bottom"></span></span>
+        <span class="cube" style="--r:-2.3deg"><span class="face f-front"><span class="cf-frame" style="filter:url(#pencil-2)"></span><span class="cf-letter" style="--gx:0.01em;--gy:0.01em;--gr:-0.8deg;--sw:0.008em;filter:url(#pencil-1)">u</span></span><span class="face f-back"></span><span class="face f-right"></span><span class="face f-left"></span><span class="face f-top"></span><span class="face f-bottom"></span></span>
+        <span class="cube" style="--r:1.7deg"><span class="face f-front"><span class="cf-frame" style="filter:url(#pencil-3)"></span><span class="cf-letter" style="--gx:0;--gy:-0.008em;--gr:1.8deg;--sw:0.006em;filter:url(#pencil-2)">b</span><svg class="hc-dot" viewBox="-20 -20 40 40"><g class="hc-dot-main"><path d="M9.7 -6.4Q11.8 -3.6 11.5 -0.3Q11.3 3.1 9.9 6.4Q8.6 9.6 5.2 10.7Q1.9 11.8 -1.6 11.6Q-5.0 11.4 -8.1 9.4Q-11.2 7.4 -11.5 3.8Q-11.8 0.2 -11.1 -3.1Q-10.4 -6.4 -7.6 -8.4Q-4.9 -10.4 -1.7 -11.5Q1.6 -12.6 4.7 -10.9Q7.7 -9.2 9.7 -6.4Z"/></g><g class="hc-spat" data-x="16.5" data-y="-9.5"><path d="M18.2 -10.4Q19.0 -9.5 18.2 -8.7Q17.4 -7.9 16.4 -7.8Q15.4 -7.7 14.8 -8.6Q14.1 -9.5 14.6 -10.7Q15.2 -11.8 16.3 -11.5Q17.5 -11.3 18.2 -10.4Z"/></g><g class="hc-spat" data-x="-17" data-y="4.5"><path d="M-15.7 3.6Q-15.4 4.5 -15.7 5.3Q-16.1 6.1 -16.9 5.9Q-17.7 5.7 -18.1 5.1Q-18.6 4.5 -18.2 3.7Q-17.9 3.0 -16.9 2.9Q-16.0 2.8 -15.7 3.6Z"/></g><g class="hc-spat" data-x="13.5" data-y="12"><path d="M14.5 11.4Q14.7 12.0 14.4 12.6Q14.2 13.2 13.5 13.2Q12.7 13.3 12.6 12.7Q12.4 12.0 12.6 11.4Q12.9 10.9 13.5 10.8Q14.2 10.7 14.5 11.4Z"/></g><g class="hc-spat" data-x="-8" data-y="-16"><path d="M-7.1 -16.5Q-6.7 -16.0 -7.1 -15.6Q-7.5 -15.1 -8.0 -15.1Q-8.6 -15.0 -8.9 -15.5Q-9.3 -16.0 -8.9 -16.4Q-8.5 -16.8 -8.0 -16.9Q-7.4 -17.0 -7.1 -16.5Z"/></g><g class="hc-spat" data-x="19.5" data-y="2.5"><path d="M20.1 2.2Q20.4 2.5 20.2 2.9Q20.0 3.4 19.6 3.3Q19.1 3.2 18.9 2.8Q18.6 2.5 18.8 2.1Q19.0 1.7 19.4 1.8Q19.9 1.9 20.1 2.2Z"/></g></svg></span><span class="face f-back"></span><span class="face f-right"></span><span class="face f-left"></span><span class="face f-top"></span><span class="face f-bottom"></span></span>
       </div>
     </div>
     <p class="subtitle">An animated mixed-media series for 3 to 7 year olds.</p>
@@ -941,6 +976,7 @@ h3 em { font-style: italic; }
   </div>
   <div class="lemon-wrap" aria-hidden="true">
     <div class="lemon-roll"><div class="lemon-spin"></div></div>
+    <span class="stray"><span class="face f-front"></span><span class="face f-back"></span><span class="face f-right"></span><span class="face f-left"></span><span class="face f-top"></span><span class="face f-bottom"></span></span>
   </div>
   <div class="scroll-cue">scroll</div>
 </section>
@@ -1286,162 +1322,36 @@ if (!reduceMotion && 'IntersectionObserver' in window) {
   });
 }
 
-// Hero logo: hand-drawn letter cards fly into the finished logo.
-// The markup is the final logo (cards in a line, frames on, splatted dot);
-// this only animates the cards into it: they pile up one by one, then all
-// spring into line at once and the dot drops in. Runs on requestAnimationFrame
-// with eased tweens so every card visibly travels and lands.
-const heroCards = (() => {
-  const logo  = document.querySelector('.hc-logo');
-  const root  = document.documentElement;
-  const cards = [...logo.querySelectorAll('.hc-card')];
-  const dot   = logo.querySelector('.hc-dot');
-  const blob  = dot.querySelector('.hc-dot-main');
-  const spats = [...dot.querySelectorAll('.hc-spat')];
-  const j = (n) => (Math.random() * 2 - 1) * n;
-  const ease = {
-    out:    (t) => 1 - Math.pow(1 - t, 3),
-    in:     (t) => t * t,
-    spring: (t) => t === 1 ? 1 : 1 - Math.exp(-6 * t) * Math.cos(9.5 * t),
-    pulse:  (t) => Math.sin(Math.PI * t),            // there and back
-  };
+// Hero title: eight letter cubes tumble in on whole 90-degree turns, showing
+// random letters (and now and then a goldfish or a cloud), and land left to
+// right as W n d r K l u b; the b gets its red splat. A ninth, stray cube
+// lands on top of the b, teeters, tips off the end, falls past the subtitle
+// and lands on the lemon's side, goldfish up. Its thud sends the lemon rolling
+// to the Wndr(er)'s feet. Runs once per load; reduced motion shows it all at rest.
+//
+// Cube face art: img/faces/goldfish.webp is cut from the WndrKlub bible (p. 11).
+// img/faces/cloud.webp is cut from "BlueSkyWhiteClouds21.jpg" by Raysonho
+// @ Open Grid Scheduler / Grid Engine, CC0 1.0 (public domain dedication):
+// https://commons.wikimedia.org/wiki/File:BlueSkyWhiteClouds21.jpg
+(function heroTitle() {
+  const root   = document.documentElement;
+  const cover  = document.querySelector('.cover');
+  const row    = cover.querySelector('.cube-row');
+  const cubes  = [...row.querySelectorAll('.cube')].map(el => ({ el }));
+  const stray  = { el: cover.querySelector('.stray') };
+  const dot    = row.querySelector('.hc-dot');
+  const blob   = dot.querySelector('.hc-dot-main');
+  const spats  = [...dot.querySelectorAll('.hc-spat')];
+  const box    = cover.querySelector('.cover-figure');
+  const fig    = box.querySelector('img');
+  const credit = cover.querySelector('.subtitle.credit');
+  const roll   = cover.querySelector('.lemon-roll');
 
-  // Drive fn(e) from 0 to 1 over ms on requestAnimationFrame.
-  function tween(ms, easing, fn) {
-    return new Promise(resolve => {
-      const t0 = performance.now();
-      requestAnimationFrame(function frame(now) {
-        const k = Math.min(1, (now - t0) / ms);
-        fn(easing(k));
-        k < 1 ? requestAnimationFrame(frame) : resolve(true);
-      });
-    });
-  }
-  const wait = (ms) => tween(ms, (t) => t, () => {});
-
-  // A card's pose is relative to its resting place in the line.
-  function set(c, p) {
-    Object.assign(c.p, p);
-    c.style.transform = `translate(${c.p.x}px, ${c.p.y}px) rotate(${c.p.r}deg) scale(${c.p.s})`;
-    c.style.opacity = c.p.o;
-  }
-  function move(c, to, ms, easing = ease.out) {
-    const from = { ...c.p };
-    return tween(ms, easing, (e) => {
-      const p = {};
-      for (const k in to) p[k] = from[k] + (to[k] - from[k]) * e;
-      set(c, p);
-    });
-  }
-  const slap = (c) => tween(130, ease.pulse, (e) => set(c, { s: 1 - 0.065 * e }));
-
-  function rest() {
-    cards.forEach(c => { c.style.transform = ''; c.style.opacity = ''; });
-    dot.style.transform = ''; dot.style.opacity = '';
-    blob.removeAttribute('transform');
-    spats.forEach(g => { g.removeAttribute('transform'); g.removeAttribute('opacity'); });
-  }
-
-  async function play() {
-    rest();
-    const fs = parseFloat(getComputedStyle(logo).fontSize);
-    const width = logo.offsetWidth;
-    cards.forEach(c => {
-      c.rest = parseFloat(c.style.getPropertyValue('--r')) || 0;
-      c.cx = c.offsetLeft + c.offsetWidth / 2;
-      c.pile = { x: width * 0.3 - c.cx + j(fs * 0.04), y: j(fs * 0.03), r: j(7) };
-      c.p = { x: 0, y: 0, r: 0, s: 1, o: 0 };
-      set(c, {});
-    });
-    dot.style.opacity = '0';
-    root.classList.remove('hc-pending');
-    await wait(100);
-
-    // 1. Cards land one on top of the other: travel in, a small slap, a breath.
-    for (const c of cards) {
-      const at = c.pile;
-      set(c, { x: at.x + fs * 0.12, y: at.y - fs * 0.6, r: at.r - 9, s: 1.2, o: 0 });
-      move(c, { x: at.x, y: at.y, r: at.r, s: 1, o: 1 }, 250).then(() => slap(c));
-      await wait(400);
-    }
-    await wait(120);
-
-    // 2. All spring into line at once.
-    const moves = cards.map(c => move(c, { x: 0, y: 0, r: c.rest }, 900, ease.spring));
-    await wait(560);
-    startDot();
-    await Promise.all(moves);
-  }
-
-  // 3. The dot drops, squashes on impact, and a few spatters flick out.
-  async function startDot() {
-    const fs = parseFloat(getComputedStyle(logo).fontSize);
-    dot.style.opacity = '1';
-    spats.forEach(g => g.setAttribute('opacity', '0'));
-    await tween(260, ease.in, (e) => { dot.style.transform = `translateY(${(-fs * 0.9 * (1 - e)).toFixed(1)}px)`; });
-    spats.forEach(g => {
-      const x = +g.dataset.x, y = +g.dataset.y;
-      tween(260, ease.out, (e) => {
-        g.setAttribute('opacity', '1');
-        g.setAttribute('transform', `translate(${(-x * (1 - e)).toFixed(2)} ${(-y * (1 - e)).toFixed(2)})`);
-      });
-    });
-    await tween(420, (t) => t, (t) => {
-      const d = Math.exp(-5 * t) * Math.cos(10 * t);  // damped squash and stretch
-      dot.style.transform = `scale(${(1 + 0.32 * d).toFixed(3)}, ${(1 - 0.28 * d).toFixed(3)})`;
-    });
-    rest();
-  }
-
-  function start() {
-    if (reduceMotion) { root.classList.remove('hc-pending'); return Promise.resolve(); }   // the still logo
-    return (document.fonts ? document.fonts.ready : Promise.resolve()).then(play);
-  }
-  return { start };
-})();
-
-const heroIntro = heroCards.start();
-
-// Hero lemon: once the logo has landed, the lemon rolls in from the right and
-// comes to rest at the Wndr(er)'s feet. Rotation is distance / radius so it
-// rolls rather than slides, with a few small hops and a rocking settle.
-// The rest spot is measured from the figure, so it holds at any width.
-(function heroLemon() {
-  const cover = document.querySelector('.cover');
-  const box   = cover.querySelector('.cover-figure');
-  const fig   = box.querySelector('img');
-  const text  = cover.querySelector('.cover-text');
-  const roll  = cover.querySelector('.lemon-roll');
-  // Visible lemon inside its 768px square art: x 117 to 641, y 111 to 632.
-  const ART = { left: 117 / 768, bottom: 632 / 768, radius: 0.34 };
-  const FIG_RIGHT = 547 / 660;   // the figure's drawn edge inside its png
-  let done = false;
-
-  function geo() {
-    const c = cover.getBoundingClientRect();
-    const b = box.getBoundingClientRect();
-    const figW = fig.offsetWidth, figH = box.offsetHeight;
-    const stacked = getComputedStyle(cover).gridTemplateColumns.split(' ').length < 2;
-    const figLeft = b.left - c.left + (b.width - figW) / 2;
-    const footX = figLeft + figW * FIG_RIGHT;               // his drawn right edge
-    let size = Math.min(280, figH * 0.37);
-    const gap = size * 0.04;
-    const room = c.width - 16 - footX - gap;                // keep 16px clear of the edge
-    if (room < size * (1 - ART.left) * 0.9) size = Math.max(80, room / ((1 - ART.left) * 0.9));
-    const floor = b.bottom - c.top;                         // his feet
-    const restX = footX + size * 0.04 - size * ART.left;
-    const startX = stacked ? c.width + 10                   // in from off screen
-                           : Math.max(restX + size, text.getBoundingClientRect().right - c.left - size);
-    return { size, top: floor - size * ART.bottom, restX, startX, r: size * ART.radius };
-  }
-
-  function place(x, y, deg, g) {
-    roll.style.setProperty('--lemon', g.size + 'px');
-    roll.style.left = '0'; roll.style.top = '0'; roll.style.right = 'auto'; roll.style.bottom = 'auto';
-    roll.style.transform = `translate(${x.toFixed(1)}px, ${(g.top + y).toFixed(1)}px) rotate(${deg.toFixed(2)}deg)`;
-  }
-  const atRest = () => { const g = geo(); place(g.restX, 0, 0, g); };
-
+  const rnd  = (a, b) => a + Math.random() * (b - a);
+  const pick = (a) => a[Math.floor(Math.random() * a.length)];
+  const sign = () => (Math.random() < 0.5 ? -1 : 1);
+  const io   = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+  const wait = (ms) => new Promise(r => setTimeout(r, ms));
   function tween(ms, fn) {
     return new Promise(resolve => {
       const t0 = performance.now();
@@ -1453,42 +1363,262 @@ const heroIntro = heroCards.start();
     });
   }
 
-  async function play() {
-    const g0 = geo();
-    place(g0.startX, 0, 0, g0);
-    await heroIntro;
-    await new Promise(r => setTimeout(r, 250));
-    const D0 = g0.startX - g0.restX;
-    if (D0 <= 0) return atRest();
-    const ms = Math.min(2600, Math.max(1500, D0 * 2.4));
-    // Whole turns only, so the lemon parks upright: nudge the radius to fit.
-    const turns = Math.max(1, Math.round(D0 / (2 * Math.PI * g0.r)));
-    await tween(ms, (k) => {
-      const g = geo();
-      const D = g.startX - g.restX;
-      const e = 1 - Math.pow(1 - k, 3);                    // ease out
-      const d = D * e;
-      const deg = -(e * turns * 360);                       // = -d / r_fit
-      const hopLen = g.size * 0.7;
-      const hop = -g.size * 0.05 * Math.pow(1 - k, 1.4) * Math.abs(Math.sin(Math.PI * d / hopLen));
-      place(g.startX - d, hop, deg, g);
-    });
-    // Settle: rock back and forth, rolling a touch each way.
-    await tween(1000, (k) => {
-      const g = geo();
-      const t = k * 1.0;
-      const a = 0.16 * Math.exp(-4.5 * t) * Math.sin(13 * t);   // radians
-      place(g.restX + a * g.r, 0, a * 180 / Math.PI, g);
-    });
-    done = true;
-    atRest();
+  // ── Faces ──────────────────────────────────────────────
+  const GLYPHS = 'abdefghkmnopqrstuwxyzABDEFGHKMNPRSTWXYZ';
+  const PICS = {
+    goldfish: '<img class="cf-pic" src="img/faces/goldfish.webp" srcset="img/faces/goldfish.webp 1x, img/faces/goldfish@2x.webp 2x" alt="">',
+    cloud:    '<img class="cf-pic" src="img/faces/cloud.webp" srcset="img/faces/cloud.webp 1x, img/faces/cloud@2x.webp 2x" alt="">',
+  };
+  const frame = () => `<span class="cf-frame" style="filter:url(#pencil-${1 + Math.floor(Math.random() * 3)})"></span>`;
+  function letterFace(face) {
+    const st = `--gx:${rnd(-0.012, 0.012).toFixed(3)}em;--gy:${rnd(-0.012, 0.012).toFixed(3)}em;--gr:${rnd(-2.4, 2.4).toFixed(1)}deg;--sw:${rnd(0.005, 0.01).toFixed(3)}em;filter:url(#pencil-${1 + Math.floor(Math.random() * 3)})`;
+    face.innerHTML = frame() + `<span class="cf-letter" style="${st}">${pick(GLYPHS)}</span>`;
+  }
+  function picFace(face, kind) {
+    face.innerHTML = frame() + PICS[kind].replace('alt=""', `alt="" style="--gr:${rnd(-4, 4).toFixed(1)}deg"`);
+  }
+  // Random letters on every face that isn't a finished letter; about one face
+  // in five across the set turns up a goldfish or a cloud.
+  function dressFaces(fishFace) {
+    const spare = [];
+    cubes.forEach(c => c.el.querySelectorAll('.face:not(.f-front)').forEach(f => spare.push(f)));
+    stray.el.querySelectorAll('.face').forEach(f => { if (f !== fishFace) spare.push(f); });
+    spare.sort(() => Math.random() - 0.5);
+    const pics = Math.round((spare.length + 1) / 5) - 1;          // the stray's goldfish counts
+    spare.forEach((f, i) => (i < pics ? picFace(f, i % 2 ? 'cloud' : 'goldfish') : letterFace(f)));
+    picFace(fishFace, 'goldfish');
   }
 
-  const ready = fig.complete ? Promise.resolve() : new Promise(r => fig.addEventListener('load', r, { once: true }));
+  // ── Pose ───────────────────────────────────────────────
+  // A cube's orientation is a list of whole quarter turns about the screen's
+  // axes. `cur` is the turn in progress, `done` the finished ones (newest
+  // first) and `start` the inverse of the planned turns, so a cube that has
+  // made all its turns is square to the viewer with its letter at the front.
+  const turn = (ax, deg) => `rotate${ax}(${deg}deg)`;
+  function pose(c) {
+    c.el.style.transform =
+      `translate3d(${(c.bx + c.x).toFixed(1)}px, ${(c.by + c.y).toFixed(1)}px, 0) rotateZ(${(c.tilt + c.jig).toFixed(2)}deg) ` +
+      `${c.cur} ${c.done.join(' ')} ${c.start.join(' ')}`;
+  }
+  function reset(c, bx = 0, by = 0) {
+    const tilt = parseFloat(c.el.style.getPropertyValue('--r')) || 0;
+    Object.assign(c, { bx, by, tilt, x: 0, y: 0, jig: 0, cur: '', done: [], start: [] });
+  }
+  // Move along path(k) while making turn t (or none), then bank the turn.
+  async function step(c, ms, path, t) {
+    await tween(ms, (k) => {
+      [c.x, c.y] = path(k);
+      c.cur = t ? turn(t.ax, io(k) * 90 * t.sg) : '';
+      pose(c);
+    });
+    if (t) c.done.unshift(turn(t.ax, 90 * t.sg));
+    c.cur = '';
+  }
+  const hop = (x0, y0, x1, y1, h) => (k) => [x0 + (x1 - x0) * k, y0 + (y1 - y0) * k - h * 4 * k * (1 - k)];
+  function rattle(c, amp, ms = 320) {
+    const sg = sign();
+    return tween(ms, (k) => { c.jig = sg * amp * Math.exp(-5 * k) * Math.sin(k * 24); pose(c); })
+      .then(() => { c.jig = 0; pose(c); });
+  }
+
+  // Tumble a cube in from above-right to its resting place (bx, by).
+  function planTumble(c) {
+    const n = Math.random() < 0.55 ? 4 : 3;
+    c.turns = Array.from({ length: n }, () => ({ ax: Math.random() < 0.72 ? 'X' : 'Y', sg: sign() }));
+    c.start = c.turns.map(t => turn(t.ax, -90 * t.sg));
+  }
+  async function tumbleIn(c, s, onLand) {
+    const H = s * rnd(2.6, 3.8), dx = s * rnd(0.5, 1.3);
+    const [a, b, d, e] = c.turns.length === 4 ? c.turns : [c.turns[0], null, c.turns[1], c.turns[2]];
+    // fall: one or two turns on the way down (gravity: y = -H (1 - t^2))
+    const fall = (t0, t1) => (k) => { const t = t0 + (t1 - t0) * k; return [dx * (1 - 0.55 * t), -H * (1 - t * t)]; };
+    const Tf = 300 + 40 * (H / s);
+    c.x = dx; c.y = -H; pose(c); c.el.style.opacity = '';
+    if (b) { await step(c, Tf * 0.55, fall(0, 0.55), a); await step(c, Tf * 0.45, fall(0.55, 1), b); }
+    else await step(c, Tf, fall(0, 1), a);
+    // two shrinking hops, a face snapping round on each
+    await step(c, 220, hop(dx * 0.45, 0, dx * 0.15, 0, s * 0.42), d);
+    await step(c, 160, hop(dx * 0.15, 0, 0, 0, s * 0.16), e);
+    onLand && onLand();
+    await rattle(c, 4.5);
+  }
+
+  // ── The splat on the b ─────────────────────────────────
+  async function splat(s) {
+    dot.style.opacity = '1';
+    spats.forEach(g => g.setAttribute('opacity', '0'));
+    await tween(240, (k) => { dot.style.transform = `translateY(${(-s * 0.7 * (1 - k * k)).toFixed(1)}px)`; });
+    spats.forEach(g => {
+      const x = +g.dataset.x, y = +g.dataset.y;
+      tween(260, (k) => {
+        const e = 1 - Math.pow(1 - k, 3);
+        g.setAttribute('opacity', '1');
+        g.setAttribute('transform', `translate(${(-x * (1 - e)).toFixed(2)} ${(-y * (1 - e)).toFixed(2)})`);
+      });
+    });
+    await tween(420, (t) => {
+      const d = Math.exp(-5 * t) * Math.cos(10 * t);
+      dot.style.transform = `scale(${(1 + 0.32 * d).toFixed(3)}, ${(1 - 0.28 * d).toFixed(3)})`;
+    });
+    dot.style.transform = '';
+    spats.forEach(g => g.removeAttribute('transform'));
+  }
+
+  // ── Geometry (cover coordinates) ───────────────────────
+  // Visible lemon inside its 768px square art: x 117 to 641, bottom 632.
+  const ART = { left: 117 / 768, right: 641 / 768, bottom: 632 / 768, radius: 0.34 };
+  const FIG_RIGHT = 547 / 660;   // the figure's drawn edge inside its png
+  function geo() {
+    const c = cover.getBoundingClientRect();
+    const b = box.getBoundingClientRect();
+    const r = row.getBoundingClientRect();
+    const bcube = cubes[7].el;
+    const s = bcube.offsetWidth;
+    const stacked = getComputedStyle(cover).gridTemplateColumns.split(' ').length < 2;
+    const W = c.width;
+    // lemon at rest: on the floor at his feet, just right of his drawn edge
+    const figW = fig.offsetWidth, figH = box.offsetHeight;
+    const footX = b.left - c.left + (b.width - figW) / 2 + figW * FIG_RIGHT;
+    let size = Math.min(280, figH * 0.37);
+    const room = W - 16 - footX - size * 0.04;
+    if (room < size * (1 - ART.left) * 0.9) size = Math.max(80, room / ((1 - ART.left) * 0.9));
+    const floor = b.bottom - c.top;
+    const lemonTop = floor - size * ART.bottom;
+    const restX = footX + size * 0.04 - size * ART.left;
+    // the stray: stacked on the b, then tipped off the end to its own floor
+    const bx = r.left - c.left + bcube.offsetLeft, by = r.top - c.top + bcube.offsetTop;
+    const strayFloor = stacked ? credit.getBoundingClientRect().bottom - c.top + s * 1.5 : floor;
+    const landX = Math.min(bx + s * 1.3, W - 16 - s);
+    const strayEnd = { x: landX - s * 0.6, y: strayFloor - s };
+    // the lemon waits on the right: on desktop just left of where the stray
+    // ends up; stacked, peeking in from the right edge at his feet
+    const lemonStart = stacked ? W - size * 0.42 : strayEnd.x - size * ART.right - 1;
+    return { s, stacked, size, lemonTop, restX, lemonStart: Math.max(lemonStart, restX), r: size * ART.radius,
+             bx, by, landX, strayFloor, strayEnd };
+  }
+
+  // ── Lemon ──────────────────────────────────────────────
+  function placeLemon(x, y, deg, g) {
+    roll.style.setProperty('--lemon', g.size + 'px');
+    roll.style.left = '0'; roll.style.top = '0'; roll.style.right = 'auto'; roll.style.bottom = 'auto';
+    roll.style.transform = `translate(${x.toFixed(1)}px, ${(g.lemonTop + y).toFixed(1)}px) rotate(${deg.toFixed(2)}deg)`;
+  }
+  // Roll left to his feet: rotation = distance / radius (rounded to whole
+  // turns so it parks upright), a few small hops, ease out, a rocking settle.
+  async function rollLemon(g0) {
+    const D0 = g0.lemonStart - g0.restX;
+    if (D0 > 1) {
+      const ms = Math.min(2400, Math.max(1300, D0 * 2.4));
+      const turns = Math.max(1, Math.round(D0 / (2 * Math.PI * g0.r)));
+      await tween(ms, (k) => {
+        const g = geo();
+        const D = g.lemonStart - g.restX;
+        const e = 1 - Math.pow(1 - k, 3);
+        const d = D * e;
+        const hopY = -g.size * 0.05 * Math.pow(1 - k, 1.4) * Math.abs(Math.sin(Math.PI * d / (g.size * 0.7)));
+        placeLemon(g.lemonStart - d, hopY, -e * turns * 360, g);
+      });
+    }
+    await tween(1000, (k) => {
+      const g = geo();
+      const a = 0.16 * Math.exp(-4.5 * k) * Math.sin(13 * k);
+      placeLemon(g.restX + a * g.r, 0, a * 180 / Math.PI, g);
+    });
+  }
+
+  // ── The stray cube ─────────────────────────────────────
+  // After the tumble in, its turns are fixed: tip off the end (+90 about Z),
+  // one or two somersaults on the way down, one roll left on the bounce.
+  function planStray() {
+    const falls = Array.from({ length: Math.random() < 0.5 ? 2 : 1 }, () => ({ ax: 'X', sg: sign() }));
+    stray.after = [{ ax: 'Z', sg: 1 }, ...falls, { ax: 'Z', sg: -1 }];
+    // which of its faces ends up on top? that one gets the goldfish
+    const m = new DOMMatrix(stray.after.slice().reverse().map(t => turn(t.ax, 90 * t.sg)).join(' '));
+    const normals = { front: [0, 0, 1], back: [0, 0, -1], right: [1, 0, 0], left: [-1, 0, 0], top: [0, -1, 0], bottom: [0, 1, 0] };
+    for (const [name, [x, y, z]] of Object.entries(normals)) {
+      const p = m.transformPoint(new DOMPoint(x, y, z, 0));
+      if (p.y < -0.9) return stray.el.querySelector('.f-' + name);
+    }
+  }
+  function strayAtRest(g) {
+    reset(stray, g.strayEnd.x, g.strayEnd.y);
+    stray.done = stray.after.slice().reverse().map(t => turn(t.ax, 90 * t.sg));
+    pose(stray);
+  }
+  async function strayRun(g) {
+    const s = g.s;
+    reset(stray, g.bx, g.by - s);                 // its resting spot on top of the b
+    planTumble(stray);
+    pose(stray);
+    stray.el.classList.add('placed');
+    await tumbleIn(stray, s);
+    // teeter, then tip over the b's right edge: pivot on its bottom-right corner
+    const pivot = (deg) => {
+      const a = deg * Math.PI / 180, vx = -s / 2, vy = -s / 2;
+      return [s + vx * Math.cos(a) - vy * Math.sin(a) - s / 2, s + vx * Math.sin(a) + vy * Math.cos(a) - s / 2];
+    };
+    await tween(260, (k) => { const d = 9 * Math.sin(Math.PI * k); [stray.x, stray.y] = pivot(d); stray.cur = turn('Z', d); pose(stray); });
+    await tween(300, (k) => { const d = 90 * k * k; [stray.x, stray.y] = pivot(d); stray.cur = turn('Z', d); pose(stray); });
+    stray.cur = ''; stray.done.unshift(turn('Z', 90)); pose(stray);
+    // fall past the subtitle to its floor, somersaulting
+    const x0 = stray.x, y0 = stray.y;
+    const x1 = g.landX - g.bx, y1 = g.strayFloor - s - (g.by - s);
+    const falls = stray.after.slice(1, -1);
+    const T = 260 + 120 * Math.sqrt(Math.max(0, y1 - y0) / s);
+    const fallPath = (t0, t1) => (k) => { const t = t0 + (t1 - t0) * k; return [x0 + (x1 - x0) * t, y0 + (y1 - y0) * t * t]; };
+    for (let i = 0; i < falls.length; i++) await step(stray, T / falls.length, fallPath(i / falls.length, (i + 1) / falls.length), falls[i]);
+    rattle(stray, 3, 200);
+    // one bounce, rolling left, into the lemon
+    await step(stray, 300, hop(x1, y1, g.strayEnd.x - g.bx, y1, s * 0.55), stray.after[stray.after.length - 1]);
+    rattle(stray, 4);
+  }
+
+  // ── Run ────────────────────────────────────────────────
+  function sizeStray(g) {
+    stray.el.style.setProperty('--s', g.s + 'px');
+    // look down on where it lands, so its top face (the goldfish) shows
+    stray.el.parentNode.style.perspectiveOrigin = `${(g.strayEnd.x + g.s / 2).toFixed(0)}px ${(g.strayEnd.y - g.s * 7).toFixed(0)}px`;
+  }
+  function allAtRest() {
+    const g = geo();
+    sizeStray(g);
+    cubes.forEach(c => { reset(c); c.el.style.transform = ''; });
+    strayAtRest(g);
+    stray.el.classList.add('placed');
+    placeLemon(g.restX, 0, 0, g);
+  }
+
+  async function play() {
+    const g = geo();
+    sizeStray(g);
+    placeLemon(g.lemonStart, 0, 0, g);
+    cubes.forEach((c) => { reset(c); planTumble(c); c.el.style.opacity = '0'; pose(c); });
+    dot.style.opacity = '0';
+    root.classList.remove('hc-pending');
+    await wait(150);
+    const landed = cubes.map((c, i) => wait(i * 210).then(() => {
+      return tumbleIn(c, g.s, () => { if (i > 0) rattle(cubes[i - 1], 2.2, 260); });
+    }));
+    const strayDone = wait(8 * 210 + 120).then(() => strayRun(geo()));
+    await landed[7];
+    splat(g.s);
+    await strayDone;
+    await rollLemon(geo());
+    done = true;
+  }
+
+  let done = false;
+  const fishFace = planStray();
+  dressFaces(fishFace);
+  const ready = Promise.all([
+    document.fonts ? document.fonts.ready : null,
+    fig.complete ? null : new Promise(r => fig.addEventListener('load', r, { once: true })),
+  ]);
   ready.then(() => {
-    if (reduceMotion) { done = true; atRest(); } else play();
+    if (reduceMotion) { root.classList.remove('hc-pending'); allAtRest(); done = true; }
+    else play();
   });
-  addEventListener('resize', () => { if (done) atRest(); });
+  addEventListener('resize', () => { if (done) allAtRest(); });
 })();
 
 // Test poses: two rows of Dixie's poses drifting in opposite directions.
