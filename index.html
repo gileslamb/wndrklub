@@ -2189,7 +2189,7 @@ const gate = (() => {
     if (!done) return;
     done = false;
     again.disabled = true;
-    if (fall.state !== 'home') { row.appendChild(stray.el); fall.state = 'home'; }
+    if (fall.state !== 'home') { fall.id++; row.appendChild(stray.el); fall.state = 'home'; }
     choose();
     roller.sx = 1;
     cubes.forEach(planTumble);
@@ -2203,83 +2203,112 @@ const gate = (() => {
   again?.addEventListener('click', replay);
 
   // ── Paging down: the stray cube drops to the pose strip ────
-  // Once the title has played, scrolling down lifts the stray cube out of the
-  // hero. It falls with the scroll (so it stays in view), somersaulting, and
-  // lands on top of the pose strip as the strip comes up, with a thud and a
-  // little bounce. Then it stays there. Reduced motion: it stays in the hero.
+  // Scrolling down, once the title has played, sets the stray cube off. From
+  // then on it follows its own path, as it does in the hero: a hop off its
+  // spot, a fall under gravity turning whole quarter-turn somersaults, a hit on
+  // the pose strip with a thud, two shrinking bounces, and it settles square,
+  // picture to the front. It doesn't wait for the scroll: if you aren't there
+  // yet, it's there when you arrive. Reduced motion: it stays in the hero.
   const strip = document.getElementById('poseStrip');
   const poses = strip ? strip.closest('section') : null;
-  const fall = { state: 'home' };              // home | falling | landed
-  let fallStage = null, perch = null;
-  function cubeStage(parent, fixed) {
+  const fall = { state: 'home', id: 0 };        // home | falling | landed
+  let pageStage = null, perch = null;
+  function cubeStage(parent, style) {
     const st = document.createElement('div');
     st.className = 'cube-stage';
     st.setAttribute('aria-hidden', 'true');
-    Object.assign(st.style, { position: fixed ? 'fixed' : 'absolute', inset: '0', pointerEvents: 'none', zIndex: fixed ? '60' : '3' });
+    Object.assign(st.style, { pointerEvents: 'none' }, style);
     parent.appendChild(st);
     return st;
   }
-  // where it lands, in page coordinates: sitting on the strip's top edge
+  const K = 14 / 13.5;                          // how much nearer the front face draws, at perspective 14 widths
+  const VIEW = (s) => ({ x: -s * 1.5, y: -s * 5 });   // the viewpoint, relative to the cube, once it's down
+  // where it comes to rest, in page coordinates: on the strip's top edge. Seen
+  // from above, its front face draws a little lower than its box, so the box
+  // sits a touch higher and the drawn bottom edge meets the strip.
   function landing() {
     const sr = strip.getBoundingClientRect();
-    // seen from 5 cube widths above, its front face draws a little lower than its box:
-    // lift the box so the drawn bottom edge sits on the strip (perspective 14 widths)
-    const k = 14 / 13.5;
-    return { x: innerWidth * (innerWidth < 600 ? 0.6 : 0.7) - fall.s / 2 + scrollX, y: sr.top + scrollY - fall.s * (5.5 * k - 4.5) };
+    return { x: innerWidth * (innerWidth < 600 ? 0.6 : 0.7) - fall.s / 2 + scrollX, y: sr.top + scrollY - fall.s * (5.5 * K - 4.5) };
   }
   function startFall() {
     const s = stray.el.offsetWidth;
     const r = row.getBoundingClientRect();
     const m = new DOMMatrix(getComputedStyle(stray.el).transform);
-    const x0 = r.left + m.m41, y0 = r.top + m.m42;                  // its box, on screen
+    const vx = r.left + m.m41, vy = r.top + m.m42;          // its box, on screen
     Object.assign(fall, {
-      s, state: 'falling', scroll0: scrollY,
+      s, state: 'falling', id: fall.id + 1,
       rest: stray.el.style.transform.replace(/^translate3d\([^)]*\)\s*/, ''),   // its landed quarter turns
-      start: { x: x0 + scrollX, y: y0 + scrollY },
-      // the row's vanishing point, relative to the cube, so nothing jumps as it lifts out
-      d0: { x: r.left + r.width * 0.5 - (x0 + s / 2), y: r.top - r.height * 0.6 - (y0 + s / 2) },
-      d1: { x: -s * 1.5, y: -s * 5 },
-      sx: sign(), sy: sign(),
     });
-    fallStage = fallStage || cubeStage(document.body, true);
-    fallStage.style.setProperty('--s', s + 'px');
-    fallStage.appendChild(stray.el);
-    sound.play('cube-rattle', { x: x0 + s / 2, gain: 0.5 });
-    trackFall();
+    // the row's vanishing point, relative to the cube, so nothing jumps as it lifts out
+    const d0 = { x: r.left + r.width * 0.5 - (vx + s / 2), y: r.top - r.height * 0.6 - (vy + s / 2) };
+    pageStage = pageStage || cubeStage(document.body, { position: 'absolute', left: '0', top: '0', width: '100%', height: '0', overflow: 'visible', zIndex: '60' });
+    pageStage.style.setProperty('--s', s + 'px');
+    pageStage.appendChild(stray.el);
+    flight(fall.id, vx + scrollX, vy + scrollY, d0);
   }
-  function trackFall() {
-    if (fall.state !== 'falling') return;
-    const T = landing(), s = fall.s;
-    const landAt = Math.max(fall.scroll0 + 240, T.y + s - innerHeight * 0.68);     // when the strip is two thirds down the screen
-    const p = Math.max(0, Math.min(1, (scrollY - fall.scroll0) / (landAt - fall.scroll0)));
-    const e = p * p * (3 - 2 * p);
-    const x = fall.start.x + (T.x - fall.start.x) * e - scrollX + Math.sin(p * Math.PI * 2) * s * 0.4;
-    const y = fall.start.y + (T.y - fall.start.y) * p - scrollY;                    // linear: stays on screen all the way
-    const d = { x: fall.d0.x + (fall.d1.x - fall.d0.x) * e, y: fall.d0.y + (fall.d1.y - fall.d0.y) * e };
-    fallStage.style.perspectiveOrigin = `${(x + s / 2 + d.x).toFixed(1)}px ${(y + s / 2 + d.y).toFixed(1)}px`;
-    // two somersaults and a spin: whole turns, so it lands square, picture to the front
-    stray.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) rotateX(${(fall.sx * p * 720).toFixed(1)}deg) rotateY(${(fall.sy * p * 360).toFixed(1)}deg) ${fall.rest}`;
-    if (p >= 1) land();
+  async function flight(id, x0, y0, d0) {
+    const s = fall.s, L = landing(), V = VIEW(s);
+    const G = 3000;                              // px/s²: a drop of a screen or so takes about a second
+    const sg = sign();
+    const turns = Array.from({ length: 4 }, () => ({ ax: 'X', sg }));   // once round: picture back at the front
+    const done = [];
+    let cur = '';
+    const bank = (n) => { while (done.length < n) { const t = turns[done.length]; done.unshift(turn(t.ax, 90 * t.sg)); } };
+    const draw = (x, y, view) => {
+      const d = { x: d0.x + (V.x - d0.x) * view, y: d0.y + (V.y - d0.y) * view };
+      pageStage.style.perspectiveOrigin = `${(x + s / 2 + d.x).toFixed(1)}px ${(y + s / 2 + d.y).toFixed(1)}px`;
+      stray.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) ${cur} ${done.join(' ')} ${fall.rest}`;
+    };
+    const vxScreen = (x) => x - scrollX + s / 2;
+    // 1. hop up and off, then fall under gravity, three somersaults on the way
+    const v0 = -s * 7;
+    const H = Math.max(0, L.y - y0);
+    const T = (-v0 + Math.sqrt(v0 * v0 + 2 * G * H)) / G;
+    const xHit = L.x + s * 0.9;
+    sound.play('cube-rattle', { x: vxScreen(x0), gain: 0.5 });
+    await tween(T * 1000, (k) => {
+      const t = k * T, q = k * 3, qi = Math.min(2, Math.floor(q));
+      bank(qi);
+      cur = turn(turns[qi].ax, io(Math.min(1, q - qi)) * 90 * turns[qi].sg);
+      draw(x0 + (xHit - x0) * (1 - Math.pow(1 - k, 1.6)), y0 + v0 * t + 0.5 * G * t * t, k);
+    });
+    if (id !== fall.id) return;
+    cur = ''; bank(3);
+    const vHit = v0 + G * T;
+    sound.play('stray-land', { x: vxScreen(xHit) });
+    // 2. first bounce, turning its last quarter, rolling left onto its spot
+    const b1 = -vHit * 0.3, T1 = 2 * -b1 / G, x1 = L.x + s * 0.2;
+    await tween(T1 * 1000, (k) => {
+      const t = k * T1;
+      cur = turn(turns[3].ax, io(k) * 90 * turns[3].sg);
+      draw(xHit + (x1 - xHit) * k, L.y + b1 * t + 0.5 * G * t * t, 1);
+    });
+    if (id !== fall.id) return;
+    cur = ''; bank(4);
+    sound.play('cube-land', { x: vxScreen(x1), gain: 0.7 });
+    // 3. a little one
+    const b2 = b1 * 0.32, T2 = 2 * -b2 / G;
+    await tween(T2 * 1000, (k) => { const t = k * T2; draw(x1 + (L.x - x1) * k, L.y + b2 * t + 0.5 * G * t * t, 1); });
+    if (id !== fall.id) return;
+    sound.play('cube-rattle', { x: vxScreen(L.x), gain: 0.45 });
+    land(id);
   }
-  async function land() {
+  // settled: it moves into the pose strip's section so it scrolls with the page
+  async function land(id) {
     fall.state = 'landed';
-    const s = fall.s;
-    perch = perch || cubeStage(poses, false);
+    const s = fall.s, V = VIEW(s);
+    perch = perch || cubeStage(poses, { position: 'absolute', inset: '0', zIndex: '3' });
     perch.style.setProperty('--s', s + 'px');
     perch.appendChild(stray.el);
-    fall.place = (dy = 0, jig = 0) => {
+    fall.place = (jig = 0) => {
       const P = poses.getBoundingClientRect(), T = landing();
       const lx = T.x - scrollX - P.left, ly = T.y - scrollY - P.top;
-      perch.style.perspectiveOrigin = `${(lx + s / 2 + fall.d1.x).toFixed(1)}px ${(ly + s / 2 + fall.d1.y).toFixed(1)}px`;
-      stray.el.style.transform = `translate3d(${lx.toFixed(1)}px, ${(ly + dy).toFixed(1)}px, 0) rotateZ(${jig.toFixed(2)}deg) ${fall.rest}`;
+      perch.style.perspectiveOrigin = `${(lx + s / 2 + V.x).toFixed(1)}px ${(ly + s / 2 + V.y).toFixed(1)}px`;
+      stray.el.style.transform = `translate3d(${lx.toFixed(1)}px, ${ly.toFixed(1)}px, 0) rotateZ(${jig.toFixed(2)}deg) ${fall.rest}`;
     };
-    const x = landing().x - scrollX + s / 2;
-    sound.play('stray-land', { x });
-    await tween(300, (k) => fall.place(-s * 0.45 * 4 * k * (1 - k)));             // one bounce
-    sound.play('cube-rattle', { x, gain: 0.6 });
     const sg = sign();
-    await tween(380, (k) => fall.place(0, sg * 5 * Math.exp(-5 * k) * Math.sin(k * 24)));
-    fall.place();
+    await tween(380, (k) => { if (id === fall.id) fall.place(sg * 4 * Math.exp(-5 * k) * Math.sin(k * 24)); });
+    if (id === fall.id) fall.place();
   }
   let fallRaf = 0;
   addEventListener('scroll', () => {
@@ -2287,7 +2316,6 @@ const gate = (() => {
     fallRaf = requestAnimationFrame(() => {
       fallRaf = 0;
       if (fall.state === 'home' && done && scrollY > cover.offsetHeight * 0.12) startFall();
-      else if (fall.state === 'falling') trackFall();
     });
   }, { passive: true });
   addEventListener('resize', () => { if (fall.state === 'landed') fall.place(); });
