@@ -1413,7 +1413,12 @@ const sound = (() => {
       if (!AC) return null;
       ctx = new AC();
       out = ctx.createGain();
-      out.connect(ctx.destination);
+      out.gain.value = 0.7;
+      // a soft limiter on the mix, so landings that coincide don't clip
+      const limit = ctx.createDynamicsCompressor();
+      limit.threshold.value = -6; limit.knee.value = 6; limit.ratio.value = 12;
+      limit.attack.value = 0.001; limit.release.value = 0.12;
+      out.connect(limit); limit.connect(ctx.destination);
     }
     return ctx;
   }
@@ -1430,7 +1435,9 @@ const sound = (() => {
           await Promise.all((spec.files || []).map(async (f) => {
             try {
               const data = await fetch(new URL(f, base)).then(r => r.arrayBuffer());
-              bank.buffers.push(await ctx.decodeAudioData(data));
+              const buf = await ctx.decodeAudioData(data);
+              if (bank.loop) buf.span = loopSpan(buf);
+              bank.buffers.push(buf);
             } catch (e) { console.warn('sfx', f, e); }
           }));
           if (bank.buffers.length) banks[ev] = bank;
@@ -1438,6 +1445,16 @@ const sound = (() => {
       })
       .catch(e => { console.warn('sfx manifest', e); });
     return loading;
+  }
+
+  // Some browsers keep the MP3 encoder's silent padding when decoding; loop
+  // between the first and last real samples so the seam has no gap.
+  function loopSpan(buf) {
+    const x = buf.getChannelData(0);
+    let a = 0, z = x.length - 1;
+    while (a < 4096 && Math.abs(x[a]) < 1e-4) a++;
+    while (z > x.length - 4096 && Math.abs(x[z]) < 1e-4) z--;
+    return [a / buf.sampleRate, (z + 1) / buf.sampleRate];
   }
 
   // A different variant from last time, when there is more than one.
@@ -1484,9 +1501,10 @@ const sound = (() => {
     const src = ctx.createBufferSource();
     src.buffer = variant(bank);
     src.loop = true;
+    if (src.buffer.span) [src.loopStart, src.loopEnd] = src.buffer.span;
     const { g, p } = chain(bank, x, 0);
     src.connect(g);
-    src.start();
+    src.start(0, src.buffer.span ? src.buffer.span[0] : 0);
     const h = {
       set(speed, px) {
         const t = ctx.currentTime;
@@ -1961,10 +1979,13 @@ const gate = (() => {
     placeRoller(g.restX, 0, 0, g, roller.sx);
   }
 
-  async function play() {
-    const g = geo();
+  function hideCubes() {
     cubes.forEach((c) => { reset(c); c.start = startOf(c); c.el.style.opacity = '0'; pose(c); });
     dot.style.opacity = '0';
+  }
+  async function play() {
+    const g = geo();
+    hideCubes();
     root.classList.remove('hc-pending');
     await wait(150);
     const landed = cubes.map((c, i) => wait(i * 210).then(async () => {
@@ -1993,6 +2014,7 @@ const gate = (() => {
     const g = geo();
     placeRoller(reduceMotion ? g.restX : g.rollStart, 0, 0, g);
     if (reduceMotion) { root.classList.remove('hc-pending'); allAtRest(); done = true; return; }
+    hideCubes();                     // out of sight behind the gate, whatever the head script's fail-safe does
     gate.opened.then(play);
   });
   addEventListener('resize', () => { if (done) allAtRest(); });

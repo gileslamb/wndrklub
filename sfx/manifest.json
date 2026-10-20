@@ -1,0 +1,118 @@
+{
+  "events": {
+    "cube-land": {
+      "files": [
+        "cube-land-01.mp3",
+        "cube-land-02.mp3",
+        "cube-land-03.mp3",
+        "cube-land-04.mp3"
+      ],
+      "gain": 0.8,
+      "pitch": 2
+    },
+    "cube-rattle": {
+      "files": [
+        "cube-rattle-01.mp3",
+        "cube-rattle-02.mp3",
+        "cube-rattle-03.mp3",
+        "cube-rattle-04.mp3"
+      ],
+      "gain": 0.55,
+      "pitch": 3
+    },
+    "splat": {
+      "files": [
+        "splat-01.mp3",
+        "splat-02.mp3"
+      ],
+      "gain": 0.7,
+      "pitch": 2
+    },
+    "stray-land": {
+      "files": [
+        "stray-land-01.mp3",
+        "stray-land-02.mp3"
+      ],
+      "gain": 0.9,
+      "pitch": 2
+    },
+    "lemon-impact": {
+      "files": [
+        "lemon-impact-01.mp3",
+        "lemon-impact-02.mp3"
+      ],
+      "gain": 0.85,
+      "pitch": 2
+    },
+    "lemon-roll": {
+      "files": [
+        "lemon-roll-01.mp3",
+        "lemon-roll-02.mp3"
+      ],
+      "gain": 0.6,
+      "pitch": 1,
+      "loop": true
+    },
+    "lemon-settle": {
+      "files": [
+        "lemon-settle-01.mp3",
+        "lemon-settle-02.mp3"
+      ],
+      "gain": 0.6,
+      "pitch": 2
+    },
+    "cheese-impact": {
+      "files": [
+        "cheese-impact-01.mp3",
+        "cheese-impact-02.mp3"
+      ],
+      "gain": 0.85,
+      "pitch": 2
+    },
+    "cheese-roll": {
+      "files": [
+        "cheese-roll-01.mp3",
+        "cheese-roll-02.mp3",
+        "cheese-roll-03.mp3",
+        "cheese-roll-04.mp3"
+      ],
+      "gain": 0.7,
+      "pitch": 2
+    },
+    "cheese-settle": {
+      "files": [
+        "cheese-settle-01.mp3",
+        "cheese-settle-02.mp3"
+      ],
+      "gain": 0.6,
+      "pitch": 2
+    },
+    "fish-impact": {
+      "files": [
+        "fish-impact-01.mp3",
+        "fish-impact-02.mp3"
+      ],
+      "gain": 0.8,
+      "pitch": 2
+    },
+    "fish-roll": {
+      "files": [
+        "fish-roll-01.mp3",
+        "fish-roll-02.mp3",
+        "fish-roll-03.mp3",
+        "fish-roll-04.mp3"
+      ],
+      "gain": 0.65,
+      "pitch": 3
+    },
+    "fish-settle": {
+      "files": [
+        "fish-settle-01.mp3",
+        "fish-settle-02.mp3"
+      ],
+      "gain": 0.6,
+      "pitch": 2
+    }
+  },
+  "base": "./"
+}
