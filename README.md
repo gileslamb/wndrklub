@@ -26,4 +26,4 @@ Vercel project `wndrklub-series`, deploys on push to `main`.
 ## Image credits
 
 - `img/faces/goldfish.webp` (+ `@2x`): cut from the WndrKlub bible, page 11.
-- `img/faces/cloud.webp` (+ `@2x`): cut from [BlueSkyWhiteClouds21.jpg](https://commons.wikimedia.org/wiki/File:BlueSkyWhiteClouds21.jpg) by Raysonho @ Open Grid Scheduler / Grid Engine, Wikimedia Commons, [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) (public domain dedication).
+- `img/faces/cloud.webp` (+ `@2x`): cut from [Cumulus mediocris Rivergate Marina Murarrie P1170631.jpg](https://commons.wikimedia.org/wiki/File:Cumulus_mediocris_Rivergate_Marina_Murarrie_P1170631.jpg) by John Robert McPherson, Wikimedia Commons, [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/) (public domain dedication).

@@ -228,7 +228,6 @@ h3 em { font-style: italic; }
   inset: 0;
   pointer-events: none;
   overflow: hidden;
-  perspective: 700px;
 }
 .lemon-roll {
   position: absolute;
@@ -332,9 +331,16 @@ h3 em { font-style: italic; }
   filter: url(#pencil-1);
   transform-origin: 50% 80%;
 }
-/* the stray cube lives on the lemon's layer, so it can fall past the subtitle */
-.stray {
+/* the stray cube lives on the lemon's layer, so it can fall past the subtitle.
+   Its stage has the row's perspective, with the vanishing point on its landing
+   spot (set by the script), so it lands square to the viewer. */
+.stray-stage {
   --s: 60px;                                   /* set from the row by the script */
+  position: absolute;
+  inset: 0;
+  perspective: calc(var(--s) * 14);
+}
+.stray {
   position: absolute;
   left: 0; top: 0;
   visibility: hidden;
@@ -976,7 +982,7 @@ h3 em { font-style: italic; }
   </div>
   <div class="lemon-wrap" aria-hidden="true">
     <div class="lemon-roll"><div class="lemon-spin"></div></div>
-    <span class="stray"><span class="face f-front"></span><span class="face f-back"></span><span class="face f-right"></span><span class="face f-left"></span><span class="face f-top"></span><span class="face f-bottom"></span></span>
+    <span class="stray-stage"><span class="stray"><span class="face f-front"></span><span class="face f-back"></span><span class="face f-right"></span><span class="face f-left"></span><span class="face f-top"></span><span class="face f-bottom"></span></span></span>
   </div>
   <div class="scroll-cue">scroll</div>
 </section>
@@ -1330,9 +1336,9 @@ if (!reduceMotion && 'IntersectionObserver' in window) {
 // to the Wndr(er)'s feet. Runs once per load; reduced motion shows it all at rest.
 //
 // Cube face art: img/faces/goldfish.webp is cut from the WndrKlub bible (p. 11).
-// img/faces/cloud.webp is cut from "BlueSkyWhiteClouds21.jpg" by Raysonho
-// @ Open Grid Scheduler / Grid Engine, CC0 1.0 (public domain dedication):
-// https://commons.wikimedia.org/wiki/File:BlueSkyWhiteClouds21.jpg
+// img/faces/cloud.webp is cut from "Cumulus mediocris Rivergate Marina Murarrie
+// P1170631.jpg" by John Robert McPherson, CC0 1.0 (public domain dedication):
+// https://commons.wikimedia.org/wiki/File:Cumulus_mediocris_Rivergate_Marina_Murarrie_P1170631.jpg
 (function heroTitle() {
   const root   = document.documentElement;
   const cover  = document.querySelector('.cover');
@@ -1379,13 +1385,26 @@ if (!reduceMotion && 'IntersectionObserver' in window) {
   }
   // Random letters on every face that isn't a finished letter; about one face
   // in five across the set turns up a goldfish or a cloud.
+  // Two clouds go where they're sure to be seen: on the face a mid-row cube
+  // shows as it appears, and on the face another shows after its first turn.
   function dressFaces(fishFace) {
+    const clouds = [];
+    for (const i of [1, 2, 3, 4, 5, 6].sort(() => Math.random() - 0.5)) {
+      for (const k of [clouds.length, 1 - clouds.length, 2]) {       // as it appears, or after a turn
+        const f = facingAfter(cubes[i], k);
+        if (f && !f.classList.contains('f-front')) { clouds.push(f); break; }
+      }
+      if (clouds.length === 2) break;
+    }
+    const fixed = new Set([fishFace, ...clouds]);
     const spare = [];
-    cubes.forEach(c => c.el.querySelectorAll('.face:not(.f-front)').forEach(f => spare.push(f)));
-    stray.el.querySelectorAll('.face').forEach(f => { if (f !== fishFace) spare.push(f); });
+    cubes.forEach(c => c.el.querySelectorAll('.face:not(.f-front)').forEach(f => { if (!fixed.has(f)) spare.push(f); }));
+    stray.el.querySelectorAll('.face').forEach(f => { if (!fixed.has(f)) spare.push(f); });
     spare.sort(() => Math.random() - 0.5);
-    const pics = Math.round((spare.length + 1) / 5) - 1;          // the stray's goldfish counts
-    spare.forEach((f, i) => (i < pics ? picFace(f, i % 2 ? 'cloud' : 'goldfish') : letterFace(f)));
+    const total = spare.length + fixed.size;
+    const pics = Math.max(0, Math.round(total / 5) - fixed.size);   // about one face in five overall
+    spare.forEach((f, i) => (i < pics ? picFace(f, i % 2 ? 'goldfish' : 'cloud') : letterFace(f)));
+    clouds.forEach(f => picFace(f, 'cloud'));
     picFace(fishFace, 'goldfish');
   }
 
@@ -1425,7 +1444,26 @@ if (!reduceMotion && 'IntersectionObserver' in window) {
   function planTumble(c) {
     const n = Math.random() < 0.55 ? 4 : 3;
     c.turns = Array.from({ length: n }, () => ({ ax: Math.random() < 0.72 ? 'X' : 'Y', sg: sign() }));
-    c.start = c.turns.map(t => turn(t.ax, -90 * t.sg));
+  }
+  const startOf = (c) => c.turns.map(t => turn(t.ax, -90 * t.sg));
+  // The face pointing at the viewer after the first `k` turns of the tumble.
+  const NORMALS = { front: [0, 0, 1], back: [0, 0, -1], right: [1, 0, 0], left: [-1, 0, 0], top: [0, -1, 0], bottom: [0, 1, 0] };
+  function faceTowards(el, transformList, want) {
+    const m = new DOMMatrix(transformList || 'none');
+    for (const [name, [x, y, z]] of Object.entries(NORMALS)) {
+      const p = m.transformPoint(new DOMPoint(x, y, z, 0));
+      if (p.x * want[0] + p.y * want[1] + p.z * want[2] > 0.9) return el.querySelector('.f-' + name);
+    }
+  }
+  const facingAfter = (c, k) =>
+    faceTowards(c.el, [...c.turns.slice(0, k).reverse().map(t => turn(t.ax, 90 * t.sg)), ...startOf(c)].join(' '), [0, 0, 1]);
+  // Square up a landed cube: its turns compose to whole quarter turns, so snap
+  // the matrix to exact 0 / 1 / -1 and drop any rounding left by the browser.
+  function squareUp(c) {
+    const m = new DOMMatrix(`${c.done.join(' ')} ${c.start.join(' ')}`.trim() || 'none');
+    const r = (v) => Math.round(v);
+    const q = [m.m11, m.m12, m.m13, 0, m.m21, m.m22, m.m23, 0, m.m31, m.m32, m.m33, 0, 0, 0, 0, 1].map((v, i) => (i % 4 === 3 || i >= 12 ? v : r(v)));
+    c.el.style.transform = `translate3d(${(c.bx + c.x).toFixed(1)}px, ${(c.by + c.y).toFixed(1)}px, 0) rotateZ(${c.tilt}deg) matrix3d(${q.join(',')})`;
   }
   async function tumbleIn(c, s, onLand) {
     const H = s * rnd(2.6, 3.8), dx = s * rnd(0.5, 1.3);
@@ -1492,7 +1530,10 @@ if (!reduceMotion && 'IntersectionObserver' in window) {
     const strayEnd = { x: landX - s * 0.6, y: strayFloor - s };
     // the lemon waits on the right: on desktop just left of where the stray
     // ends up; stacked, peeking in from the right edge at his feet
-    const lemonStart = stacked ? W - size * 0.42 : strayEnd.x - size * ART.right - 1;
+    // its front face sits s/2 nearer the viewer than its box, so on screen it
+    // is scaled by P / (P - s/2) about the vanishing point (its own centre)
+    const P = s * 14, seenLeft = strayEnd.x + s / 2 - (s / 2) * P / (P - s / 2);
+    const lemonStart = stacked ? W - size * 0.42 : seenLeft - size * ART.right;
     return { s, stacked, size, lemonTop, restX, lemonStart: Math.max(lemonStart, restX), r: size * ART.radius,
              bx, by, landX, strayFloor, strayEnd };
   }
@@ -1532,23 +1573,19 @@ if (!reduceMotion && 'IntersectionObserver' in window) {
   function planStray() {
     const falls = Array.from({ length: Math.random() < 0.5 ? 2 : 1 }, () => ({ ax: 'X', sg: sign() }));
     stray.after = [{ ax: 'Z', sg: 1 }, ...falls, { ax: 'Z', sg: -1 }];
-    // which of its faces ends up on top? that one gets the goldfish
-    const m = new DOMMatrix(stray.after.slice().reverse().map(t => turn(t.ax, 90 * t.sg)).join(' '));
-    const normals = { front: [0, 0, 1], back: [0, 0, -1], right: [1, 0, 0], left: [-1, 0, 0], top: [0, -1, 0], bottom: [0, 1, 0] };
-    for (const [name, [x, y, z]] of Object.entries(normals)) {
-      const p = m.transformPoint(new DOMPoint(x, y, z, 0));
-      if (p.y < -0.9) return stray.el.querySelector('.f-' + name);
-    }
+    planTumble(stray);
+    // whichever of its faces ends up facing the viewer gets the goldfish
+    return faceTowards(stray.el, stray.after.slice().reverse().map(t => turn(t.ax, 90 * t.sg)).join(' '), [0, 0, 1]);
   }
   function strayAtRest(g) {
     reset(stray, g.strayEnd.x, g.strayEnd.y);
     stray.done = stray.after.slice().reverse().map(t => turn(t.ax, 90 * t.sg));
-    pose(stray);
+    squareUp(stray);
   }
   async function strayRun(g) {
     const s = g.s;
     reset(stray, g.bx, g.by - s);                 // its resting spot on top of the b
-    planTumble(stray);
+    stray.start = startOf(stray);
     pose(stray);
     stray.el.classList.add('placed');
     await tumbleIn(stray, s);
@@ -1570,14 +1607,15 @@ if (!reduceMotion && 'IntersectionObserver' in window) {
     rattle(stray, 3, 200);
     // one bounce, rolling left, into the lemon
     await step(stray, 300, hop(x1, y1, g.strayEnd.x - g.bx, y1, s * 0.55), stray.after[stray.after.length - 1]);
-    rattle(stray, 4);
+    rattle(stray, 4).then(() => squareUp(stray));
   }
 
   // ── Run ────────────────────────────────────────────────
   function sizeStray(g) {
-    stray.el.style.setProperty('--s', g.s + 'px');
-    // look down on where it lands, so its top face (the goldfish) shows
-    stray.el.parentNode.style.perspectiveOrigin = `${(g.strayEnd.x + g.s / 2).toFixed(0)}px ${(g.strayEnd.y - g.s * 7).toFixed(0)}px`;
+    const stage = stray.el.parentNode;
+    stage.style.setProperty('--s', g.s + 'px');
+    // vanishing point on the centre of its landing spot
+    stage.style.perspectiveOrigin = `${(g.strayEnd.x + g.s / 2).toFixed(1)}px ${(g.strayEnd.y + g.s / 2).toFixed(1)}px`;
   }
   function allAtRest() {
     const g = geo();
@@ -1592,7 +1630,7 @@ if (!reduceMotion && 'IntersectionObserver' in window) {
     const g = geo();
     sizeStray(g);
     placeLemon(g.lemonStart, 0, 0, g);
-    cubes.forEach((c) => { reset(c); planTumble(c); c.el.style.opacity = '0'; pose(c); });
+    cubes.forEach((c) => { reset(c); c.start = startOf(c); c.el.style.opacity = '0'; pose(c); });
     dot.style.opacity = '0';
     root.classList.remove('hc-pending');
     await wait(150);
@@ -1608,6 +1646,7 @@ if (!reduceMotion && 'IntersectionObserver' in window) {
   }
 
   let done = false;
+  cubes.forEach(planTumble);
   const fishFace = planStray();
   dressFaces(fishFace);
   const ready = Promise.all([
