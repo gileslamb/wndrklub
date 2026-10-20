@@ -11,6 +11,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <script>
+document.documentElement.classList.add('gate-on');   // the lemon gate (removed when the visitor goes in)
 if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
   document.documentElement.classList.add('hc-pending');
   setTimeout(() => document.documentElement.classList.remove('hc-pending'), 3000);  // fail open
@@ -233,12 +234,12 @@ h3 em { font-style: italic; }
   position: absolute;
   right: 8vw;
   bottom: 12vh;
-  width: var(--lemon, 300px);
-  height: var(--lemon, 300px);
+  width: var(--rw, 160px);
+  height: var(--rh, 160px);
   pointer-events: auto;
 }
 .lemon-roll > div { width: 100%; height: 100%; }
-.lemon-roll .lemon-spin { max-width: none; max-height: none; }
+.lemon-roll .lemon-spin { max-width: none; max-height: none; background-image: url('img/faces/lemon@2x.webp'); }
 .lemon-spin {
   width: 300px;
   height: 300px;
@@ -331,15 +332,8 @@ h3 em { font-style: italic; }
   filter: url(#pencil-1);
   transform-origin: 50% 80%;
 }
-/* the stray cube lives on the lemon's layer, so it can fall past the subtitle.
-   Its stage has the row's perspective, with the vanishing point on its landing
-   spot (set by the script), so it lands square to the viewer. */
-.stray-stage {
-  --s: 60px;                                   /* set from the row by the script */
-  position: absolute;
-  inset: 0;
-  perspective: calc(var(--s) * 14);
-}
+/* the stray cube is in the row's 3D scene (same perspective and vanishing
+   point as the letter cubes), placed absolutely so it can fall past the subtitle */
 .stray {
   position: absolute;
   left: 0; top: 0;
@@ -347,6 +341,53 @@ h3 em { font-style: italic; }
 }
 .stray.placed { visibility: visible; }
 .hc-pending .cube-row { visibility: hidden; }
+
+/* ── The lemon gate ───────────────────────────────────
+   The password is checked on the server (middleware.js) on the same cream page
+   with the lemon in the same place; here the lemon is the way in. */
+.gate { display: none; }
+.gate-on body { overflow: hidden; }
+.gate-on .gate {
+  position: fixed; inset: 0; z-index: 300;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 24px;
+  background: var(--paper);
+  transition: opacity 0.6s ease;
+}
+.gate-lemon {
+  width: min(46vw, 240px);
+  aspect-ratio: 536 / 533;
+  border: 0; padding: 0;
+  background: url('img/faces/lemon@2x.webp') center / contain no-repeat;
+  cursor: pointer;
+  animation: gate-bob 3.2s ease-in-out infinite;
+  transition: transform 0.6s cubic-bezier(.5,-0.3,.6,1);
+}
+.gate-lemon:hover { animation-play-state: paused; transform: rotate(-8deg) scale(1.04); }
+.gate-lemon:focus-visible { outline: 2px solid var(--heart); outline-offset: 10px; border-radius: 50%; }
+@keyframes gate-bob { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg) translateY(-4px); } }
+.gate-below { height: 112px; display: flex; flex-direction: column; align-items: center; gap: 8px; padding-top: 26px; }
+.gate-hint { font-family: 'Caveat', cursive; font-size: 24px; color: var(--ink-soft); }
+.gate-quiet { font-family: 'Inter', sans-serif; font-size: 13px; color: var(--ink-soft); text-underline-offset: 3px; }
+.gate-quiet:hover { color: var(--heart); }
+.gate.opening { opacity: 0; pointer-events: none; }
+.gate.opening .gate-lemon { animation: none; transform: scale(1.3) rotate(-40deg); }
+
+/* ── Sound switch: the master for effects and music ── */
+.sound-toggle {
+  flex: none;
+  width: 30px; height: 30px;
+  display: grid; place-items: center;
+  margin-right: 2px;
+  border: 1.5px solid currentColor; border-radius: 50%;
+  color: var(--ink-soft);
+}
+.sound-toggle svg { width: 18px; height: 18px; overflow: visible; filter: url(#pencil-2); }
+.sound-toggle .waves { display: none; }
+.sound-toggle.on { color: var(--ink); }
+.sound-toggle.on .waves { display: inline; }
+.sound-toggle.on .cross { display: none; }
+.sound-toggle:hover { color: var(--heart); }
 
 /* ── Music player (fixed, top right) ────────────────── */
 .mini-player {
@@ -929,6 +970,14 @@ h3 em { font-style: italic; }
 </head>
 <body>
 
+<div class="gate" id="gate" role="dialog" aria-label="Enter WndrKlub">
+  <button class="gate-lemon" type="button" aria-label="Enter WndrKlub with sound"></button>
+  <div class="gate-below">
+    <span class="gate-hint">tap the lemon for sound</span>
+    <a class="gate-quiet" href="#">enter without sound</a>
+  </div>
+</div>
+
 <div class="frame-mark">wndrklub</div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -938,6 +987,13 @@ h3 em { font-style: italic; }
 </svg>
 
 <div class="mini-player" id="miniPlayer" role="region" aria-label="Music player">
+  <button class="sound-toggle" id="soundToggle" type="button" aria-pressed="false" aria-label="Sound off. Turn sound on">
+    <svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 7.6h3.1l4.4-3.7v12.2l-4.4-3.7H3z" fill="currentColor" fill-opacity="0.15"/>
+      <path class="waves" d="M13.4 7.2c1.2 1.6 1.2 4 0 5.6M15.8 5c2.4 2.9 2.4 7.1 0 10"/>
+      <path class="cross" d="M13.6 7.6l4.4 4.8M18 7.6l-4.4 4.8"/>
+    </svg>
+  </button>
   <span class="mp-label"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M13 1.5v9.2a2.3 2.3 0 1 1-1.4-2.1V4.3L6.4 5.6v6.6a2.3 2.3 0 1 1-1.4-2.1V3.4z"/></svg><span>sounds</span></span>
   <button class="mp-toggle" data-action="toggle" aria-label="Play">
     <svg class="mp-icon-play" viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.5 6z"/></svg>
@@ -975,6 +1031,7 @@ h3 em { font-style: italic; }
         <span class="cube" style="--r:1.0deg"><span class="face f-front"><span class="cf-frame" style="filter:url(#pencil-1)"></span><span class="cf-letter" style="--gx:-0.008em;--gy:0;--gr:1.2deg;--sw:0.005em;filter:url(#pencil-3)">l</span></span><span class="face f-back"></span><span class="face f-right"></span><span class="face f-left"></span><span class="face f-top"></span><span class="face f-bottom"></span></span>
         <span class="cube" style="--r:-2.3deg"><span class="face f-front"><span class="cf-frame" style="filter:url(#pencil-2)"></span><span class="cf-letter" style="--gx:0.01em;--gy:0.01em;--gr:-0.8deg;--sw:0.008em;filter:url(#pencil-1)">u</span></span><span class="face f-back"></span><span class="face f-right"></span><span class="face f-left"></span><span class="face f-top"></span><span class="face f-bottom"></span></span>
         <span class="cube" style="--r:1.7deg"><span class="face f-front"><span class="cf-frame" style="filter:url(#pencil-3)"></span><span class="cf-letter" style="--gx:0;--gy:-0.008em;--gr:1.8deg;--sw:0.006em;filter:url(#pencil-2)">b</span><svg class="hc-dot" viewBox="-20 -20 40 40"><g class="hc-dot-main"><path d="M9.7 -6.4Q11.8 -3.6 11.5 -0.3Q11.3 3.1 9.9 6.4Q8.6 9.6 5.2 10.7Q1.9 11.8 -1.6 11.6Q-5.0 11.4 -8.1 9.4Q-11.2 7.4 -11.5 3.8Q-11.8 0.2 -11.1 -3.1Q-10.4 -6.4 -7.6 -8.4Q-4.9 -10.4 -1.7 -11.5Q1.6 -12.6 4.7 -10.9Q7.7 -9.2 9.7 -6.4Z"/></g><g class="hc-spat" data-x="16.5" data-y="-9.5"><path d="M18.2 -10.4Q19.0 -9.5 18.2 -8.7Q17.4 -7.9 16.4 -7.8Q15.4 -7.7 14.8 -8.6Q14.1 -9.5 14.6 -10.7Q15.2 -11.8 16.3 -11.5Q17.5 -11.3 18.2 -10.4Z"/></g><g class="hc-spat" data-x="-17" data-y="4.5"><path d="M-15.7 3.6Q-15.4 4.5 -15.7 5.3Q-16.1 6.1 -16.9 5.9Q-17.7 5.7 -18.1 5.1Q-18.6 4.5 -18.2 3.7Q-17.9 3.0 -16.9 2.9Q-16.0 2.8 -15.7 3.6Z"/></g><g class="hc-spat" data-x="13.5" data-y="12"><path d="M14.5 11.4Q14.7 12.0 14.4 12.6Q14.2 13.2 13.5 13.2Q12.7 13.3 12.6 12.7Q12.4 12.0 12.6 11.4Q12.9 10.9 13.5 10.8Q14.2 10.7 14.5 11.4Z"/></g><g class="hc-spat" data-x="-8" data-y="-16"><path d="M-7.1 -16.5Q-6.7 -16.0 -7.1 -15.6Q-7.5 -15.1 -8.0 -15.1Q-8.6 -15.0 -8.9 -15.5Q-9.3 -16.0 -8.9 -16.4Q-8.5 -16.8 -8.0 -16.9Q-7.4 -17.0 -7.1 -16.5Z"/></g><g class="hc-spat" data-x="19.5" data-y="2.5"><path d="M20.1 2.2Q20.4 2.5 20.2 2.9Q20.0 3.4 19.6 3.3Q19.1 3.2 18.9 2.8Q18.6 2.5 18.8 2.1Q19.0 1.7 19.4 1.8Q19.9 1.9 20.1 2.2Z"/></g></svg></span><span class="face f-back"></span><span class="face f-right"></span><span class="face f-left"></span><span class="face f-top"></span><span class="face f-bottom"></span></span>
+        <span class="stray"><span class="face f-front"></span><span class="face f-back"></span><span class="face f-right"></span><span class="face f-left"></span><span class="face f-top"></span><span class="face f-bottom"></span></span>
       </div>
     </div>
     <p class="subtitle">An animated mixed-media series for 3 to 7 year olds.</p>
@@ -982,7 +1039,6 @@ h3 em { font-style: italic; }
   </div>
   <div class="lemon-wrap" aria-hidden="true">
     <div class="lemon-roll"><div class="lemon-spin"></div></div>
-    <span class="stray-stage"><span class="stray"><span class="face f-front"></span><span class="face f-back"></span><span class="face f-right"></span><span class="face f-left"></span><span class="face f-top"></span><span class="face f-bottom"></span></span></span>
   </div>
   <div class="scroll-cue">scroll</div>
 </section>
@@ -1328,36 +1384,226 @@ if (!reduceMotion && 'IntersectionObserver' in window) {
   });
 }
 
+// Sound: one master switch for the whole page (the hero's sound effects and the
+// music player). The choice lasts for the browser session. With sound off,
+// nothing is fetched and nothing plays. Effects are decoded once into Web Audio
+// buffers from a manifest on R2, so sounds can be swapped by editing the
+// manifest, with no code change.
+const SFX_MANIFEST = 'https://pub-5e50c80530864ad79bca1353ddf95e71.r2.dev/manifest.json';
+
+const sound = (() => {
+  const KEY = 'wk-sound';
+  const MAX_VOICES = 8;
+  const btn = document.getElementById('soundToggle');
+  let on = false;
+  let ctx = null, out = null, loading = null;
+  const banks = {};          // event -> { buffers: [], gain, pitch, loop, last }
+  const voices = new Set();
+  const loops = new Set();
+  const listeners = [];
+
+  const store = {
+    get() { try { return sessionStorage.getItem(KEY); } catch { return null; } },
+    set(v) { try { sessionStorage.setItem(KEY, v); } catch {} },
+  };
+
+  function context() {
+    if (!ctx) {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return null;
+      ctx = new AC();
+      out = ctx.createGain();
+      out.connect(ctx.destination);
+    }
+    return ctx;
+  }
+
+  // Fetch the manifest and decode every file. Runs once, only with sound on.
+  function preload() {
+    if (loading || !context()) return loading;
+    loading = fetch(SFX_MANIFEST, { mode: 'cors' })
+      .then(r => (r.ok ? r.json() : Promise.reject(new Error('manifest ' + r.status))))
+      .then(m => {
+        const base = new URL(m.base || '.', SFX_MANIFEST);
+        return Promise.all(Object.entries(m.events || {}).map(async ([ev, spec]) => {
+          const bank = { buffers: [], gain: spec.gain ?? 1, pitch: Math.min(3, spec.pitch ?? 2), loop: !!spec.loop, last: -1 };
+          await Promise.all((spec.files || []).map(async (f) => {
+            try {
+              const data = await fetch(new URL(f, base)).then(r => r.arrayBuffer());
+              bank.buffers.push(await ctx.decodeAudioData(data));
+            } catch (e) { console.warn('sfx', f, e); }
+          }));
+          if (bank.buffers.length) banks[ev] = bank;
+        }));
+      })
+      .catch(e => { console.warn('sfx manifest', e); });
+    return loading;
+  }
+
+  // A different variant from last time, when there is more than one.
+  function variant(bank) {
+    const n = bank.buffers.length;
+    let i = Math.floor(Math.random() * n);
+    if (n > 1 && i === bank.last) i = (i + 1 + Math.floor(Math.random() * (n - 1))) % n;
+    bank.last = i;
+    return bank.buffers[i];
+  }
+  const panFor = (x) => Math.max(-1, Math.min(1, (x / innerWidth) * 2 - 1)) * 0.75;
+
+  // source -> gain -> pan -> out
+  function chain(bank, x, gain) {
+    const g = ctx.createGain();
+    g.gain.value = bank.gain * gain;
+    let p = null;
+    if (ctx.createStereoPanner) {
+      p = ctx.createStereoPanner();
+      p.pan.value = panFor(x);
+      g.connect(p); p.connect(out);
+    } else g.connect(out);
+    return { g, p };
+  }
+
+  // One-shot: random variant, ±pitch semitones, a little gain spread, panned to x (px).
+  function play(ev, { x = innerWidth / 2, gain = 1 } = {}) {
+    const bank = on && ctx && banks[ev];
+    if (!bank) return;
+    if (voices.size >= MAX_VOICES) return;                // keep the tumble from turning to mush
+    const src = ctx.createBufferSource();
+    src.buffer = variant(bank);
+    src.playbackRate.value = Math.pow(2, ((Math.random() * 2 - 1) * bank.pitch) / 12);
+    src.connect(chain(bank, x, gain * (0.8 + Math.random() * 0.2)).g);
+    voices.add(src);
+    src.onended = () => voices.delete(src);
+    src.start();
+  }
+
+  // Looped sound whose rate and level follow a 0..1 speed; fades out on stop().
+  function loop(ev, { x = innerWidth / 2 } = {}) {
+    const bank = on && ctx && banks[ev];
+    if (!bank || !bank.loop) return null;
+    const src = ctx.createBufferSource();
+    src.buffer = variant(bank);
+    src.loop = true;
+    const { g, p } = chain(bank, x, 0);
+    src.connect(g);
+    src.start();
+    const h = {
+      set(speed, px) {
+        const t = ctx.currentTime;
+        if (p && px != null) p.pan.setTargetAtTime(panFor(px), t, 0.05);
+        g.gain.setTargetAtTime(bank.gain * Math.min(1, speed) * 0.9, t, 0.03);
+        src.playbackRate.setTargetAtTime(0.6 + 0.6 * Math.min(1, speed), t, 0.03);
+      },
+      stop(ms = 250) {
+        if (!loops.has(h)) return;
+        loops.delete(h);
+        const t = ctx.currentTime;
+        g.gain.cancelScheduledValues(t);
+        g.gain.setTargetAtTime(0, t, ms / 3000);
+        src.stop(t + ms / 1000 + 0.05);
+      },
+    };
+    loops.add(h);
+    return h;
+  }
+
+  function render() {
+    if (!btn) return;
+    btn.classList.toggle('on', on);
+    btn.setAttribute('aria-pressed', String(on));
+    btn.setAttribute('aria-label', on ? 'Sound on. Turn sound off' : 'Sound off. Turn sound on');
+    btn.title = on ? 'Sound on' : 'Sound off';
+  }
+
+  // Must be called from a user gesture when turning on (it unlocks Web Audio).
+  function set(v) {
+    on = !!v;
+    store.set(on ? 'on' : 'off');
+    if (on) {
+      const c = context();
+      if (c && c.state !== 'running') c.resume();
+      preload();
+    } else {
+      loops.forEach(h => h.stop(120));
+      if (ctx && ctx.state === 'running') ctx.suspend();
+    }
+    render();
+    listeners.forEach(fn => fn(on));
+  }
+
+  btn?.addEventListener('click', () => set(!on));
+  render();
+
+  return {
+    set, play, loop,
+    get on() { return on; },
+    get remembered() { return store.get(); },
+    ready: () => loading || Promise.resolve(),
+    onChange: (fn) => listeners.push(fn),
+  };
+})();
+
+// The lemon gate. The password itself is checked on the server (middleware.js);
+// by the time this page loads, the visitor is in. The lemon is the way in:
+// tapping it turns sound on (this tap is what unlocks Web Audio), the quiet
+// link goes in without. Either way the overlay lifts and the hero starts.
+const gate = (() => {
+  const el = document.getElementById('gate');
+  const root = document.documentElement;
+  let open;
+  const opened = new Promise(r => (open = r));
+  if (!el) { open({ sound: false }); return { opened }; }
+  const lemon = el.querySelector('.gate-lemon');
+  const quiet = el.querySelector('.gate-quiet');
+  function enter(withSound) {
+    if (el.classList.contains('opening')) return;
+    sound.set(withSound);
+    el.classList.add('opening');
+    // Let the sounds start decoding while the overlay lifts.
+    const lift = new Promise(r => setTimeout(r, reduceMotion ? 0 : 650));
+    Promise.all([lift, withSound ? Promise.race([sound.ready(), new Promise(r => setTimeout(r, 1500))]) : null]).then(() => {
+      root.classList.remove('gate-on');
+      el.remove();
+      open({ sound: withSound });
+    });
+  }
+  lemon.addEventListener('click', () => enter(true));
+  quiet.addEventListener('click', (e) => { e.preventDefault(); enter(false); });
+  return { opened };
+})();
+
 // Hero title: eight letter cubes tumble in on whole 90-degree turns, showing
-// random letters (and now and then a goldfish or a cloud), and land left to
-// right as W n d r K l u b; the b gets its red splat. A ninth, stray cube
-// lands on top of the b, teeters, tips off the end, falls past the subtitle
-// and lands on the lemon's side, goldfish up. Its thud sends the lemon rolling
-// to the Wndr(er)'s feet. Runs once per load; reduced motion shows it all at rest.
+// random letters (and now and then a goldfish or some cheese), and land left
+// to right as W n d r K l u b; the b gets its red splat. A ninth, stray cube
+// lands on top of the b, teeters, tips off the end, falls past the subtitle and
+// lands on the right with a picture to the front. Its thud knocks the roller
+// (a lemon, some cheese or a goldfish, never the same as the stray's picture)
+// over to the Wndr(er)'s feet. Runs once per load, after the gate; reduced
+// motion shows it all at rest. Sounds fire from the events as they happen.
 //
-// Cube face art: img/faces/goldfish.webp is cut from the WndrKlub bible (p. 11).
-// img/faces/cloud.webp is cut from "Cumulus mediocris Rivergate Marina Murarrie
-// P1170631.jpg" by John Robert McPherson, CC0 1.0 (public domain dedication):
-// https://commons.wikimedia.org/wiki/File:Cumulus_mediocris_Rivergate_Marina_Murarrie_P1170631.jpg
+// Face art: img/faces/goldfish.webp is cut from the WndrKlub bible (p. 11),
+// img/faces/cheese.webp from Giles's cheese still, img/faces/lemon.webp from
+// the site's lemon artwork.
 (function heroTitle() {
   const root   = document.documentElement;
   const cover  = document.querySelector('.cover');
   const row    = cover.querySelector('.cube-row');
   const cubes  = [...row.querySelectorAll('.cube')].map(el => ({ el }));
-  const stray  = { el: cover.querySelector('.stray') };
+  const stray  = { el: row.querySelector('.stray') };
   const dot    = row.querySelector('.hc-dot');
-  const blob   = dot.querySelector('.hc-dot-main');
   const spats  = [...dot.querySelectorAll('.hc-spat')];
   const box    = cover.querySelector('.cover-figure');
   const fig    = box.querySelector('img');
   const credit = cover.querySelector('.subtitle.credit');
   const roll   = cover.querySelector('.lemon-roll');
+  const spin   = roll.querySelector('.lemon-spin');
 
   const rnd  = (a, b) => a + Math.random() * (b - a);
   const pick = (a) => a[Math.floor(Math.random() * a.length)];
   const sign = () => (Math.random() < 0.5 ? -1 : 1);
   const io   = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
   const wait = (ms) => new Promise(r => setTimeout(r, ms));
+  const midX = (el) => { const b = el.getBoundingClientRect(); return b.left + b.width / 2; };
   function tween(ms, fn) {
     return new Promise(resolve => {
       const t0 = performance.now();
@@ -1369,43 +1615,51 @@ if (!reduceMotion && 'IntersectionObserver' in window) {
     });
   }
 
+  // ── What the stray shows, and what rolls ───────────────
+  // w, h: the cut-out art's pixel size. scale: its width against the lemon's.
+  const OBJECTS = {
+    lemon:    { art: 'img/faces/lemon@2x.webp',    w: 536, h: 533, scale: 1.0,  sfx: 'lemon' },
+    cheese:   { art: 'img/faces/cheese@2x.webp',   w: 584, h: 303, scale: 1.3,  sfx: 'cheese' },
+    goldfish: { art: 'img/faces/goldfish@2x.webp', w: 640, h: 468, scale: 1.3,  sfx: 'fish' },
+  };
+  const strayKind = pick(Object.keys(OBJECTS));
+  const rollKind  = pick(Object.keys(OBJECTS).filter(k => k !== strayKind));
+  const R = OBJECTS[rollKind];
+  spin.style.backgroundImage = `url(${R.art})`;
+  roll.dataset.kind = rollKind;
+
   // ── Faces ──────────────────────────────────────────────
   const GLYPHS = 'abdefghkmnopqrstuwxyzABDEFGHKMNPRSTWXYZ';
-  const PICS = {
-    goldfish: '<img class="cf-pic" src="img/faces/goldfish.webp" srcset="img/faces/goldfish.webp 1x, img/faces/goldfish@2x.webp 2x" alt="">',
-    cloud:    '<img class="cf-pic" src="img/faces/cloud.webp" srcset="img/faces/cloud.webp 1x, img/faces/cloud@2x.webp 2x" alt="">',
-  };
+  const pic = (k) => `<img class="cf-pic" src="img/faces/${k}.webp" srcset="img/faces/${k}.webp 1x, img/faces/${k}@2x.webp 2x" alt="">`;
   const frame = () => `<span class="cf-frame" style="filter:url(#pencil-${1 + Math.floor(Math.random() * 3)})"></span>`;
   function letterFace(face) {
     const st = `--gx:${rnd(-0.012, 0.012).toFixed(3)}em;--gy:${rnd(-0.012, 0.012).toFixed(3)}em;--gr:${rnd(-2.4, 2.4).toFixed(1)}deg;--sw:${rnd(0.005, 0.01).toFixed(3)}em;filter:url(#pencil-${1 + Math.floor(Math.random() * 3)})`;
     face.innerHTML = frame() + `<span class="cf-letter" style="${st}">${pick(GLYPHS)}</span>`;
   }
   function picFace(face, kind) {
-    face.innerHTML = frame() + PICS[kind].replace('alt=""', `alt="" style="--gr:${rnd(-4, 4).toFixed(1)}deg"`);
+    face.innerHTML = frame() + pic(kind).replace('alt=""', `alt="" style="--gr:${rnd(-4, 4).toFixed(1)}deg"`);
   }
-  // Random letters on every face that isn't a finished letter; about one face
-  // in five across the set turns up a goldfish or a cloud.
-  // Two clouds go where they're sure to be seen: on the face a mid-row cube
-  // shows as it appears, and on the face another shows after its first turn.
-  function dressFaces(fishFace) {
-    const clouds = [];
+  // Random letters on every spare face; about one face in five across the set
+  // is a goldfish or cheese. One of each goes where it's sure to be seen: on
+  // the face a mid-row cube shows as it appears, or after its first turn.
+  function dressFaces(strayFront) {
+    const sure = [];
     for (const i of [1, 2, 3, 4, 5, 6].sort(() => Math.random() - 0.5)) {
-      for (const k of [clouds.length, 1 - clouds.length, 2]) {       // as it appears, or after a turn
+      for (const k of [sure.length, 1 - sure.length, 2]) {
         const f = facingAfter(cubes[i], k);
-        if (f && !f.classList.contains('f-front')) { clouds.push(f); break; }
+        if (f && !f.classList.contains('f-front')) { sure.push(f); break; }
       }
-      if (clouds.length === 2) break;
+      if (sure.length === 2) break;
     }
-    const fixed = new Set([fishFace, ...clouds]);
+    const fixed = new Set([strayFront, ...sure]);
     const spare = [];
     cubes.forEach(c => c.el.querySelectorAll('.face:not(.f-front)').forEach(f => { if (!fixed.has(f)) spare.push(f); }));
     stray.el.querySelectorAll('.face').forEach(f => { if (!fixed.has(f)) spare.push(f); });
     spare.sort(() => Math.random() - 0.5);
-    const total = spare.length + fixed.size;
-    const pics = Math.max(0, Math.round(total / 5) - fixed.size);   // about one face in five overall
-    spare.forEach((f, i) => (i < pics ? picFace(f, i % 2 ? 'goldfish' : 'cloud') : letterFace(f)));
-    clouds.forEach(f => picFace(f, 'cloud'));
-    picFace(fishFace, 'goldfish');
+    const pics = Math.max(0, Math.round((spare.length + fixed.size) / 5) - fixed.size);
+    spare.forEach((f, i) => (i < pics ? picFace(f, i % 2 ? 'goldfish' : 'cheese') : letterFace(f)));
+    sure.forEach((f, i) => picFace(f, i ? 'goldfish' : 'cheese'));
+    picFace(strayFront, strayKind);
   }
 
   // ── Pose ───────────────────────────────────────────────
@@ -1440,13 +1694,11 @@ if (!reduceMotion && 'IntersectionObserver' in window) {
       .then(() => { c.jig = 0; pose(c); });
   }
 
-  // Tumble a cube in from above-right to its resting place (bx, by).
   function planTumble(c) {
     const n = Math.random() < 0.55 ? 4 : 3;
     c.turns = Array.from({ length: n }, () => ({ ax: Math.random() < 0.72 ? 'X' : 'Y', sg: sign() }));
   }
   const startOf = (c) => c.turns.map(t => turn(t.ax, -90 * t.sg));
-  // The face pointing at the viewer after the first `k` turns of the tumble.
   const NORMALS = { front: [0, 0, 1], back: [0, 0, -1], right: [1, 0, 0], left: [-1, 0, 0], top: [0, -1, 0], bottom: [0, 1, 0] };
   function faceTowards(el, transformList, want) {
     const m = new DOMMatrix(transformList || 'none');
@@ -1455,17 +1707,17 @@ if (!reduceMotion && 'IntersectionObserver' in window) {
       if (p.x * want[0] + p.y * want[1] + p.z * want[2] > 0.9) return el.querySelector('.f-' + name);
     }
   }
+  // The face pointing at the viewer after the first `k` turns of the tumble.
   const facingAfter = (c, k) =>
     faceTowards(c.el, [...c.turns.slice(0, k).reverse().map(t => turn(t.ax, 90 * t.sg)), ...startOf(c)].join(' '), [0, 0, 1]);
   // Square up a landed cube: its turns compose to whole quarter turns, so snap
   // the matrix to exact 0 / 1 / -1 and drop any rounding left by the browser.
   function squareUp(c) {
     const m = new DOMMatrix(`${c.done.join(' ')} ${c.start.join(' ')}`.trim() || 'none');
-    const r = (v) => Math.round(v);
-    const q = [m.m11, m.m12, m.m13, 0, m.m21, m.m22, m.m23, 0, m.m31, m.m32, m.m33, 0, 0, 0, 0, 1].map((v, i) => (i % 4 === 3 || i >= 12 ? v : r(v)));
+    const q = [m.m11, m.m12, m.m13, 0, m.m21, m.m22, m.m23, 0, m.m31, m.m32, m.m33, 0, 0, 0, 0, 1].map((v, i) => (i % 4 === 3 || i >= 12 ? v : Math.round(v)));
     c.el.style.transform = `translate3d(${(c.bx + c.x).toFixed(1)}px, ${(c.by + c.y).toFixed(1)}px, 0) rotateZ(${c.tilt}deg) matrix3d(${q.join(',')})`;
   }
-  async function tumbleIn(c, s, onLand) {
+  async function tumbleIn(c, s) {
     const H = s * rnd(2.6, 3.8), dx = s * rnd(0.5, 1.3);
     const [a, b, d, e] = c.turns.length === 4 ? c.turns : [c.turns[0], null, c.turns[1], c.turns[2]];
     // fall: one or two turns on the way down (gravity: y = -H (1 - t^2))
@@ -1474,11 +1726,11 @@ if (!reduceMotion && 'IntersectionObserver' in window) {
     c.x = dx; c.y = -H; pose(c); c.el.style.opacity = '';
     if (b) { await step(c, Tf * 0.55, fall(0, 0.55), a); await step(c, Tf * 0.45, fall(0.55, 1), b); }
     else await step(c, Tf, fall(0, 1), a);
+    sound.play('cube-rattle', { x: midX(c.el), gain: 0.55 });          // first bounce
     // two shrinking hops, a face snapping round on each
     await step(c, 220, hop(dx * 0.45, 0, dx * 0.15, 0, s * 0.42), d);
+    sound.play('cube-rattle', { x: midX(c.el), gain: 0.35 });
     await step(c, 160, hop(dx * 0.15, 0, 0, 0, s * 0.16), e);
-    onLand && onLand();
-    await rattle(c, 4.5);
   }
 
   // ── The splat on the b ─────────────────────────────────
@@ -1486,6 +1738,7 @@ if (!reduceMotion && 'IntersectionObserver' in window) {
     dot.style.opacity = '1';
     spats.forEach(g => g.setAttribute('opacity', '0'));
     await tween(240, (k) => { dot.style.transform = `translateY(${(-s * 0.7 * (1 - k * k)).toFixed(1)}px)`; });
+    sound.play('splat', { x: midX(dot) });
     spats.forEach(g => {
       const x = +g.dataset.x, y = +g.dataset.y;
       tween(260, (k) => {
@@ -1503,8 +1756,6 @@ if (!reduceMotion && 'IntersectionObserver' in window) {
   }
 
   // ── Geometry (cover coordinates) ───────────────────────
-  // Visible lemon inside its 768px square art: x 117 to 641, bottom 632.
-  const ART = { left: 117 / 768, right: 641 / 768, bottom: 632 / 768, radius: 0.34 };
   const FIG_RIGHT = 547 / 660;   // the figure's drawn edge inside its png
   function geo() {
     const c = cover.getBoundingClientRect();
@@ -1514,81 +1765,170 @@ if (!reduceMotion && 'IntersectionObserver' in window) {
     const s = bcube.offsetWidth;
     const stacked = getComputedStyle(cover).gridTemplateColumns.split(' ').length < 2;
     const W = c.width;
-    // lemon at rest: on the floor at his feet, just right of his drawn edge
+    // the roller at rest: on the floor at his feet, just right of his drawn edge
     const figW = fig.offsetWidth, figH = box.offsetHeight;
     const footX = b.left - c.left + (b.width - figW) / 2 + figW * FIG_RIGHT;
-    let size = Math.min(280, figH * 0.37);
-    const room = W - 16 - footX - size * 0.04;
-    if (room < size * (1 - ART.left) * 0.9) size = Math.max(80, room / ((1 - ART.left) * 0.9));
+    let rw = Math.min(280, figH * 0.37) * 0.68 * R.scale;
+    const room = W - 16 - footX - rw * 0.06;
+    if (room < rw) rw = Math.max(50, room);
+    const rh = rw * R.h / R.w;
     const floor = b.bottom - c.top;
-    const lemonTop = floor - size * ART.bottom;
-    const restX = footX + size * 0.04 - size * ART.left;
-    // the stray: stacked on the b, then tipped off the end to its own floor
-    const bx = r.left - c.left + bcube.offsetLeft, by = r.top - c.top + bcube.offsetTop;
+    const restX = footX + rw * 0.06;
+    // the stray lives in the row's 3D scene, so it's drawn from the row's
+    // viewpoint: perspective 14 cube widths, vanishing point 50% / -60% of the row
+    const rowX = r.left - c.left, rowY = r.top - c.top;
+    const P = s * 14, O = { x: rowX + r.width * 0.5, y: rowY - r.height * 0.6 };
+    const proj = (x, y, z) => [O.x + (x - O.x) * P / (P - z), O.y + (y - O.y) * P / (P - z)];
+    const bx = rowX + bcube.offsetLeft, by = rowY + bcube.offsetTop;
+    // its floor: below the subtitle when stacked, else his feet. Place the box
+    // so the front face's bottom edge, as drawn, sits on that floor.
     const strayFloor = stacked ? credit.getBoundingClientRect().bottom - c.top + s * 1.5 : floor;
-    const landX = Math.min(bx + s * 1.3, W - 16 - s);
-    const strayEnd = { x: landX - s * 0.6, y: strayFloor - s };
-    // the lemon waits on the right: on desktop just left of where the stray
-    // ends up; stacked, peeking in from the right edge at his feet
-    // its front face sits s/2 nearer the viewer than its box, so on screen it
-    // is scaled by P / (P - s/2) about the vanishing point (its own centre)
-    const P = s * 14, seenLeft = strayEnd.x + s / 2 - (s / 2) * P / (P - s / 2);
-    const lemonStart = stacked ? W - size * 0.42 : seenLeft - size * ART.right;
-    return { s, stacked, size, lemonTop, restX, lemonStart: Math.max(lemonStart, restX), r: size * ART.radius,
-             bx, by, landX, strayFloor, strayEnd };
+    const k = P / (P - s / 2);
+    const endY = O.y + (strayFloor - O.y) / k - s;
+    const landX = Math.min(bx + s * 1.3, W - 16 - s * 1.1);
+    const strayEnd = { x: landX - s * 0.6, y: endY };
+    // the cube's visible left edge (any of its eight corners, as projected)
+    let seenLeft = Infinity;
+    for (const x of [strayEnd.x, strayEnd.x + s]) for (const z of [-s / 2, s / 2]) seenLeft = Math.min(seenLeft, proj(x, 0, z)[0]);
+    // the roller waits on the right: on desktop against the stray's visible
+    // edge; stacked, peeking in from the right edge at his feet
+    const rollStart = Math.max(restX, stacked ? W - rw * 0.6 : seenLeft - rw);
+    return { s, stacked, rw, rh, floor, restX, rollStart, bx, by, rowX, rowY, landX, strayEnd };
   }
 
-  // ── Lemon ──────────────────────────────────────────────
-  function placeLemon(x, y, deg, g) {
-    roll.style.setProperty('--lemon', g.size + 'px');
+  // ── The roller ─────────────────────────────────────────
+  function placeRoller(x, y, deg, g, sx = 1, sy = 1) {
+    roll.style.setProperty('--rw', g.rw + 'px');
+    roll.style.setProperty('--rh', g.rh + 'px');
     roll.style.left = '0'; roll.style.top = '0'; roll.style.right = 'auto'; roll.style.bottom = 'auto';
-    roll.style.transform = `translate(${x.toFixed(1)}px, ${(g.lemonTop + y).toFixed(1)}px) rotate(${deg.toFixed(2)}deg)`;
+    roll.style.transformOrigin = `50% ${sy !== 1 ? '100%' : '50%'}`;
+    roll.style.transform = `translate(${x.toFixed(1)}px, ${(g.floor - g.rh + y).toFixed(1)}px) rotate(${deg.toFixed(2)}deg) scale(${sx}, ${sy.toFixed(3)})`;
   }
-  // Roll left to his feet: rotation = distance / radius (rounded to whole
-  // turns so it parks upright), a few small hops, ease out, a rocking settle.
+  const rollerX = (g, x) => cover.getBoundingClientRect().left + x + g.rw / 2;
+
+  // Lemon: rolls. Rotation = distance / radius, rounded to whole turns so it
+  // parks upright, with a few small hops, easing out, then a rocking settle.
   async function rollLemon(g0) {
-    const D0 = g0.lemonStart - g0.restX;
+    const D0 = g0.rollStart - g0.restX;
+    const loop = sound.loop('lemon-roll', { x: rollerX(g0, g0.rollStart) });
     if (D0 > 1) {
       const ms = Math.min(2400, Math.max(1300, D0 * 2.4));
-      const turns = Math.max(1, Math.round(D0 / (2 * Math.PI * g0.r)));
+      const turns = Math.max(1, Math.round(D0 / (2 * Math.PI * g0.rh / 2)));
       await tween(ms, (k) => {
         const g = geo();
-        const D = g.lemonStart - g.restX;
+        const D = g.rollStart - g.restX;
         const e = 1 - Math.pow(1 - k, 3);
         const d = D * e;
-        const hopY = -g.size * 0.05 * Math.pow(1 - k, 1.4) * Math.abs(Math.sin(Math.PI * d / (g.size * 0.7)));
-        placeLemon(g.lemonStart - d, hopY, -e * turns * 360, g);
+        const hopY = -g.rh * 0.05 * Math.pow(1 - k, 1.4) * Math.abs(Math.sin(Math.PI * d / (g.rh * 0.7)));
+        placeRoller(g.rollStart - d, hopY, -e * turns * 360, g);
+        loop?.set(Math.pow(1 - k, 2), rollerX(g, g.rollStart - d));
       });
     }
+    loop?.stop(300);
+    sound.play('lemon-settle', { x: rollerX(g0, g0.restX) });
     await tween(1000, (k) => {
       const g = geo();
       const a = 0.16 * Math.exp(-4.5 * k) * Math.sin(13 * k);
-      placeLemon(g.restX + a * g.r, 0, a * 180 / Math.PI, g);
+      placeRoller(g.restX + a * g.rh / 2, 0, a * 180 / Math.PI, g);
     });
   }
 
+  // Cheese: tumbles lumpily. Still distance / radius overall, but each quarter
+  // turn lurches over and drops with a thud, lifting a little as it goes.
+  async function rollCheese(g0) {
+    const D0 = g0.rollStart - g0.restX;
+    const loop = sound.loop('cheese-roll');
+    if (D0 > 1) {
+      const ms = Math.min(2600, Math.max(1500, D0 * 2.8));
+      const quarters = 4 * Math.max(1, Math.round(D0 / (2 * Math.PI * g0.rh * 0.62)));   // whole turns
+      let last = 0;
+      await tween(ms, (k) => {
+        const g = geo();
+        const D = g.rollStart - g.restX;
+        const e = 1 - Math.pow(1 - k, 2.4);
+        const u = e * quarters, q = Math.floor(u), f = u - q;
+        const lurch = f * f * f * (f * (f * 6 - 15) + 10);                 // sits, then tips over
+        const th = (q + lurch) * Math.PI / 2;
+        // keep its lowest corner on the floor as it tips (it turns about its middle)
+        const reach = (g.rw * Math.abs(Math.sin(th)) + g.rh * Math.abs(Math.cos(th))) / 2 - g.rh / 2;
+        const lift = -reach - g.rh * 0.1 * Math.sin(Math.PI * lurch);
+        placeRoller(g.rollStart - D * e, lift, -(q + lurch) * 90, g);
+        if (q > last && q <= quarters) {
+          last = q;
+          if (!loop) sound.play('cheese-roll', { x: rollerX(g, g.rollStart - D * e), gain: 0.6 + 0.4 * (1 - k) });
+        }
+        loop?.set(1 - k, rollerX(g, g.rollStart - D * e));
+      });
+    }
+    loop?.stop(200);
+    sound.play('cheese-settle', { x: rollerX(g0, g0.restX) });
+    await tween(700, (k) => {
+      const g = geo();
+      const a = 0.07 * Math.exp(-6 * k) * Math.sin(16 * k);
+      placeRoller(g.restX + a * g.rh / 2, 0, a * 180 / Math.PI, g);
+    });
+  }
+
+  // Goldfish: flops. A run of shrinking hops, flipping over at the top of
+  // each one, nose up then down, a squash on landing; then a tail wiggle.
+  async function flopFish(g0) {
+    const D0 = g0.rollStart - g0.restX;
+    let sx = 1;
+    if (D0 > 1) {
+      const n = Math.max(2, Math.round(D0 / (g0.rw * 0.45)));
+      const lens = Array.from({ length: n }, (_, i) => Math.pow(0.8, i));
+      const sum = lens.reduce((a, b) => a + b, 0);
+      let done = 0;
+      for (let i = 0; i < n; i++) {
+        const from = done, to = done + lens[i] / sum; done = to;
+        const h = g0.rh * (0.9 - 0.55 * i / n), ms = 200 + 180 * Math.pow(0.88, i);
+        const dir = i % 2 ? 1 : -1;
+        await tween(ms, (k) => {
+          const g = geo();
+          const D = g.rollStart - g.restX;
+          const x = g.rollStart - D * (from + (to - from) * k);
+          if (k > 0.5 && sx === (i % 2 ? -1 : 1)) sx = -sx;            // flip over at the top
+          placeRoller(x, -h * 4 * k * (1 - k), dir * 26 * Math.sin(Math.PI * k), g, sx);
+        });
+        sound.play('fish-roll', { x: rollerX(g0, g0.rollStart - D0 * to), gain: 1 - 0.5 * i / n });
+        const g = geo();
+        await tween(110, (k) => placeRoller(g.rollStart - (g.rollStart - g.restX) * to, 0, 0, g, sx, 1 - 0.14 * Math.sin(Math.PI * k)));
+      }
+    }
+    sound.play('fish-settle', { x: rollerX(g0, g0.restX) });
+    await tween(700, (k) => {
+      const g = geo();
+      placeRoller(g.restX, 0, 7 * Math.exp(-4 * k) * Math.sin(22 * k), g, sx);
+    });
+    roller.sx = sx;
+  }
+  const roller = { sx: 1 };
+  const ROLL = { lemon: rollLemon, cheese: rollCheese, goldfish: flopFish };
+
   // ── The stray cube ─────────────────────────────────────
   // After the tumble in, its turns are fixed: tip off the end (+90 about Z),
-  // one or two somersaults on the way down, one roll left on the bounce.
+  // one or two somersaults on the way down, one roll left on the bounce. The
+  // face that ends up at the front gets its picture.
   function planStray() {
     const falls = Array.from({ length: Math.random() < 0.5 ? 2 : 1 }, () => ({ ax: 'X', sg: sign() }));
     stray.after = [{ ax: 'Z', sg: 1 }, ...falls, { ax: 'Z', sg: -1 }];
     planTumble(stray);
-    // whichever of its faces ends up facing the viewer gets the goldfish
     return faceTowards(stray.el, stray.after.slice().reverse().map(t => turn(t.ax, 90 * t.sg)).join(' '), [0, 0, 1]);
   }
   function strayAtRest(g) {
-    reset(stray, g.strayEnd.x, g.strayEnd.y);
+    reset(stray, g.strayEnd.x - g.rowX, g.strayEnd.y - g.rowY);
     stray.done = stray.after.slice().reverse().map(t => turn(t.ax, 90 * t.sg));
     squareUp(stray);
   }
   async function strayRun(g) {
     const s = g.s;
-    reset(stray, g.bx, g.by - s);                 // its resting spot on top of the b
+    reset(stray, g.bx - g.rowX, g.by - s - g.rowY);     // its resting spot on top of the b
     stray.start = startOf(stray);
     pose(stray);
     stray.el.classList.add('placed');
     await tumbleIn(stray, s);
+    sound.play('cube-land', { x: midX(stray.el), gain: 0.8 });
+    await rattle(stray, 4.5);
     // teeter, then tip over the b's right edge: pivot on its bottom-right corner
     const pivot = (deg) => {
       const a = deg * Math.PI / 180, vx = -s / 2, vy = -s / 2;
@@ -1599,63 +1939,61 @@ if (!reduceMotion && 'IntersectionObserver' in window) {
     stray.cur = ''; stray.done.unshift(turn('Z', 90)); pose(stray);
     // fall past the subtitle to its floor, somersaulting
     const x0 = stray.x, y0 = stray.y;
-    const x1 = g.landX - g.bx, y1 = g.strayFloor - s - (g.by - s);
+    const x1 = g.landX - g.bx, y1 = g.strayEnd.y - (g.by - s);
     const falls = stray.after.slice(1, -1);
     const T = 260 + 120 * Math.sqrt(Math.max(0, y1 - y0) / s);
     const fallPath = (t0, t1) => (k) => { const t = t0 + (t1 - t0) * k; return [x0 + (x1 - x0) * t, y0 + (y1 - y0) * t * t]; };
     for (let i = 0; i < falls.length; i++) await step(stray, T / falls.length, fallPath(i / falls.length, (i + 1) / falls.length), falls[i]);
+    sound.play('stray-land', { x: midX(stray.el) });
     rattle(stray, 3, 200);
-    // one bounce, rolling left, into the lemon
+    // one bounce, rolling left, into the roller
     await step(stray, 300, hop(x1, y1, g.strayEnd.x - g.bx, y1, s * 0.55), stray.after[stray.after.length - 1]);
+    sound.play(`${R.sfx}-impact`, { x: midX(stray.el) });
     rattle(stray, 4).then(() => squareUp(stray));
   }
 
   // ── Run ────────────────────────────────────────────────
-  function sizeStray(g) {
-    const stage = stray.el.parentNode;
-    stage.style.setProperty('--s', g.s + 'px');
-    // vanishing point on the centre of its landing spot
-    stage.style.perspectiveOrigin = `${(g.strayEnd.x + g.s / 2).toFixed(1)}px ${(g.strayEnd.y + g.s / 2).toFixed(1)}px`;
-  }
   function allAtRest() {
     const g = geo();
-    sizeStray(g);
     cubes.forEach(c => { reset(c); c.el.style.transform = ''; });
     strayAtRest(g);
     stray.el.classList.add('placed');
-    placeLemon(g.restX, 0, 0, g);
+    placeRoller(g.restX, 0, 0, g, roller.sx);
   }
 
   async function play() {
     const g = geo();
-    sizeStray(g);
-    placeLemon(g.lemonStart, 0, 0, g);
     cubes.forEach((c) => { reset(c); c.start = startOf(c); c.el.style.opacity = '0'; pose(c); });
     dot.style.opacity = '0';
     root.classList.remove('hc-pending');
     await wait(150);
-    const landed = cubes.map((c, i) => wait(i * 210).then(() => {
-      return tumbleIn(c, g.s, () => { if (i > 0) rattle(cubes[i - 1], 2.2, 260); });
+    const landed = cubes.map((c, i) => wait(i * 210).then(async () => {
+      await tumbleIn(c, g.s);
+      sound.play('cube-land', { x: midX(c.el) });
+      if (i > 0) { rattle(cubes[i - 1], 2.2, 260); sound.play('cube-rattle', { x: midX(cubes[i - 1].el), gain: 0.7 }); }
+      await rattle(c, 4.5);
     }));
     const strayDone = wait(8 * 210 + 120).then(() => strayRun(geo()));
     await landed[7];
     splat(g.s);
     await strayDone;
-    await rollLemon(geo());
+    await ROLL[rollKind](geo());
     done = true;
   }
 
   let done = false;
   cubes.forEach(planTumble);
-  const fishFace = planStray();
-  dressFaces(fishFace);
+  dressFaces(planStray());
   const ready = Promise.all([
     document.fonts ? document.fonts.ready : null,
     fig.complete ? null : new Promise(r => fig.addEventListener('load', r, { once: true })),
   ]);
+  // Set the scene behind the gate, then run once the visitor is in.
   ready.then(() => {
-    if (reduceMotion) { root.classList.remove('hc-pending'); allAtRest(); done = true; }
-    else play();
+    const g = geo();
+    placeRoller(reduceMotion ? g.restX : g.rollStart, 0, 0, g);
+    if (reduceMotion) { root.classList.remove('hc-pending'); allAtRest(); done = true; return; }
+    gate.opened.then(play);
   });
   addEventListener('resize', () => { if (done) allAtRest(); });
 })();
@@ -1715,6 +2053,7 @@ const player = (() => {
     }
   }
   function play() {
+    if (!sound.on) sound.set(true);   // pressing play is asking for sound
     if (!audio.src) load(idx);
     films.stop();
     audio.play().catch(err => {
@@ -1750,6 +2089,7 @@ const player = (() => {
   });
 
   audio.addEventListener('ended', () => { load(idx + 1); play(); });
+  sound.onChange((on) => { if (!on) pause(); });
   audio.addEventListener('play', setUI);
   audio.addEventListener('pause', setUI);
 
