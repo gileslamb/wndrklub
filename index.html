@@ -340,6 +340,7 @@ h3 em { font-style: italic; }
   visibility: hidden;
 }
 .stray.placed { visibility: visible; }
+.cube-stage { perspective: calc(var(--s, 60px) * 14); }
 .hc-pending .cube-row { visibility: hidden; }
 
 /* the hero's replay: small, under the credit line */
@@ -1282,8 +1283,8 @@ section.look2 { min-height: auto; padding: 14vh 4vw 16vh; overflow: hidden; }
     </div>
     <div class="shots">
       <figure class="shot" style="--r:1.8deg">
-        <img src="https://customer-3aa0vwfgpylhsylu.cloudflarestream.com/1e0f09ef391c967ca296489c47d49d4a/thumbnails/thumbnail.jpg?time=30s&amp;height=540" alt="A drawn Wndr(er) among real mushrooms and flowers" loading="lazy" width="960" height="540">
-        <figcaption>from Brooke Cant&rsquo;s animation test</figcaption>
+        <img src="img/tests/lily-leaf.webp" srcset="img/tests/lily-leaf.webp 960w, img/tests/lily-leaf@2x.webp 1920w" sizes="(max-width: 860px) 90vw, 45vw" alt="A drawn Wndr(er) standing on a real leaf in long grass" loading="lazy" width="960" height="538">
+        <figcaption>from Lily Kromer&rsquo;s animation test</figcaption>
       </figure>
       <figure class="shot" style="--r:-2.6deg">
         <img src="https://customer-3aa0vwfgpylhsylu.cloudflarestream.com/9ec574aa703835bf396985b5e0b37e10/thumbnails/thumbnail.jpg?time=3s&amp;height=540" alt="The Wndr(er) stepping through a drawn frame" loading="lazy" width="960" height="540">
@@ -2152,7 +2153,7 @@ const gate = (() => {
   function allAtRest() {
     const g = geo();
     cubes.forEach(c => { reset(c); c.el.style.transform = ''; });
-    strayAtRest(g);
+    if (fall.state === 'home') strayAtRest(g);
     stray.el.classList.add('placed');
     placeRoller(g.restX, 0, 0, g, roller.sx);
   }
@@ -2188,6 +2189,7 @@ const gate = (() => {
     if (!done) return;
     done = false;
     again.disabled = true;
+    if (fall.state !== 'home') { row.appendChild(stray.el); fall.state = 'home'; }
     choose();
     roller.sx = 1;
     cubes.forEach(planTumble);
@@ -2199,6 +2201,96 @@ const gate = (() => {
     play();
   }
   again?.addEventListener('click', replay);
+
+  // ── Paging down: the stray cube drops to the pose strip ────
+  // Once the title has played, scrolling down lifts the stray cube out of the
+  // hero. It falls with the scroll (so it stays in view), somersaulting, and
+  // lands on top of the pose strip as the strip comes up, with a thud and a
+  // little bounce. Then it stays there. Reduced motion: it stays in the hero.
+  const strip = document.getElementById('poseStrip');
+  const poses = strip ? strip.closest('section') : null;
+  const fall = { state: 'home' };              // home | falling | landed
+  let fallStage = null, perch = null;
+  function cubeStage(parent, fixed) {
+    const st = document.createElement('div');
+    st.className = 'cube-stage';
+    st.setAttribute('aria-hidden', 'true');
+    Object.assign(st.style, { position: fixed ? 'fixed' : 'absolute', inset: '0', pointerEvents: 'none', zIndex: fixed ? '60' : '3' });
+    parent.appendChild(st);
+    return st;
+  }
+  // where it lands, in page coordinates: sitting on the strip's top edge
+  function landing() {
+    const sr = strip.getBoundingClientRect();
+    // seen from 5 cube widths above, its front face draws a little lower than its box:
+    // lift the box so the drawn bottom edge sits on the strip (perspective 14 widths)
+    const k = 14 / 13.5;
+    return { x: innerWidth * (innerWidth < 600 ? 0.6 : 0.7) - fall.s / 2 + scrollX, y: sr.top + scrollY - fall.s * (5.5 * k - 4.5) };
+  }
+  function startFall() {
+    const s = stray.el.offsetWidth;
+    const r = row.getBoundingClientRect();
+    const m = new DOMMatrix(getComputedStyle(stray.el).transform);
+    const x0 = r.left + m.m41, y0 = r.top + m.m42;                  // its box, on screen
+    Object.assign(fall, {
+      s, state: 'falling', scroll0: scrollY,
+      rest: stray.el.style.transform.replace(/^translate3d\([^)]*\)\s*/, ''),   // its landed quarter turns
+      start: { x: x0 + scrollX, y: y0 + scrollY },
+      // the row's vanishing point, relative to the cube, so nothing jumps as it lifts out
+      d0: { x: r.left + r.width * 0.5 - (x0 + s / 2), y: r.top - r.height * 0.6 - (y0 + s / 2) },
+      d1: { x: -s * 1.5, y: -s * 5 },
+      sx: sign(), sy: sign(),
+    });
+    fallStage = fallStage || cubeStage(document.body, true);
+    fallStage.style.setProperty('--s', s + 'px');
+    fallStage.appendChild(stray.el);
+    sound.play('cube-rattle', { x: x0 + s / 2, gain: 0.5 });
+    trackFall();
+  }
+  function trackFall() {
+    if (fall.state !== 'falling') return;
+    const T = landing(), s = fall.s;
+    const landAt = Math.max(fall.scroll0 + 240, T.y + s - innerHeight * 0.68);     // when the strip is two thirds down the screen
+    const p = Math.max(0, Math.min(1, (scrollY - fall.scroll0) / (landAt - fall.scroll0)));
+    const e = p * p * (3 - 2 * p);
+    const x = fall.start.x + (T.x - fall.start.x) * e - scrollX + Math.sin(p * Math.PI * 2) * s * 0.4;
+    const y = fall.start.y + (T.y - fall.start.y) * p - scrollY;                    // linear: stays on screen all the way
+    const d = { x: fall.d0.x + (fall.d1.x - fall.d0.x) * e, y: fall.d0.y + (fall.d1.y - fall.d0.y) * e };
+    fallStage.style.perspectiveOrigin = `${(x + s / 2 + d.x).toFixed(1)}px ${(y + s / 2 + d.y).toFixed(1)}px`;
+    // two somersaults and a spin: whole turns, so it lands square, picture to the front
+    stray.el.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) rotateX(${(fall.sx * p * 720).toFixed(1)}deg) rotateY(${(fall.sy * p * 360).toFixed(1)}deg) ${fall.rest}`;
+    if (p >= 1) land();
+  }
+  async function land() {
+    fall.state = 'landed';
+    const s = fall.s;
+    perch = perch || cubeStage(poses, false);
+    perch.style.setProperty('--s', s + 'px');
+    perch.appendChild(stray.el);
+    fall.place = (dy = 0, jig = 0) => {
+      const P = poses.getBoundingClientRect(), T = landing();
+      const lx = T.x - scrollX - P.left, ly = T.y - scrollY - P.top;
+      perch.style.perspectiveOrigin = `${(lx + s / 2 + fall.d1.x).toFixed(1)}px ${(ly + s / 2 + fall.d1.y).toFixed(1)}px`;
+      stray.el.style.transform = `translate3d(${lx.toFixed(1)}px, ${(ly + dy).toFixed(1)}px, 0) rotateZ(${jig.toFixed(2)}deg) ${fall.rest}`;
+    };
+    const x = landing().x - scrollX + s / 2;
+    sound.play('stray-land', { x });
+    await tween(300, (k) => fall.place(-s * 0.45 * 4 * k * (1 - k)));             // one bounce
+    sound.play('cube-rattle', { x, gain: 0.6 });
+    const sg = sign();
+    await tween(380, (k) => fall.place(0, sg * 5 * Math.exp(-5 * k) * Math.sin(k * 24)));
+    fall.place();
+  }
+  let fallRaf = 0;
+  addEventListener('scroll', () => {
+    if (reduceMotion || !strip || fallRaf) return;
+    fallRaf = requestAnimationFrame(() => {
+      fallRaf = 0;
+      if (fall.state === 'home' && done && scrollY > cover.offsetHeight * 0.12) startFall();
+      else if (fall.state === 'falling') trackFall();
+    });
+  }, { passive: true });
+  addEventListener('resize', () => { if (fall.state === 'landed') fall.place(); });
 
   let done = false;
   cubes.forEach(planTumble);
