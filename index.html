@@ -984,6 +984,206 @@ h3 em { font-style: italic; }
   .dixie-grid { grid-template-columns: repeat(6, 1fr); gap: 6px; }
   .dixie-box { border-width: 2px; }
 }
+
+/* ══ Alt running order ════════════════════════════════ */
+
+/* The series: three moments, a closing line, one line of facts */
+.moments { list-style: none; margin: 34px 0 30px; }
+.moments li {
+  position: relative;
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: clamp(20px, 1.85vw, 26px);
+  line-height: 1.35;
+  color: var(--ink);
+  padding-left: 30px;
+  margin-bottom: 16px;
+  max-width: 34ch;
+}
+.moments li::before {
+  content: '';
+  position: absolute; left: 0; top: 0.68em;
+  width: 16px; height: 2px;
+  background: var(--heart);
+  border-radius: 2px;
+  transform: rotate(-4deg);
+}
+.copy p.closer {
+  font-family: 'Fraunces', serif;
+  font-weight: 900;
+  font-size: clamp(30px, 3.2vw, 44px);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin: 6px 0 30px;
+}
+.copy p.facts {
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  line-height: 1.6;
+  letter-spacing: 0.01em;
+  color: var(--ink-soft);
+  max-width: 62ch;
+  padding-top: 14px;
+  border-top: 1px solid rgba(26, 24, 20, 0.2);
+}
+
+/* Pose strip: one slow, seamless film strip, full width */
+section.poses { min-height: auto; padding: 4vh 0 10vh; }
+.pose-strip { width: 100%; overflow: hidden; padding: 4px 0; }
+.pose-row {
+  display: flex;
+  gap: 14px;
+  padding-right: 14px;          /* keeps the -50% loop point exact */
+  width: max-content;
+  animation: dixie-left 150s linear infinite;
+}
+.pose-strip:hover .pose-row { animation-play-state: paused; }
+.pose-row .dixie-box { width: clamp(118px, 12vw, 172px); flex: none; }
+.poses .dixie-caption { padding: 0 6vw; }
+/* Reduced motion (and before the script runs): a still row you can scroll sideways */
+.pose-strip.still { overflow-x: auto; scrollbar-width: thin; }
+.pose-strip.still .pose-row { animation: none; padding-left: 6vw; padding-right: 6vw; }
+
+/* How it works: the flipbook centre stage, five words, one line */
+.how2 { background: var(--paper-deep); }
+.flipbook.big { padding: 36px 36px 40px; margin: 8px auto 52px; transform: rotate(-1.2deg); }
+.flipbook.big .frames { width: min(440px, 68vw); height: auto; aspect-ratio: 422 / 500; }
+.five-words {
+  list-style: none;
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: 8px clamp(18px, 3.2vw, 48px);
+  margin-bottom: 28px;
+}
+.five-words li {
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: clamp(22px, 2.5vw, 34px);
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.five-words li:nth-child(odd) { transform: rotate(-1.5deg); }
+.five-words li:nth-child(even) { transform: rotate(1.5deg) translateY(4px); }
+.five-words li:last-child { color: var(--heart); font-style: italic; }
+.grammar-line {
+  font-family: 'Caveat', cursive;
+  font-size: clamp(22px, 2.1vw, 28px);
+  color: var(--ink-soft);
+  max-width: 40ch;
+  margin: 0 auto;
+}
+
+/* The look: an art table of fragments, cropped boards, photos and drawn line */
+section.look2 { min-height: auto; padding: 14vh 4vw 16vh; overflow: hidden; }
+.look-copy { max-width: 56ch; margin: 0 auto 7vh; text-align: center; }
+.look-copy .eyebrow { justify-content: center; }
+.look-copy .eyebrow::before { display: none; }
+.look-copy h3 { margin-left: auto; margin-right: auto; }
+.look-copy p { font-size: clamp(17px, 1.35vw, 20px); line-height: 1.65; color: var(--ink-soft); }
+.table { position: relative; width: 100%; max-width: 1400px; margin: 0 auto; aspect-ratio: 2 / 1; }
+.frag {
+  --x: var(--ax); --y: var(--ay); --w: var(--aw); --r: var(--ar); --d: var(--ad);
+  position: absolute;
+  left: calc(var(--x) * 1%);
+  top: calc(var(--y) * 1%);
+  width: calc(var(--w) * 1%);
+  transform: translateY(calc(var(--py, 0) * var(--d) * 1px)) rotate(var(--r));
+  will-change: transform;
+}
+.look2[data-layout="b"] .frag { --x: var(--bx); --y: var(--by); --w: var(--bw); --r: var(--br); --d: var(--bd); }
+.look2[data-layout="b"] .frag.b-hide { display: none; }
+.frag img, .frag svg { display: block; width: 100%; height: auto; }
+/* prints: a cream border and a soft shadow, like a photo laid on the table */
+.frag.cell, .frag.photo {
+  background: #fbf9f3;
+  padding: 6px 6px 7px;
+  box-shadow: 0 8px 18px rgba(26, 24, 20, 0.16), 0 1px 2px rgba(26, 24, 20, 0.12);
+}
+.frag.cell .pic { display: block; background-repeat: no-repeat; }
+.frag.photo img { aspect-ratio: 16 / 9; object-fit: cover; }
+/* drawings: torn paper scraps */
+.frag.draw {
+  background: #fff;
+  padding: 4px;
+  box-shadow: 0 6px 14px rgba(26, 24, 20, 0.14);
+  clip-path: polygon(0 3%, 9% 0, 22% 2%, 37% 0, 55% 3%, 71% 0, 88% 2%, 100% 0, 98% 22%, 100% 47%, 97% 70%, 100% 100%, 78% 98%, 60% 100%, 41% 97%, 20% 100%, 2% 98%, 0 76%, 3% 50%, 0 26%);
+}
+/* cut-outs sit straight on the table */
+.frag.cut img { filter: drop-shadow(0 6px 8px rgba(26, 24, 20, 0.22)); }
+/* pencil marks */
+.frag.scribble svg { overflow: visible; fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; filter: url(#pencil-2); }
+.frag.s-frame svg { aspect-ratio: 3 / 4; height: auto; }
+.frag.s-frame svg path { vector-effect: non-scaling-stroke; stroke-width: 2; }
+.frag.s-spiral svg path, .frag.s-arrow svg path { stroke: var(--heart); }
+/* a strip of tape on some pieces */
+.frag.taped::before {
+  content: '';
+  position: absolute; z-index: 2;
+  left: 50%; top: -9px;
+  width: 64px; height: 18px;
+  margin-left: -32px;
+  background: rgba(236, 226, 196, 0.78);
+  box-shadow: 0 1px 2px rgba(26, 24, 20, 0.12);
+  transform: rotate(-4deg);
+}
+/* Layout B: the copy on a taped note card, the collage piled beside it */
+.look2[data-layout="b"] { display: grid; }
+.look2[data-layout="b"] .look-copy, .look2[data-layout="b"] .table { grid-area: 1 / 1; }
+.look2[data-layout="b"] .look-copy {
+  position: relative; z-index: 3;
+  align-self: center; justify-self: start;
+  width: min(34%, 460px);
+  margin: 0 0 0 1%;
+  text-align: left;
+  background: #fbf9f3;
+  padding: 40px 40px 34px;
+  box-shadow: 0 18px 40px rgba(26, 24, 20, 0.14);
+  transform: rotate(-1.6deg);
+}
+.look2[data-layout="b"] .look-copy::before {
+  content: ''; position: absolute; left: 50%; top: -12px; width: 90px; height: 22px; margin-left: -45px;
+  background: rgba(236, 226, 196, 0.85); transform: rotate(3deg);
+}
+.look2[data-layout="b"] .look-copy .eyebrow { justify-content: flex-start; }
+.look2[data-layout="b"] .look-copy h3 { margin-left: 0; font-size: clamp(30px, 3.2vw, 44px); }
+
+/* In development: four tiles in a row */
+.dev2 .header { margin-bottom: 56px; }
+.dev2 h3 { font-weight: 500; }
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px 22px;
+  width: 100%; max-width: 1400px;
+  margin: 0 auto;
+}
+.tiles .sb-panel:nth-child(odd) { transform: rotate(-0.6deg); }
+.tiles .sb-panel:nth-child(even) { transform: rotate(0.6deg) translateY(8px); }
+.tiles .sb-caption { text-align: center; }
+
+@media (max-width: 1100px) {
+  .tiles { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 860px) {
+  section.look2 { padding: 10vh 5vw 12vh; }
+  .look2[data-layout] { display: block; }
+  .look2[data-layout] .look-copy { width: auto; margin: 0 auto 6vh; padding: 0; background: none; box-shadow: none; transform: none; text-align: center; }
+  .look2[data-layout] .look-copy::before { display: none; }
+  .look2[data-layout] .look-copy .eyebrow { justify-content: center; }
+  .look2[data-layout] .look-copy h3 { margin-left: auto; }
+  .table { aspect-ratio: 4 / 5; }
+  .look2[data-layout] .frag { --x: var(--mx); --y: var(--my); --w: var(--mw); --r: var(--mr); --d: 0; }
+  .look2[data-layout] .frag.b-hide { display: block; }
+  .look2[data-layout] .frag.m-hide { display: none; }
+  .moments li { padding-left: 26px; }
+}
+@media (max-width: 600px) {
+  .tiles { grid-template-columns: 1fr; gap: 34px; }
+  .flipbook.big { padding: 22px 22px 26px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .frag { transform: rotate(var(--r)); }
+}
 </style>
 </head>
 <body>
@@ -1070,9 +1270,15 @@ h3 em { font-style: italic; }
   <div class="split">
     <div class="copy">
       <div class="eyebrow">The series</div>
-      <h3>In each episode of WndrKlub, the Wndr(er) notices something ordinary and turns it into a story.</h3>
-      <p>A puddle becomes an ocean. A shadow becomes a giant. A crack in the pavement becomes a road to somewhere else.</p>
-      <p class="lead">WndrKlub shows children that anything becomes extraordinary the moment you put a frame around it.</p>
+      <h3>Everyone&rsquo;s a filmmaker. They just don&rsquo;t know it yet.</h3>
+      <p>Look at something differently and you&rsquo;re already telling a story. WndrKlub is a series of short, funny, wildly imaginative films that catch the moment an idea takes off, when one thing leads to another and the ordinary turns into a story.</p>
+      <ul class="moments">
+        <li>A balloon drifts up, and up, and pops.</li>
+        <li>A lemon becomes a whole world.</li>
+        <li>He shrinks into the grass and plays among giant insects.</li>
+      </ul>
+      <p class="closer">It&rsquo;s all about the frame.</p>
+      <p class="facts">Short films, 2 to 5 minutes, for 3 to 7 year olds. 2D line drawing mixed with live action and collage. In development, supported by Screen Scotland.</p>
     </div>
     <div class="shots">
       <figure class="shot" style="--r:1.8deg">
@@ -1087,192 +1293,10 @@ h3 em { font-style: italic; }
   </div>
 </section>
 
-<!-- MEET THE WNDR(ER) -->
-<section class="meet">
-  <div class="split flip">
-    <div class="copy">
-      <div class="eyebrow">Meet the Wndr(er)</div>
-      <h3>The Wndr(er) is a creative explorer, and guides our audience watching at home.</h3>
-      <p>He notices what everyone else walks past: the sway of a tree, the reflection in a window, the sound a door makes when it closes slowly. He pauses where others move on, framing the ordinary until it becomes extraordinary.</p>
-    </div>
-    <div class="shots meet-figure">
-      <img src="img/wndrer_figure.png" alt="The Wndr(er): a stick figure in a bowler hat with a red heart" loading="lazy">
-      <figure class="shot" style="--r:4deg">
-        <img src="img/dixie/dixie-08-footnote.webp" alt="The Wndr(er), mid-tumble" loading="lazy" width="374" height="488">
-      </figure>
-    </div>
-  </div>
-</section>
-
-<!-- MUSIC -->
-<section class="music">
-  <div class="split">
-    <div class="copy">
-      <div class="eyebrow">Music</div>
-      <h3>Anything can be music.</h3>
-      <p>WndrKlub is made to be heard as much as seen. Music threads through every episode. Rhythm, tone and the happy accidents of sound shape the story as much as the pictures do. A dripping tap becomes a beat. A creaky door becomes a melody. Sound becomes music, and music becomes sound, creating a sound world that is playful and surprising.</p>
-      <button class="listen" type="button" data-listen aria-pressed="false"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.5 6z"/></svg><span>Play the music</span></button>
-    </div>
-    <div class="shots music-shots">
-      <div class="lemon-spin music-lemon" aria-hidden="true"></div>
-      <figure class="shot" style="--r:-2.4deg">
-        <img src="img/dixie/dixie-03.webp" alt="The Wndr(er) wrestling a lemon, pose by pose" loading="lazy" width="1600" height="900">
-      </figure>
-    </div>
-  </div>
-</section>
-
-<!-- HOW AN EPISODE WORKS -->
-<section class="how">
-  <div class="header center">
-    <div class="eyebrow">How an episode works</div>
-    <h3>Exploring the Art of Storytelling</h3>
-  </div>
-  <ol class="strip5">
-    <li><figure class="step">
-      <div class="step-frame"><span class="sb-no">1</span><img src="img/lemon_frame_1.jpg" alt="The Wndr(er) looking at a lemon" loading="lazy"></div>
-      <figcaption><strong>Notice.</strong> <span>Something ordinary: a sound, an object, a texture.</span></figcaption>
-    </figure></li>
-    <li><figure class="step">
-      <div class="step-frame"><span class="sb-no">2</span><img src="https://customer-3aa0vwfgpylhsylu.cloudflarestream.com/b49254889bc7fb4d2b1185db7a40d658/thumbnails/thumbnail.jpg?time=30s&amp;height=540" alt="A sketched Wndr(er) inside a drawn panel" loading="lazy"></div>
-      <figcaption><strong>Reframe.</strong> <span>A panel, a change of scale, a shift of context, and it becomes something else.</span></figcaption>
-    </figure></li>
-    <li><figure class="step">
-      <div class="step-frame"><span class="sb-no">3</span><img src="img/ocean.jpg" alt="The Wndr(er) swimming in the ocean world" loading="lazy" style="object-position:40% 50%"></div>
-      <figcaption><strong>Journey.</strong> <span>A unique story unfolds inside the new world.</span></figcaption>
-    </figure></li>
-    <li><figure class="step">
-      <div class="step-frame"><span class="sb-no">4</span><img src="img/lemon_frame_4.jpg" alt="The Wndr(er) carrying the lemon" loading="lazy"></div>
-      <figcaption><strong>Return.</strong> <span>Back to the ordinary, now seen differently.</span></figcaption>
-    </figure></li>
-    <li><figure class="step">
-      <div class="step-frame blank"><span class="sb-no">5</span><span class="hint">your turn&hellip;</span></div>
-      <figcaption><strong>Your turn.</strong> <span>Every episode ends with an invite to a blank page for our audience to create their own stories.</span></figcaption>
-    </figure></li>
-  </ol>
-</section>
-
-<!-- THE LOOK -->
-<section class="look">
-  <div class="header center">
-    <div class="eyebrow">The look</div>
-    <h3>Whatever comes to hand.</h3>
-    <div class="copy">
-      <p>Hand-drawn line, live action, photographs, cut paper, the textures of a child&rsquo;s art table. A drawn Wndr(er) walks through a real street. A real puddle sits inside a sketched panel.</p>
-      <p>If a child watches and thinks &ldquo;I could make that&rdquo;, it&rsquo;s working.</p>
-    </div>
-  </div>
-  <div class="worlds-grid">
-    <div class="world-card">
-      <div class="image-wrap"><img src="img/space.jpg" alt="WndrKlub Space world" loading="lazy"></div>
-      <div class="meta"><h4>Space.</h4><div class="tagline">cheese moons &amp; galaxies</div></div>
-    </div>
-    <div class="world-card">
-      <div class="image-wrap"><img src="img/water.jpg" alt="WndrKlub Water world" loading="lazy"></div>
-      <div class="meta"><h4>Water.</h4><div class="tagline">drops, ripples, jellyfish</div></div>
-    </div>
-    <div class="world-card">
-      <div class="image-wrap"><img src="img/ocean.jpg" alt="WndrKlub Ocean world" loading="lazy"></div>
-      <div class="meta"><h4>Ocean.</h4><div class="tagline">turtles, octopi, the deep</div></div>
-    </div>
-  </div>
-</section>
-
-<!-- THE GRAMMAR -->
-<section class="grammar center">
-  <div class="eyebrow">The grammar</div>
-  <h3>Panels become shots.<br>Page turns become edits.<br><strong>Flipbooks become animation.</strong></h3>
-
-  <div class="flipbook">
-    <div class="frames">
-      <img src="img/lemon_frame_1.jpg" alt="">
-      <img src="img/lemon_frame_2.jpg" alt="">
-      <img src="img/lemon_frame_3.jpg" alt="">
-      <img src="img/lemon_frame_4.jpg" alt="">
-    </div>
-    <div class="label">a flipbook, alive &uarr;</div>
-  </div>
-
-  <div class="trio">
-    <div class="item">
-      <strong>A panel</strong>
-      <span>is a rectangle drawn around a moment. It says: look at this one thing, now.</span>
-    </div>
-    <div class="item">
-      <strong>A gutter</strong>
-      <span>is the gap between panels. Where the viewer does the work, filling the blank, making the leap.</span>
-    </div>
-    <div class="item">
-      <strong>A flipbook</strong>
-      <span>is animation at its most basic. Draw, flick through, the dot walks. The whole medium in a gesture.</span>
-    </div>
-  </div>
-
-  <div class="copy">
-    <p>Built from the oldest animation tools there are, so children can see how it&rsquo;s made and do it themselves.</p>
-  </div>
-</section>
-
-<!-- BEYOND THE SCREEN -->
-<section class="beyond">
-  <div class="split">
-    <div class="copy">
-      <div class="eyebrow">Beyond the screen</div>
-      <h3>WndrKlub keeps going after the episode ends.</h3>
-      <p>Designed alongside Scotland&rsquo;s Film and Screen Education curriculum, it gives teachers a five-minute episode, a folded piece of paper and a pencil. That&rsquo;s the whole kit.</p>
-      <p>Young animators trained in Scotland run workshops where children make films of their own.</p>
-    </div>
-    <div class="shots left">
-      <figure class="shot" style="--r:-1.4deg">
-        <img src="https://customer-3aa0vwfgpylhsylu.cloudflarestream.com/c440e434e1ab7a1e00a69b14e7ecd945/thumbnails/thumbnail.jpg?time=3s&amp;height=540" alt="Drawn panels on paper, the Wndr(er) peeking out beside the words The End" loading="lazy" width="960" height="540">
-        <figcaption>from Jacob Cunningham&rsquo;s animation test</figcaption>
-      </figure>
-      <figure class="shot" style="--r:2.4deg">
-        <img src="https://customer-3aa0vwfgpylhsylu.cloudflarestream.com/b49254889bc7fb4d2b1185db7a40d658/thumbnails/thumbnail.jpg?time=6s&amp;height=540" alt="A pencil sketch of the Wndr(er) running between two drawn panels" loading="lazy" width="960" height="540">
-        <figcaption>from Joshua Shire&rsquo;s animation test</figcaption>
-      </figure>
-    </div>
-  </div>
-</section>
-
-<!-- SERIES SHEET -->
-<section class="glance">
-  <div class="split">
-    <div>
-      <div class="spec">
-        <div class="spec-head"><strong>WndrKlub.</strong><span>Series sheet</span></div>
-        <dl>
-          <dt>Episodes</dt><dd>2 to 5 minutes each</dd>
-          <dt>Audience</dt><dd>3 to 7 year olds</dd>
-          <dt>Home</dt><dd>Designed for preschool broadcast, with a classroom life beyond it</dd>
-          <dt>Style</dt><dd>2D line drawing mixed with live action, collage and found footage</dd>
-          <dt>Original Music, Visual &amp; Story Format</dt><dd>Created by Curious Dreamers</dd>
-          <dt>Status</dt><dd>In development, supported by Screen Scotland</dd>
-        </dl>
-      </div>
-    </div>
-    <div class="shots">
-      <figure class="shot" style="--r:-1.6deg">
-        <img src="img/dixie/dixie-01.webp" alt="Early character pose testing sheet" loading="lazy" width="1600" height="900">
-        <figcaption>early character pose testing</figcaption>
-      </figure>
-      <figure class="shot" style="--r:2.2deg">
-        <img src="img/dixie/dixie-05.webp" alt="Playful poses of the Wndr(er)" loading="lazy" width="1600" height="900">
-        <figcaption>playful</figcaption>
-      </figure>
-    </div>
-  </div>
-</section>
-
-<!-- IN DEVELOPMENT -->
-<section class="dev">
-  <div class="header center">
-    <div class="eyebrow">In development</div>
-  </div>
-
-  <div class="block" id="test-poses">
-    <div class="header center"><h3>Test poses.</h3></div>
-    <div class="dixie dixie-grid" id="dixie" role="img" aria-label="Wndr(er) test poses: playful, sad, scared, and wrestling a lemon">
+<!-- POSE STRIP -->
+<section class="poses" aria-label="Wndr(er) test poses">
+  <div class="pose-strip still" id="poseStrip">
+    <div class="pose-row">
       <div class="dixie-box"><img src="img/dixie/poses/pose-01.webp" alt="" loading="lazy" width="360" height="360"></div>
       <div class="dixie-box"><img src="img/dixie/poses/pose-02.webp" alt="" loading="lazy" width="360" height="360"></div>
       <div class="dixie-box"><img src="img/dixie/poses/pose-03.webp" alt="" loading="lazy" width="360" height="360"></div>
@@ -1310,56 +1334,156 @@ h3 em { font-style: italic; }
       <div class="dixie-box"><img src="img/dixie/poses/pose-35.webp" alt="" loading="lazy" width="360" height="360"></div>
       <div class="dixie-box"><img src="img/dixie/poses/pose-36.webp" alt="" loading="lazy" width="360" height="360"></div>
     </div>
-    <p class="dixie-caption">Wndr(er) test poses by Dixie O&rsquo;Malley, Young Animator of the Year 2024 (2D Animation, 15 to 18).</p>
   </div>
+  <p class="dixie-caption">Wndr(er) test poses by Dixie O&rsquo;Malley, Young Animator of the Year 2024 (2D Animation, 15 to 18).</p>
+</section>
 
-  <div class="block" id="four-animators">
-    <div class="header center">
-      <h3>Four animators, one brief.</h3>
-      <p class="intro">Four young animators trained in Scotland, one brief: tell a story through comic frames. These are their tests.</p>
+<!-- MEET THE WNDR(ER) -->
+<section class="meet">
+  <div class="split flip">
+    <div class="copy">
+      <div class="eyebrow">Meet the Wndr(er)</div>
+      <h3>The Wndr(er) is a creative explorer, and guides our audience watching at home.</h3>
+      <p>He notices what everyone else walks past: the sway of a tree, the reflection in a window, the sound a door makes when it closes slowly. He pauses where others move on, framing the ordinary until it becomes extraordinary.</p>
     </div>
-    <div class="storyboard">
-      <figure class="sb-panel">
-        <div class="sb-head"><span class="sb-no">01</span><span>Animation test</span></div>
+    <div class="shots meet-figure">
+      <img src="img/wndrer_figure.png" alt="The Wndr(er): a stick figure in a bowler hat with a red heart" loading="lazy">
+      <figure class="shot" style="--r:4deg">
+        <img src="img/dixie/dixie-08-footnote.webp" alt="The Wndr(er), mid-tumble" loading="lazy" width="374" height="488">
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how2 center">
+  <div class="eyebrow">How it works</div>
+  <div class="flipbook big">
+    <div class="frames">
+      <img src="img/lemon_frame_1.jpg" alt="The Wndr(er) and a lemon, drawn as a flipbook">
+      <img src="img/lemon_frame_2.jpg" alt="">
+      <img src="img/lemon_frame_3.jpg" alt="">
+      <img src="img/lemon_frame_4.jpg" alt="">
+    </div>
+  </div>
+  <ol class="five-words">
+    <li>Notice.</li>
+    <li>Reframe.</li>
+    <li>Journey.</li>
+    <li>Return.</li>
+    <li>Your turn.</li>
+  </ol>
+  <p class="grammar-line">Panels become shots. Page turns become edits. Flipbooks become animation.</p>
+</section>
+
+<!-- THE LOOK: an art table -->
+<section class="look2" data-layout="a">
+  <div class="look-copy">
+    <div class="eyebrow">The look</div>
+    <h3>Whatever comes to hand.</h3>
+    <p>Hand-drawn line, real streets, cut paper, whatever comes to hand. If a child watches and thinks &ldquo;I could make that&rdquo;, it&rsquo;s working.</p>
+  </div>
+  <div class="table" aria-hidden="true">
+    <div class="frag cell" style="--ax:3;--ay:8;--aw:24;--ar:-6deg;--ad:0.05;--bx:42;--by:2;--bw:24;--br:-4deg;--bd:0.05;--mx:0;--my:0;--mw:50;--mr:-4deg;"><span class="pic" style="background-image:url(img/space.jpg);background-size:466.47% 478.72%;background-position:3.34% 96.77%;aspect-ratio:343/188"></span></div>
+    <div class="frag cell taped" style="--ax:22;--ay:2;--aw:27;--ar:3deg;--ad:0.02;--bx:63;--by:0;--bw:26;--br:3deg;--bd:0.02;--mx:44;--my:3;--mw:54;--mr:3deg;"><span class="pic" style="background-image:url(img/ocean.jpg);background-size:466.47% 478.72%;background-position:36.60% 69.80%;aspect-ratio:343/188"></span></div>
+    <div class="frag cell m-hide" style="--ax:47;--ay:14;--aw:13;--ar:-9deg;--ad:0.08;--bx:86;--by:14;--bw:14;--br:-7deg;--bd:0.08;"><span class="pic" style="background-image:url(img/water.jpg);background-size:457.14% 468.75%;background-position:34.40% 68.08%;aspect-ratio:350/192"></span></div>
+    <div class="frag photo" style="--ax:56;--ay:4;--aw:27;--ar:5deg;--ad:0.03;--bx:52;--by:24;--bw:27;--br:4deg;--bd:0.03;--mx:8;--my:20;--mw:60;--mr:5deg;"><img src="https://customer-3aa0vwfgpylhsylu.cloudflarestream.com/1e0f09ef391c967ca296489c47d49d4a/thumbnails/thumbnail.jpg?time=30s&amp;height=360" alt="" loading="lazy"></div>
+    <div class="frag cell m-hide" style="--ax:80;--ay:20;--aw:18;--ar:-4deg;--ad:0.06;--bx:78;--by:34;--bw:20;--br:-3deg;--bd:0.06;"><span class="pic" style="background-image:url(img/space.jpg);background-size:466.47% 489.13%;background-position:34.21% 37.43%;aspect-ratio:343/184"></span></div>
+    <div class="frag cell taped" style="--ax:2;--ay:42;--aw:20;--ar:5deg;--ad:0.04;--bx:40;--by:40;--bw:18;--br:3deg;--bd:0.04;--mx:58;--my:22;--mw:40;--mr:-6deg;"><span class="pic" style="background-image:url(img/water.jpg);background-size:463.77% 468.75%;background-position:3.19% 68.08%;aspect-ratio:345/192"></span></div>
+    <div class="frag draw" style="--ax:19;--ay:36;--aw:13;--ar:-8deg;--ad:0.09;--bx:60;--by:52;--bw:12;--br:-6deg;--bd:0.09;--mx:2;--my:40;--mw:30;--mr:-7deg;"><img src="img/dixie/poses/pose-07.webp" alt="" loading="lazy"></div>
+    <div class="frag scribble s-frame" style="--ax:36.5;--ay:27;--aw:17;--ar:-3deg;--ad:0.03;--bx:86.2;--by:46.5;--bw:13.6;--br:-3deg;--bd:0.01;--mx:61;--my:33;--mw:35;--mr:-3deg;"><svg viewBox="0 0 90 120" preserveAspectRatio="none"><path d="M5 7 L84 3 L87 114 L3 117 Z M3 117 L1 113" /></svg></div>
+    <div class="frag draw" style="--ax:39.8;--ay:35;--aw:11;--ar:4deg;--ad:0.05;--bx:88;--by:52;--bw:10;--br:6deg;--bd:0.07;--mx:66;--my:38;--mw:26;--mr:6deg;"><img src="img/lemon_frame_3.jpg" alt="" loading="lazy"></div>
+    <div class="frag cell taped" style="--ax:58;--ay:40;--aw:21;--ar:-3deg;--ad:0.03;--bx:70;--by:66;--bw:20;--br:2deg;--bd:0.03;--mx:34;--my:52;--mw:56;--mr:2deg;"><span class="pic" style="background-image:url(img/water.jpg);background-size:457.14% 473.68%;background-position:34.40% 37.75%;aspect-ratio:350/190"></span></div>
+    <div class="frag cut" style="--ax:79;--ay:50;--aw:15;--ar:12deg;--ad:0.1;--bx:45;--by:80;--bw:13;--br:10deg;--bd:0.1;--mx:4;--my:58;--mw:38;--mr:12deg;"><img src="img/faces/cheese.webp" alt="" loading="lazy"></div>
+    <div class="frag cell m-hide" style="--ax:4;--ay:67;--aw:17;--ar:8deg;--ad:0.05;--bx:36;--by:70;--bw:15;--br:6deg;--bd:0.05;"><span class="pic" style="background-image:url(img/ocean.jpg);background-size:458.45% 478.72%;background-position:67.39% 5.06%;aspect-ratio:349/188"></span></div>
+    <div class="frag cut" style="--ax:18;--ay:60;--aw:17;--ar:-10deg;--ad:0.11;--bx:60;--by:84;--bw:15;--br:-8deg;--bd:0.11;--mx:56;--my:70;--mw:40;--mr:-10deg;"><img src="img/faces/goldfish.webp" alt="" loading="lazy"></div>
+    <div class="frag cell taped" style="--ax:30;--ay:70;--aw:19;--ar:-2deg;--ad:0.04;--bx:82;--by:78;--bw:17;--br:-3deg;--bd:0.04;--mx:6;--my:74;--mw:52;--mr:-3deg;"><span class="pic" style="background-image:url(img/ocean.jpg);background-size:467.84% 476.19%;background-position:4.85% 36.71%;aspect-ratio:342/189"></span></div>
+    <div class="frag draw" style="--ax:53;--ay:64;--aw:10;--ar:6deg;--ad:0.08;--bx:93;--by:2;--bw:7;--br:5deg;--bd:0.08;--mx:64;--my:84;--mw:28;--mr:5deg;"><img src="img/dixie/poses/pose-21.webp" alt="" loading="lazy"></div>
+    <div class="frag cell m-hide b-hide" style="--ax:63;--ay:66;--aw:23;--ar:-2deg;--ad:0.02;--bx:40;--by:18;--bw:1;--br:0deg;--bd:0;"><span class="pic" style="background-image:url(img/space.jpg);background-size:466.47% 478.72%;background-position:3.34% 67.84%;aspect-ratio:343/188"></span></div>
+    <div class="frag scribble s-arrow" style="--ax:87;--ay:76;--aw:8;--ar:10deg;--ad:0.06;--bx:90;--by:92;--bw:8;--br:10deg;--bd:0.06;--mx:80;--my:56;--mw:18;--mr:8deg;"><svg viewBox="0 0 60 60"><path d="M8 50 C 20 30, 34 20, 52 10 M52 10 L38 11 M52 10 L46 23" /></svg></div>
+    <div class="frag scribble s-spiral" style="--ax:49.5;--ay:88;--aw:5;--ar:0deg;--ad:0.09;--bx:35;--by:92;--bw:6;--br:0deg;--bd:0.09;--mx:40;--my:92;--mw:14;--mr:0deg;"><svg viewBox="0 0 60 60"><path d="M30 30 c4 -2 6 3 2 6 c-6 4 -12 -2 -10 -8 c3 -9 16 -10 21 -2 c6 9 -1 22 -13 22 c-13 0 -21 -12 -17 -24" /></svg></div>
+  </div>
+</section>
+
+<!-- MUSIC -->
+<section class="music">
+  <div class="split">
+    <div class="copy">
+      <div class="eyebrow">Music</div>
+      <h3>Rhythm, rhyme and playing with time.</h3>
+      <p>A drip is a beat. A creak is a tune. A wobble is a bassline. In WndrKlub, sound and picture play together, speeding up, slowing down, stopping still, until the beat, the tone, the melody and the buzz of a passing bee all lock in and the whole world starts to groove.</p>
+      <button class="listen" type="button" data-listen aria-pressed="false"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.5 6z"/></svg><span>Play the music</span></button>
+    </div>
+    <div class="shots music-shots">
+      <div class="lemon-spin music-lemon" aria-hidden="true"></div>
+      <figure class="shot" style="--r:-2.4deg">
+        <img src="img/dixie/dixie-03.webp" alt="The Wndr(er) wrestling a lemon, pose by pose" loading="lazy" width="1600" height="900">
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- BEYOND THE SCREEN -->
+<section class="beyond">
+  <div class="split">
+    <div class="copy">
+      <div class="eyebrow">Beyond the screen</div>
+      <h3>Then it&rsquo;s their turn.</h3>
+      <p>Every episode ends on a blank page. In class, it&rsquo;s an episode, a folded piece of paper and a pencil, designed alongside Scotland&rsquo;s Film and Screen Education curriculum. In workshops, young animators help children make films of their own.</p>
+    </div>
+    <div class="shots left">
+      <figure class="shot" style="--r:-1.4deg">
+        <img src="https://customer-3aa0vwfgpylhsylu.cloudflarestream.com/c440e434e1ab7a1e00a69b14e7ecd945/thumbnails/thumbnail.jpg?time=3s&amp;height=540" alt="Drawn panels on paper, the Wndr(er) peeking out beside the words The End" loading="lazy" width="960" height="540">
+        <figcaption>from Jacob Cunningham&rsquo;s animation test</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- IN DEVELOPMENT -->
+<section class="dev2">
+  <div class="header center">
+    <div class="eyebrow">In development</div>
+    <h3>Finding the look.</h3>
+    <div class="copy"><p>We&rsquo;ve been working with young animators trained in Scotland, each taking the same brief in their own direction, to explore how WndrKlub could move.</p></div>
+  </div>
+  <div class="tiles">
+    <figure class="sb-panel">
         <div class="sb-frame" data-uid="1e0f09ef391c967ca296489c47d49d4a" data-poster="20s">
           <button class="sb-poster" aria-label="Play Brooke Cant&rsquo;s animation test">
             <img src="https://customer-3aa0vwfgpylhsylu.cloudflarestream.com/1e0f09ef391c967ca296489c47d49d4a/thumbnails/thumbnail.jpg?time=20s&amp;height=720" alt="" loading="lazy">
             <span class="sb-play"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.5 6z"/></svg></span>
           </button>
         </div>
-        <figcaption class="sb-caption">01 Brooke Cant</figcaption>
+        <figcaption class="sb-caption">Brooke Cant</figcaption>
       </figure>
-      <figure class="sb-panel">
-        <div class="sb-head"><span class="sb-no">02</span><span>Animation test</span></div>
+    <figure class="sb-panel">
         <div class="sb-frame" data-uid="c440e434e1ab7a1e00a69b14e7ecd945" data-poster="1s">
           <button class="sb-poster" aria-label="Play Jacob Cunningham&rsquo;s animation test">
             <img src="https://customer-3aa0vwfgpylhsylu.cloudflarestream.com/c440e434e1ab7a1e00a69b14e7ecd945/thumbnails/thumbnail.jpg?time=1s&amp;height=720" alt="" loading="lazy">
             <span class="sb-play"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.5 6z"/></svg></span>
           </button>
         </div>
-        <figcaption class="sb-caption">02 Jacob Cunningham</figcaption>
+        <figcaption class="sb-caption">Jacob Cunningham</figcaption>
       </figure>
-      <figure class="sb-panel">
-        <div class="sb-head"><span class="sb-no">03</span><span>Animation test</span></div>
+    <figure class="sb-panel">
         <div class="sb-frame" data-uid="b49254889bc7fb4d2b1185db7a40d658" data-poster="2s">
           <button class="sb-poster" aria-label="Play Joshua Shire&rsquo;s animation test">
             <img src="https://customer-3aa0vwfgpylhsylu.cloudflarestream.com/b49254889bc7fb4d2b1185db7a40d658/thumbnails/thumbnail.jpg?time=2s&amp;height=720" alt="" loading="lazy">
             <span class="sb-play"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.5 6z"/></svg></span>
           </button>
         </div>
-        <figcaption class="sb-caption">03 Joshua Shire</figcaption>
+        <figcaption class="sb-caption">Joshua Shire</figcaption>
       </figure>
-      <figure class="sb-panel">
-        <div class="sb-head"><span class="sb-no">04</span><span>Animation test</span></div>
+    <figure class="sb-panel">
         <div class="sb-frame" data-uid="9ec574aa703835bf396985b5e0b37e10" data-poster="0s">
           <button class="sb-poster" aria-label="Play Lily Kromer&rsquo;s animation test">
             <img src="https://customer-3aa0vwfgpylhsylu.cloudflarestream.com/9ec574aa703835bf396985b5e0b37e10/thumbnails/thumbnail.jpg?time=0s&amp;height=720" alt="" loading="lazy">
             <span class="sb-play"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.5 6z"/></svg></span>
           </button>
         </div>
-        <figcaption class="sb-caption">04 Lily Kromer</figcaption>
+        <figcaption class="sb-caption">Lily Kromer</figcaption>
       </figure>
-    </div>
   </div>
 </section>
 
@@ -2094,21 +2218,35 @@ const gate = (() => {
   addEventListener('resize', () => { if (done) allAtRest(); });
 })();
 
-// Test poses: two rows of Dixie's poses drifting in opposite directions.
-(function dixiePoses() {
-  const box = document.getElementById('dixie');
-  if (!box || reduceMotion) return;  // static grid
-  const srcs = [...box.querySelectorAll('img')].map(img => img.getAttribute('src'));
-  // Each row is duplicated once so translateX(-50%) loops seamlessly.
-  box.className = 'dixie strip';
-  const rows = [[], []];
-  srcs.forEach((src, i) => rows[i % 2].push(src));
-  box.innerHTML = rows.map((row, r) => {
-    const cells = row.concat(row).map((src, i) =>
-      `<div class="dixie-box"${i >= row.length ? ' aria-hidden="true"' : ''}><img src="${src}" alt="" width="360" height="360"></div>`
-    ).join('');
-    return `<div class="dixie-row${r === 0 ? ' rev' : ''}">${cells}</div>`;
-  }).join('');
+// Pose strip: one row, duplicated once so translateX(-50%) loops seamlessly.
+// Without the script, or with reduced motion, it stays a still row you can scroll.
+(function poseStrip() {
+  const strip = document.getElementById('poseStrip');
+  if (!strip || reduceMotion) return;
+  const row = strip.querySelector('.pose-row');
+  [...row.children].forEach(n => { const c = n.cloneNode(true); c.setAttribute('aria-hidden', 'true'); row.appendChild(c); });
+  strip.classList.remove('still');
+})();
+
+// The look: the art table. ?collage=a or ?collage=b picks the layout (for
+// review). Pieces drift a little at different rates as the table scrolls by.
+(function lookTable() {
+  const sec = document.querySelector('.look2');
+  if (!sec) return;
+  const pick = new URLSearchParams(location.search).get('collage');
+  if (pick === 'a' || pick === 'b') sec.dataset.layout = pick;
+  if (reduceMotion) return;
+  const table = sec.querySelector('.table');
+  let raf = 0;
+  const update = () => {
+    raf = 0;
+    const r = table.getBoundingClientRect();
+    const off = -(r.top + r.height / 2 - innerHeight / 2) * 0.5;
+    table.style.setProperty('--py', Math.max(-260, Math.min(260, off)).toFixed(1));   // a gentle drift, never more
+  };
+  addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
+  addEventListener('resize', update);
+  update();
 })();
 
 // Music player (fixed, top right), streaming straight from R2
