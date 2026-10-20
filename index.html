@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow">
-<title>WndrKlub.</title>
+<title>WndrKlub</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Ccircle cx='8' cy='8' r='6' fill='%23c8292e'/%3E%3C/svg%3E">
 <meta name="description" content="WndrKlub. An animated mixed-media series for 3 to 7 year olds.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -219,11 +219,26 @@ h3 em { font-style: italic; }
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(8px); }
 }
+.cover-text .subtitle.credit { margin-top: 10px; max-width: none; font-size: clamp(22px, 2.1vw, 30px); }
+/* The hero lemon sits on the hero's floor (the Wndr(er)'s feet). The script
+   measures the figure, rolls the lemon in from the right and parks it beside
+   him; without the script it simply waits at the right. */
 .lemon-wrap {
-  display: flex;
-  justify-content: flex-end;
-  margin-top: 28px;
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
 }
+.lemon-roll {
+  position: absolute;
+  right: 8vw;
+  bottom: 12vh;
+  width: var(--lemon, 300px);
+  height: var(--lemon, 300px);
+  pointer-events: auto;
+}
+.lemon-roll > div { width: 100%; height: 100%; }
+.lemon-roll .lemon-spin { max-width: none; max-height: none; }
 .lemon-spin {
   width: 300px;
   height: 300px;
@@ -422,7 +437,7 @@ h3 em { font-style: italic; }
   margin: 0;
 }
 
-/* ── At a glance: a spec sheet ───────────────────────── */
+/* ── Series sheet: a spec sheet ───────────────────────── */
 .glance { background: var(--paper-deep); }
 .spec {
   background: #fbf9f3;
@@ -450,7 +465,7 @@ h3 em { font-style: italic; }
   text-transform: none;
   font-weight: 700;
 }
-.spec dl { display: grid; grid-template-columns: max-content 1fr; }
+.spec dl { display: grid; grid-template-columns: fit-content(180px) 1fr; }
 .spec dt, .spec dd {
   padding: 16px 22px;
   border-bottom: 1px solid rgba(26,24,20,0.2);
@@ -859,7 +874,6 @@ h3 em { font-style: italic; }
   .mini-player { top: 14px; right: 12px; padding-left: 10px; gap: 4px; }
   .mp-label span { display: none; }
   .mini-player .mp-name { max-width: 9ch; font-size: 17px; }
-  .lemon-wrap { justify-content: center; }
   .spec dl { grid-template-columns: 1fr; }
   .spec dt { border-right: 0; border-bottom: 0; padding-bottom: 0; padding-top: 16px; }
   .spec dd { padding-top: 4px; }
@@ -909,7 +923,7 @@ h3 em { font-style: italic; }
   </div>
   <div class="cover-text">
     <div class="hc-wrap">
-      <h1 class="sr-only">WndrKlub.</h1>
+      <h1 class="sr-only">WndrKlub</h1>
       <div class="hc-logo" aria-hidden="true">
         <span class="hc-card" style="--r:-2.0deg"><span class="hc-frame"></span><span class="hc-letter" style="--gx:0.01em;--gy:-0.01em;--gr:-1.5deg;--sw:0.008em;filter:url(#pencil-1)">W</span></span>
         <span class="hc-card" style="--r:1.4deg"><span class="hc-frame"></span><span class="hc-letter" style="--gx:0;--gy:0.012em;--gr:2.0deg;--sw:0.005em;filter:url(#pencil-2)">n</span></span>
@@ -923,9 +937,10 @@ h3 em { font-style: italic; }
       </div>
     </div>
     <p class="subtitle">An animated mixed-media series for 3 to 7 year olds.</p>
-    <div class="lemon-wrap" aria-hidden="true">
-      <div class="lemon-spin"></div>
-    </div>
+    <p class="subtitle credit">Created by Curious Dreamers.</p>
+  </div>
+  <div class="lemon-wrap" aria-hidden="true">
+    <div class="lemon-roll"><div class="lemon-spin"></div></div>
   </div>
   <div class="scroll-cue">scroll</div>
 </section>
@@ -935,9 +950,9 @@ h3 em { font-style: italic; }
   <div class="split">
     <div class="copy">
       <div class="eyebrow">The series</div>
-      <h3>Every episode, the Wndr(er) stops, notices something ordinary, and turns it into a story.</h3>
+      <h3>In each episode of WndrKlub, the Wndr(er) notices something ordinary and turns it into a story.</h3>
       <p>A puddle becomes an ocean. A shadow becomes a giant. A crack in the pavement becomes a road to somewhere else.</p>
-      <p class="lead">WndrKlub shows children that anything becomes extraordinary the moment you put a frame around it. And then it hands them the pencil.</p>
+      <p class="lead">WndrKlub shows children that anything becomes extraordinary the moment you put a frame around it.</p>
     </div>
     <div class="shots">
       <figure class="shot" style="--r:1.8deg">
@@ -957,7 +972,7 @@ h3 em { font-style: italic; }
   <div class="split flip">
     <div class="copy">
       <div class="eyebrow">Meet the Wndr(er)</div>
-      <h3>The Wndr(er) is a creative explorer, and the star of the show.</h3>
+      <h3>The Wndr(er) is a creative explorer, and guides our audience watching at home.</h3>
       <p>He notices what everyone else walks past: the sway of a tree, the reflection in a window, the sound a door makes when it closes slowly. He pauses where others move on, framing the ordinary until it becomes extraordinary.</p>
     </div>
     <div class="shots meet-figure">
@@ -975,8 +990,7 @@ h3 em { font-style: italic; }
     <div class="copy">
       <div class="eyebrow">Music</div>
       <h3>Anything can be music.</h3>
-      <p>Music threads through every episode. Rhythm, tone and the happy accidents of sound shape the story as much as the pictures do. A dripping tap becomes a beat. A creaky door becomes a melody. Sound becomes music, and music becomes sound.</p>
-      <p>Co-created by composer Giles Lamb, WndrKlub is made to be heard as much as seen: playful, surprising, and built to tickle.</p>
+      <p>WndrKlub is made to be heard as much as seen. Music threads through every episode. Rhythm, tone and the happy accidents of sound shape the story as much as the pictures do. A dripping tap becomes a beat. A creaky door becomes a melody. Sound becomes music, and music becomes sound, creating a sound world that is playful and surprising.</p>
       <button class="listen" type="button" data-listen aria-pressed="false"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.5 6z"/></svg><span>Play the music</span></button>
     </div>
     <div class="shots music-shots">
@@ -988,66 +1002,34 @@ h3 em { font-style: italic; }
   </div>
 </section>
 
-<!-- AT A GLANCE -->
-<section class="glance">
-  <div class="split">
-    <div>
-      <div class="eyebrow">At a glance</div>
-      <div class="spec">
-        <div class="spec-head"><strong>WndrKlub.</strong><span>Series sheet</span></div>
-        <dl>
-          <dt>Episodes</dt><dd>Short, under five minutes each</dd>
-          <dt>Audience</dt><dd>3 to 7 year olds</dd>
-          <dt>Home</dt><dd>Designed for preschool broadcast, with a classroom life beyond it</dd>
-          <dt>Style</dt><dd>2D line drawing mixed with live action, collage and found footage</dd>
-          <dt>Music</dt><dd>Original score by Giles Lamb, woven through every episode</dd>
-          <dt>Status</dt><dd>In development, supported by Screen Scotland</dd>
-          <dt>Made in</dt><dd>Glasgow</dd>
-        </dl>
-      </div>
-    </div>
-    <div class="shots">
-      <figure class="shot" style="--r:-1.6deg">
-        <img src="img/dixie/dixie-01.webp" alt="Early character pose testing sheet" loading="lazy" width="1600" height="900">
-        <figcaption>early character pose testing</figcaption>
-      </figure>
-      <figure class="shot" style="--r:2.2deg">
-        <img src="img/dixie/dixie-05.webp" alt="Playful poses of the Wndr(er)" loading="lazy" width="1600" height="900">
-        <figcaption>playful</figcaption>
-      </figure>
-    </div>
-  </div>
-</section>
-
 <!-- HOW AN EPISODE WORKS -->
 <section class="how">
   <div class="header center">
     <div class="eyebrow">How an episode works</div>
-    <h3>Five panels, every time.</h3>
+    <h3>Exploring the Art of Storytelling</h3>
   </div>
   <ol class="strip5">
     <li><figure class="step">
       <div class="step-frame"><span class="sb-no">1</span><img src="img/lemon_frame_1.jpg" alt="The Wndr(er) looking at a lemon" loading="lazy"></div>
-      <figcaption><strong>Notice.</strong><span>Something ordinary: a sound, an object, a texture.</span></figcaption>
+      <figcaption><strong>Notice.</strong> <span>Something ordinary: a sound, an object, a texture.</span></figcaption>
     </figure></li>
     <li><figure class="step">
       <div class="step-frame"><span class="sb-no">2</span><img src="https://customer-3aa0vwfgpylhsylu.cloudflarestream.com/b49254889bc7fb4d2b1185db7a40d658/thumbnails/thumbnail.jpg?time=30s&amp;height=540" alt="A sketched Wndr(er) inside a drawn panel" loading="lazy"></div>
-      <figcaption><strong>Reframe.</strong><span>A panel, a change of scale, a shift of context, and it becomes something else.</span></figcaption>
+      <figcaption><strong>Reframe.</strong> <span>A panel, a change of scale, a shift of context, and it becomes something else.</span></figcaption>
     </figure></li>
     <li><figure class="step">
       <div class="step-frame"><span class="sb-no">3</span><img src="img/ocean.jpg" alt="The Wndr(er) swimming in the ocean world" loading="lazy" style="object-position:40% 50%"></div>
-      <figcaption><strong>Journey.</strong><span>A short story unfolds inside the new world.</span></figcaption>
+      <figcaption><strong>Journey.</strong> <span>A unique story unfolds inside the new world.</span></figcaption>
     </figure></li>
     <li><figure class="step">
       <div class="step-frame"><span class="sb-no">4</span><img src="img/lemon_frame_4.jpg" alt="The Wndr(er) carrying the lemon" loading="lazy"></div>
-      <figcaption><strong>Return.</strong><span>Back to the ordinary thing, now seen differently.</span></figcaption>
+      <figcaption><strong>Return.</strong> <span>Back to the ordinary, now seen differently.</span></figcaption>
     </figure></li>
     <li><figure class="step">
       <div class="step-frame blank"><span class="sb-no">5</span><span class="hint">your turn&hellip;</span></div>
-      <figcaption><strong>Your turn.</strong><span>Every episode ends with a blank page, a half-drawn flipbook or an empty panel.</span></figcaption>
+      <figcaption><strong>Your turn.</strong> <span>Every episode ends with an invite to a blank page for our audience to create their own stories.</span></figcaption>
     </figure></li>
   </ol>
-  <p class="coda">Short enough that watching isn&rsquo;t the activity. Long enough to open a door.</p>
 </section>
 
 <!-- THE LOOK -->
@@ -1128,6 +1110,35 @@ h3 em { font-style: italic; }
       <figure class="shot" style="--r:2.4deg">
         <img src="https://customer-3aa0vwfgpylhsylu.cloudflarestream.com/b49254889bc7fb4d2b1185db7a40d658/thumbnails/thumbnail.jpg?time=6s&amp;height=540" alt="A pencil sketch of the Wndr(er) running between two drawn panels" loading="lazy" width="960" height="540">
         <figcaption>from Joshua Shire&rsquo;s animation test</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- SERIES SHEET -->
+<section class="glance">
+  <div class="split">
+    <div>
+      <div class="spec">
+        <div class="spec-head"><strong>WndrKlub.</strong><span>Series sheet</span></div>
+        <dl>
+          <dt>Episodes</dt><dd>2 to 5 minutes each</dd>
+          <dt>Audience</dt><dd>3 to 7 year olds</dd>
+          <dt>Home</dt><dd>Designed for preschool broadcast, with a classroom life beyond it</dd>
+          <dt>Style</dt><dd>2D line drawing mixed with live action, collage and found footage</dd>
+          <dt>Original Music, Visual &amp; Story Format</dt><dd>Created by Curious Dreamers</dd>
+          <dt>Status</dt><dd>In development, supported by Screen Scotland</dd>
+        </dl>
+      </div>
+    </div>
+    <div class="shots">
+      <figure class="shot" style="--r:-1.6deg">
+        <img src="img/dixie/dixie-01.webp" alt="Early character pose testing sheet" loading="lazy" width="1600" height="900">
+        <figcaption>early character pose testing</figcaption>
+      </figure>
+      <figure class="shot" style="--r:2.2deg">
+        <img src="img/dixie/dixie-05.webp" alt="Playful poses of the Wndr(er)" loading="lazy" width="1600" height="900">
+        <figcaption>playful</figcaption>
       </figure>
     </div>
   </div>
@@ -1383,13 +1394,102 @@ const heroCards = (() => {
   }
 
   function start() {
-    if (reduceMotion) { root.classList.remove('hc-pending'); return; }   // the still logo
-    (document.fonts ? document.fonts.ready : Promise.resolve()).then(play);
+    if (reduceMotion) { root.classList.remove('hc-pending'); return Promise.resolve(); }   // the still logo
+    return (document.fonts ? document.fonts.ready : Promise.resolve()).then(play);
   }
   return { start };
 })();
 
-heroCards.start();
+const heroIntro = heroCards.start();
+
+// Hero lemon: once the logo has landed, the lemon rolls in from the right and
+// comes to rest at the Wndr(er)'s feet. Rotation is distance / radius so it
+// rolls rather than slides, with a few small hops and a rocking settle.
+// The rest spot is measured from the figure, so it holds at any width.
+(function heroLemon() {
+  const cover = document.querySelector('.cover');
+  const box   = cover.querySelector('.cover-figure');
+  const fig   = box.querySelector('img');
+  const text  = cover.querySelector('.cover-text');
+  const roll  = cover.querySelector('.lemon-roll');
+  // Visible lemon inside its 768px square art: x 117 to 641, y 111 to 632.
+  const ART = { left: 117 / 768, bottom: 632 / 768, radius: 0.34 };
+  const FIG_RIGHT = 547 / 660;   // the figure's drawn edge inside its png
+  let done = false;
+
+  function geo() {
+    const c = cover.getBoundingClientRect();
+    const b = box.getBoundingClientRect();
+    const figW = fig.offsetWidth, figH = box.offsetHeight;
+    const stacked = getComputedStyle(cover).gridTemplateColumns.split(' ').length < 2;
+    const figLeft = b.left - c.left + (b.width - figW) / 2;
+    const footX = figLeft + figW * FIG_RIGHT;               // his drawn right edge
+    let size = Math.min(280, figH * 0.37);
+    const gap = size * 0.04;
+    const room = c.width - 16 - footX - gap;                // keep 16px clear of the edge
+    if (room < size * (1 - ART.left) * 0.9) size = Math.max(80, room / ((1 - ART.left) * 0.9));
+    const floor = b.bottom - c.top;                         // his feet
+    const restX = footX + size * 0.04 - size * ART.left;
+    const startX = stacked ? c.width + 10                   // in from off screen
+                           : Math.max(restX + size, text.getBoundingClientRect().right - c.left - size);
+    return { size, top: floor - size * ART.bottom, restX, startX, r: size * ART.radius };
+  }
+
+  function place(x, y, deg, g) {
+    roll.style.setProperty('--lemon', g.size + 'px');
+    roll.style.left = '0'; roll.style.top = '0'; roll.style.right = 'auto'; roll.style.bottom = 'auto';
+    roll.style.transform = `translate(${x.toFixed(1)}px, ${(g.top + y).toFixed(1)}px) rotate(${deg.toFixed(2)}deg)`;
+  }
+  const atRest = () => { const g = geo(); place(g.restX, 0, 0, g); };
+
+  function tween(ms, fn) {
+    return new Promise(resolve => {
+      const t0 = performance.now();
+      requestAnimationFrame(function frame(now) {
+        const k = Math.min(1, (now - t0) / ms);
+        fn(k);
+        k < 1 ? requestAnimationFrame(frame) : resolve();
+      });
+    });
+  }
+
+  async function play() {
+    const g0 = geo();
+    place(g0.startX, 0, 0, g0);
+    await heroIntro;
+    await new Promise(r => setTimeout(r, 250));
+    const D0 = g0.startX - g0.restX;
+    if (D0 <= 0) return atRest();
+    const ms = Math.min(2600, Math.max(1500, D0 * 2.4));
+    // Whole turns only, so the lemon parks upright: nudge the radius to fit.
+    const turns = Math.max(1, Math.round(D0 / (2 * Math.PI * g0.r)));
+    await tween(ms, (k) => {
+      const g = geo();
+      const D = g.startX - g.restX;
+      const e = 1 - Math.pow(1 - k, 3);                    // ease out
+      const d = D * e;
+      const deg = -(e * turns * 360);                       // = -d / r_fit
+      const hopLen = g.size * 0.7;
+      const hop = -g.size * 0.05 * Math.pow(1 - k, 1.4) * Math.abs(Math.sin(Math.PI * d / hopLen));
+      place(g.startX - d, hop, deg, g);
+    });
+    // Settle: rock back and forth, rolling a touch each way.
+    await tween(1000, (k) => {
+      const g = geo();
+      const t = k * 1.0;
+      const a = 0.16 * Math.exp(-4.5 * t) * Math.sin(13 * t);   // radians
+      place(g.restX + a * g.r, 0, a * 180 / Math.PI, g);
+    });
+    done = true;
+    atRest();
+  }
+
+  const ready = fig.complete ? Promise.resolve() : new Promise(r => fig.addEventListener('load', r, { once: true }));
+  ready.then(() => {
+    if (reduceMotion) { done = true; atRest(); } else play();
+  });
+  addEventListener('resize', () => { if (done) atRest(); });
+})();
 
 // Test poses: two rows of Dixie's poses drifting in opposite directions.
 (function dixiePoses() {
