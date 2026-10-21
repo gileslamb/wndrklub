@@ -220,7 +220,7 @@ h3 em { font-style: italic; }
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(8px); }
 }
-.cover-text .subtitle.credit { margin-top: 10px; max-width: none; font-size: clamp(22px, 2.1vw, 30px); }
+.cover-text .subtitle + .subtitle { margin-top: 8px; }
 /* The hero lemon sits on the hero's floor (the Wndr(er)'s feet). The script
    measures the figure, rolls the lemon in from the right and parks it beside
    him; without the script it simply waits at the right. */
@@ -1360,6 +1360,79 @@ section.music2 { position: relative; padding-top: 14vh; padding-bottom: 14vh; ov
 @media (prefers-reduced-motion: reduce) {
   .flow mask .reveal, .flow .tip { transition: none; }
 }
+
+/* ══ Edits 3 ═════════════════════════════════════════ */
+/* hero: three lines, one size */
+.cover-text .subtitle { font-size: clamp(24px, 2.35vw, 33px); max-width: 26ch; }
+/* How do you see the world?: words only */
+section.series.text-only { align-items: center; }
+.series.text-only .copy { max-width: 1100px; width: 100%; }
+.series.text-only h3 { font-size: clamp(54px, 8.6vw, 132px); line-height: 0.98; max-width: 12ch; margin-bottom: 42px; }
+.series.text-only .copy p { max-width: 56ch; }
+/* keywords: quietly stronger */
+strong.kw { font-weight: 700; color: var(--ink); font-size: 1.04em; }
+h3 strong.kw { font-weight: inherit; font-size: 1em; font-style: italic; }
+/* Episodes: each step on its own card cube, dots between */
+.word-cubes {
+  list-style: none;
+  display: flex; flex-wrap: wrap; justify-content: center; align-items: center;
+  gap: 18px 10px;
+  margin: 18px auto 46px;
+  max-width: 1100px;
+}
+.wcube {
+  --d: 12px;
+  position: relative;
+  margin: var(--d) var(--d) 0 0;
+  padding: 16px 22px 14px;
+  background: #fbf9f3;
+  border: 1.5px solid rgba(26, 24, 20, 0.62);
+  border-radius: 3px;
+  transform: perspective(600px) rotateY(var(--ry)) rotateZ(var(--rz));
+  transition: transform 0.3s ease;
+}
+.wcube::before, .wcube::after { content: ''; position: absolute; border: 1.5px solid rgba(26, 24, 20, 0.55); }
+.wcube::before {           /* top */
+  left: -1.5px; right: -1.5px; bottom: 100%; height: var(--d);
+  background: #f0eadc; border-bottom: 0;
+  transform-origin: bottom; transform: skewX(-45deg) translateX(calc(var(--d) / 2));
+}
+.wcube::after {            /* side */
+  top: -1.5px; bottom: -1.5px; left: 100%; width: var(--d);
+  background: #e1dbcb; border-left: 0;
+  transform-origin: left; transform: skewY(-45deg) translateY(calc(var(--d) / -2));
+}
+.wcube span {
+  font-family: 'Fraunces', serif;
+  font-weight: 900;
+  font-variation-settings: 'opsz' 144;
+  font-size: clamp(22px, 2.3vw, 32px);
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.wcube.last span { color: var(--heart); font-style: italic; }
+.wcube:hover { transform: perspective(600px) rotateY(calc(var(--ry) * -1)) rotateZ(calc(var(--rz) * -1)); }
+.wc-dots { display: flex; gap: 5px; align-items: center; padding-top: 10px; }
+.wc-dots span { width: 5px; height: 5px; border-radius: 50%; background: var(--ink-soft); }
+/* Music: the big red title stays */
+.music-title {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 900;
+  font-size: clamp(64px, 9vw, 140px);
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+  color: var(--heart);
+  transform: rotate(-3deg);
+  transform-origin: left bottom;
+  margin-bottom: 18px;
+}
+.dev2 .dev-caption { margin-top: 0; }
+@media (max-width: 700px) {
+  .word-cubes { flex-direction: column; gap: 6px; }
+  .wc-dots { flex-direction: column; padding: 4px 0; }
+}
 </style>
 </head>
 <body>
@@ -1429,8 +1502,8 @@ section.music2 { position: relative; padding-top: 14vh; padding-bottom: 14vh; ov
       </div>
     </div>
     <p class="subtitle">An animated mixed-media series for 3 to 7 year olds.</p>
-    <p class="hero-facts">Short films, 2 to 5 minutes, for 3 to 7 year olds. 2D line drawing mixed with live action and collage. In development, supported by Screen Scotland.</p>
-    <p class="subtitle credit">Created by Curious Dreamers.</p>
+    <p class="subtitle">Created by Curious Dreamers.</p>
+    <p class="subtitle credit">In development, supported by Screen Scotland.</p>
     <button class="hero-again" type="button" hidden aria-label="Play the title again">
       <svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15.6 7.4A6.4 6.4 0 1 0 16.4 12"/><path d="M16.2 3.4l-.4 4.3-4.2-.6"/></svg>
       <span>again</span>
@@ -1443,24 +1516,11 @@ section.music2 { position: relative; padding-top: 14vh; padding-bottom: 14vh; ov
 </section>
 
 <!-- THE SERIES -->
-<section class="series">
-  <div class="split">
-    <div class="copy">
-      <div class="eyebrow">The series</div>
-      <h3>How do you see the world?</h3>
-      <p>WndrKlub encourages children to be curious, to be storytellers, to see the world from a different perspective. WndrKlub is a series of short, funny, wildly imaginative films that catch the moment an idea takes off, when one thing leads to another and the ordinary turns into a story.</p>
-      <p class="closer">It&rsquo;s all about the frame.</p>
-    </div>
-    <div class="shots">
-      <figure class="shot" style="--r:1.8deg">
-        <img src="https://customer-3aa0vwfgpylhsylu.cloudflarestream.com/1e0f09ef391c967ca296489c47d49d4a/thumbnails/thumbnail.jpg?time=30s&amp;height=540" alt="A drawn Wndr(er) among real mushrooms and flowers" loading="lazy" width="960" height="540">
-        <figcaption>from Brooke Cant&rsquo;s animation test</figcaption>
-      </figure>
-      <figure class="shot" style="--r:-2.6deg">
-        <img src="https://customer-3aa0vwfgpylhsylu.cloudflarestream.com/9ec574aa703835bf396985b5e0b37e10/thumbnails/thumbnail.jpg?time=3s&amp;height=540" alt="The Wndr(er) stepping through a drawn frame" loading="lazy" width="960" height="540">
-        <figcaption>from Lily Kromer&rsquo;s animation test</figcaption>
-      </figure>
-    </div>
+<section class="series text-only">
+  <div class="copy">
+    <h3>How do you see the world?</h3>
+    <p>WndrKlub encourages children to be curious, to be storytellers, to see the world from a different perspective. WndrKlub is a series of short, funny, wildly imaginative films that catch the moment an idea takes off, when one thing leads to another and the ordinary turns into a story.</p>
+    <p class="closer">It&rsquo;s all about the frame.</p>
   </div>
 </section>
 
@@ -1513,10 +1573,9 @@ section.music2 { position: relative; padding-top: 14vh; padding-bottom: 14vh; ov
 <section class="meet">
   <div class="split flip">
     <div class="copy">
-      <div class="eyebrow">Meet the Wndr(er)</div>
       <h3>The Wndr(er) is a creative explorer, and guides our audience watching at home.</h3>
       <p>He notices what everyone else walks past: the sway of a tree, the reflection in a window, the sound a door makes when it closes slowly. He pauses where others move on, framing the ordinary until it becomes extraordinary.</p>
-      <p>He has a child&rsquo;s sense of wonder: endlessly curious, open to anything, and happiest when his imagination runs off ahead of him. He looks at everything from every angle, upside down, close up and far away, just to see what it might become. He&rsquo;s what curiosity looks like when it gets up and goes exploring.</p>
+      <p>He has a child&rsquo;s sense of wonder: endlessly curious, open to anything, and happiest when his imagination runs off ahead of him. He looks at everything from every angle, upside down, close up and far away, just to see what it might become.</p>
     </div>
     <div class="shots meet-figure">
       <img src="img/wndrer_figure.png" alt="The Wndr(er): a stick figure in a bowler hat with a red heart" loading="lazy">
@@ -1529,7 +1588,6 @@ section.music2 { position: relative; padding-top: 14vh; padding-bottom: 14vh; ov
 
 <!-- EPISODES -->
 <section class="how2 center">
-  <div class="eyebrow">Episodes</div>
   <h3 class="episodes-head">Panels become shots. Page turns become edits. Flipbooks become animation.</h3>
   <div class="flipbook big">
     <div class="frames">
@@ -1539,97 +1597,36 @@ section.music2 { position: relative; padding-top: 14vh; padding-bottom: 14vh; ov
       <img src="img/lemon_frame_4.jpg" alt="">
     </div>
   </div>
-  <div class="flow" id="flow">
-<svg class="flow-d" viewBox="0 0 1000 320" aria-hidden="true" focusable="false">
-<defs>
-<mask id="flow-d-m0" maskUnits="userSpaceOnUse"><path class="reveal" style="--i:0" d="M173.0,112.0 C201.6,47.2 184.2,52.6 213.0,84.0" pathLength="1"/></mask>
-<mask id="flow-d-m1" maskUnits="userSpaceOnUse"><path class="reveal" style="--i:1" d="M373.0,82.0 C403.3,46.9 384.5,54.1 418.0,118.0" pathLength="1"/></mask>
-<mask id="flow-d-m2" maskUnits="userSpaceOnUse"><path class="reveal" style="--i:2" d="M578.0,120.0 C604.3,49.5 589.6,52.7 623.0,84.0" pathLength="1"/></mask>
-<mask id="flow-d-m3" maskUnits="userSpaceOnUse"><path class="reveal" style="--i:3" d="M783.0,82.0 C812.4,50.6 790.0,51.8 823.0,110.0" pathLength="1"/></mask>
-<mask id="flow-d-m4" maskUnits="userSpaceOnUse"><path class="reveal" style="--i:4" d="M915.0,152.0 C991.0,303.6 40.6,319.2 82.0,156.0" pathLength="1"/></mask>
-</defs><g class="ink">
-<path class="dots" d="M173.0,112.0 C201.6,47.2 184.2,52.6 213.0,84.0" mask="url(#flow-d-m0)"/><path class="tip" style="--i:0" d="M202.3,81.3 L213.0,84.0 L209.5,73.6"/>
-<path class="dots" d="M373.0,82.0 C403.3,46.9 384.5,54.1 418.0,118.0" mask="url(#flow-d-m1)"/><path class="tip" style="--i:1" d="M409.1,111.5 L418.0,118.0 L418.7,107.0"/>
-<path class="dots" d="M578.0,120.0 C604.3,49.5 589.6,52.7 623.0,84.0" mask="url(#flow-d-m2)"/><path class="tip" style="--i:2" d="M612.3,81.3 L623.0,84.0 L619.5,73.6"/>
-<path class="dots" d="M783.0,82.0 C812.4,50.6 790.0,51.8 823.0,110.0" mask="url(#flow-d-m3)"/><path class="tip" style="--i:3" d="M813.8,104.0 L823.0,110.0 L823.1,99.0"/>
-<path class="dots loop" d="M915.0,152.0 C991.0,303.6 40.6,319.2 82.0,156.0" mask="url(#flow-d-m4)"/><path class="tip" style="--i:4" d="M84.7,166.7 L82.0,156.0 L74.5,164.0"/>
-</g></svg>
-<svg class="flow-m" viewBox="0 0 320 700" aria-hidden="true" focusable="false">
-<defs>
-<mask id="flow-m-m0" maskUnits="userSpaceOnUse"><path class="reveal" style="--i:0" d="M114.0,90.0 C89.8,126.4 148.9,116.3 124.0,158.0" pathLength="1"/></mask>
-<mask id="flow-m-m1" maskUnits="userSpaceOnUse"><path class="reveal" style="--i:1" d="M114.0,220.0 C83.2,256.9 144.5,250.5 124.0,288.0" pathLength="1"/></mask>
-<mask id="flow-m-m2" maskUnits="userSpaceOnUse"><path class="reveal" style="--i:2" d="M114.0,350.0 C83.4,390.7 147.1,377.0 124.0,418.0" pathLength="1"/></mask>
-<mask id="flow-m-m3" maskUnits="userSpaceOnUse"><path class="reveal" style="--i:3" d="M114.0,480.0 C86.4,516.5 142.5,505.6 124.0,548.0" pathLength="1"/></mask>
-<mask id="flow-m-m4" maskUnits="userSpaceOnUse"><path class="reveal" style="--i:4" d="M228.0,584.0 C319.4,559.4 320.5,84.7 232.0,58.0" pathLength="1"/></mask>
-</defs><g class="ink">
-<path class="dots" d="M114.0,90.0 C89.8,126.4 148.9,116.3 124.0,158.0" mask="url(#flow-m-m0)"/><path class="tip" style="--i:0" d="M124.0,147.0 L124.0,158.0 L133.3,152.1"/>
-<path class="dots" d="M114.0,220.0 C83.2,256.9 144.5,250.5 124.0,288.0" mask="url(#flow-m-m1)"/><path class="tip" style="--i:1" d="M124.0,277.0 L124.0,288.0 L133.3,282.1"/>
-<path class="dots" d="M114.0,350.0 C83.4,390.7 147.1,377.0 124.0,418.0" mask="url(#flow-m-m2)"/><path class="tip" style="--i:2" d="M124.0,407.0 L124.0,418.0 L133.3,412.1"/>
-<path class="dots" d="M114.0,480.0 C86.4,516.5 142.5,505.6 124.0,548.0" mask="url(#flow-m-m3)"/><path class="tip" style="--i:3" d="M124.0,537.0 L124.0,548.0 L133.3,542.1"/>
-<path class="dots loop" d="M228.0,584.0 C319.4,559.4 320.5,84.7 232.0,58.0" mask="url(#flow-m-m4)"/><path class="tip" style="--i:4" d="M242.7,55.6 L232.0,58.0 L239.8,65.7"/>
-</g></svg>
-    <ol>
-      <li style="--x:95;--y:120;--r:-2deg;--mx:120;--my:60">Notice.</li>
-      <li style="--x:295;--y:78;--r:1.5deg;--mx:120;--my:190">Reframe.</li>
-      <li style="--x:500;--y:128;--r:-1deg;--mx:120;--my:320">Journey.</li>
-      <li style="--x:705;--y:78;--r:2deg;--mx:120;--my:450">Return.</li>
-      <li style="--x:905;--y:120;--r:-1.5deg;--mx:120;--my:580">Your turn.</li>
-    </ol>
-  </div>
+  <ol class="word-cubes">
+    <li class="wcube" style="--rz:-4deg;--ry:-12deg;filter:url(#pencil-1)"><span>Notice.</span></li>
+    <li class="wc-dots" aria-hidden="true"><span></span><span></span><span></span></li>
+    <li class="wcube" style="--rz:3deg;--ry:10deg;filter:url(#pencil-2)"><span>Reframe.</span></li>
+    <li class="wc-dots" aria-hidden="true"><span></span><span></span><span></span></li>
+    <li class="wcube" style="--rz:-2deg;--ry:-8deg;filter:url(#pencil-3)"><span>Journey.</span></li>
+    <li class="wc-dots" aria-hidden="true"><span></span><span></span><span></span></li>
+    <li class="wcube" style="--rz:4deg;--ry:12deg;filter:url(#pencil-1)"><span>Return.</span></li>
+    <li class="wc-dots" aria-hidden="true"><span></span><span></span><span></span></li>
+    <li class="wcube last" style="--rz:-3deg;--ry:-10deg;filter:url(#pencil-2)"><span>Your turn.</span></li>
+  </ol>
   <div class="copy episodes-body">
-    <p>WndrKlub introduces children to <span class="kw">storytelling</span> and filmmaking through the playful visual language of <span class="nw"><span class="kw">flipbooks</span>,</span> comics and storyboards, blending 2D line drawings with live-action footage. With humour and curiosity, the series explores movement, sequencing and <span class="kw">timing</span> in ways that feel tactile, intuitive and immediately accessible. By building stories <span class="nw"><span class="kw">frame by frame</span>,</span> children discover how images come to life, how pacing shapes a narrative, and how <span class="kw">emotion</span> can be conveyed through visual storytelling.</p>
+    <p>WndrKlub introduces children to <strong class="kw">storytelling</strong> and filmmaking through the playful visual language of <strong class="kw">flipbooks</strong>, comics and storyboards, blending 2D line drawings with live-action footage. With humour and curiosity, the series explores movement, sequencing and <strong class="kw">timing</strong> in ways that feel tactile, intuitive and immediately accessible. By building stories <strong class="kw">frame by frame</strong>, children discover how images come to life, how pacing shapes a narrative, and how <strong class="kw">emotion</strong> can be conveyed through visual storytelling.</p>
   </div>
 </section>
 
 <!-- MUSIC -->
-<section class="music2" data-layout="a">
-  <div class="music-head">
-    <div class="music-eyebrow">Music</div>
-    <h3>Rhythm, rhyme and playing with <span class="nw"><span class="kw">time</span>.</span></h3>
-  </div>
-  <div class="copy music-body">
-    <p>A drip is a <span class="nw"><span class="kw">beat</span>.</span> A creak is a <span class="nw"><span class="kw">tune</span>.</span> A wobble is a bassline. In WndrKlub, sound and picture play together, speeding up, slowing down, stopping still, until the beat, the tone, the melody and the buzz of a passing bee all lock in and the whole world starts to <span class="nw"><span class="kw">groove</span>.</span></p>
-  </div>
-  <div class="music-art">
-    <!-- A: a wobbly stave running across, the words sitting on it like notes -->
-    <div class="stave-art" aria-hidden="true">
-      <svg class="stave" viewBox="0 0 1200 200" preserveAspectRatio="none">
-        <g class="ink">
-          <path d="M0,62 Q300,57 600,63 T1200,60"/>
-          <path d="M0,82 Q320,78 610,84 T1200,80"/>
-          <path d="M0,102 Q280,98 590,104 T1200,101"/>
-          <path d="M0,122 Q310,118 600,124 T1200,121"/>
-          <path d="M0,142 Q290,139 600,144 T1200,141"/>
-        </g>
-      </svg>
-      <svg class="clef" viewBox="0 0 60 150"><path d="M33,148 C24,150 18,140 26,134 C34,128 38,140 30,142 M30,142 L34,8 C36,-4 50,6 40,22 C28,40 6,62 10,86 C14,108 46,108 46,88 C46,70 22,68 20,84 C19,94 30,98 34,92"/></svg>
-      <span class="snote n1"><span class="kw">beat</span></span>
-      <span class="snote n2"><span class="kw">tune</span></span>
-      <span class="snote n3"><span class="kw">time</span></span>
-      <span class="snote n4"><span class="kw">groove</span></span>
-      <svg class="doodle q1" viewBox="0 0 40 80"><ellipse cx="14" cy="66" rx="11" ry="8" transform="rotate(-22 14 66)"/><path d="M24,62 L25,8 C30,20 40,24 36,40"/></svg>
-      <svg class="doodle q2" viewBox="0 0 60 80"><ellipse cx="12" cy="66" rx="10" ry="7" transform="rotate(-22 12 66)"/><ellipse cx="46" cy="58" rx="10" ry="7" transform="rotate(-22 46 58)"/><path d="M21,63 L22,12 L56,4 L55,55 M22,22 L56,14"/></svg>
+<section class="music">
+  <div class="split">
+    <div class="copy">
+      <div class="music-title">Music</div>
+      <h3>Rhythm, rhyme and playing with <strong class="kw">time</strong>.</h3>
+      <p>A drip is a <strong class="kw">beat</strong>. A creak is a <strong class="kw">tune</strong>. A wobble is a bassline. In WndrKlub, sound and picture play together, speeding up, slowing down, stopping still, until the beat, the tone, the melody and the buzz of a passing bee all lock in and the whole world starts to <strong class="kw">groove</strong>.</p>
+      <button class="listen" type="button" data-listen aria-pressed="false"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.5 6z"/></svg><span>Play the music</span></button>
     </div>
-    <!-- B: the lemon picture, music spilling out of it -->
-    <div class="lemon-art">
-      <div class="shots music-shots">
-        <div class="lemon-spin music-lemon" aria-hidden="true"></div>
-        <figure class="shot" style="--r:-2.4deg">
-          <img src="img/dixie/dixie-03.webp" alt="The Wndr(er) wrestling a lemon, pose by pose" loading="lazy" width="1600" height="900">
-        </figure>
-      </div>
-      <svg class="spill" viewBox="0 0 400 300" aria-hidden="true">
-        <g class="ink">
-          <path class="trail" d="M330,250 C300,180 360,140 300,90 C250,50 170,70 120,30"/>
-          <g transform="translate(300 160) rotate(-12)"><ellipse cx="0" cy="40" rx="11" ry="8" transform="rotate(-22 0 40)"/><path d="M10,36 L11,-12 C16,0 26,4 22,20"/></g>
-          <g transform="translate(220 70) rotate(8)"><ellipse cx="0" cy="40" rx="10" ry="7" transform="rotate(-22 0 40)"/><ellipse cx="34" cy="32" rx="10" ry="7" transform="rotate(-22 34 32)"/><path d="M9,37 L10,-8 L43,-16 L43,29 M10,2 L43,-6"/></g>
-          <g transform="translate(110 6) rotate(-20)"><ellipse cx="0" cy="40" rx="9" ry="7" transform="rotate(-22 0 40)"/><path d="M8,36 L9,0"/></g>
-          <g class="trumpet" transform="translate(330 232) rotate(-34)"><path d="M0,0 L44,-6 L44,6 Z M44,-6 C60,-22 70,-24 74,-24 L74,24 C70,24 60,22 44,6 M10,-3 L10,-12 M22,-5 L22,-14 M34,-6 L34,-15"/></g>
-        </g>
-      </svg>
-    </div>
-    <div class="music-play">
-      <button class="listen big" type="button" data-listen aria-pressed="false"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.5 6z"/></svg><span>Play the music</span></button>
+    <div class="shots music-shots">
+      <div class="lemon-spin music-lemon" aria-hidden="true"></div>
+      <figure class="shot" style="--r:-2.4deg">
+        <img src="img/dixie/dixie-03.webp" alt="The Wndr(er) wrestling a lemon, pose by pose" loading="lazy" width="1600" height="900">
+      </figure>
     </div>
   </div>
 </section>
@@ -1637,9 +1634,8 @@ section.music2 { position: relative; padding-top: 14vh; padding-bottom: 14vh; ov
 <!-- THE LOOK: an art table -->
 <section class="look2" data-layout="a">
   <div class="look-copy">
-    <div class="eyebrow">The look</div>
-    <h3>Made from things you can find.</h3>
-    <p>WndrKlub has a tactile, handmade look: drawn lines, cut paper, photos, collage and found footage, gathered together and layered up. It shows children at home that stories can be made from anything to hand, and invites them to pick something up and start making their own. If a child watches and thinks &ldquo;I could make that!&rdquo;, it&rsquo;s working.</p>
+    <h3>Visual and tactile.</h3>
+    <p>WndrKlub has a tactile, handmade look: drawn lines, cut paper, photos, collage and found footage, gathered together, inspiring children at home to create their own stories.</p>
   </div>
   <div class="table" aria-hidden="true">
     <div class="frag cell" style="--ax:3;--ay:8;--aw:24;--ar:-6deg;--ad:0.05;--bx:42;--by:2;--bw:24;--br:-4deg;--bd:0.05;--mx:0;--my:0;--mw:50;--mr:-4deg;"><span class="pic" style="background-image:url(img/space.jpg);background-size:466.47% 478.72%;background-position:3.34% 96.77%;aspect-ratio:343/188"></span></div>
@@ -1667,7 +1663,6 @@ section.music2 { position: relative; padding-top: 14vh; padding-bottom: 14vh; ov
 <section class="beyond">
   <div class="split">
     <div class="copy">
-      <div class="eyebrow">Beyond the screen</div>
       <h3>Inspiring future Wndr(er)s</h3>
       <p>The WndrKlub series aligns perfectly with the Screen Scotland Film and Screen Education curriculum by introducing children to the fundamentals of filmmaking through a hands-on, playful format.</p>
       <p>Just as the curriculum emphasises sequencing, visual storytelling and media literacy, our approach teaches young learners to understand how stories are constructed, how movement and emotion are conveyed, and how images and sound work together.</p>
@@ -1685,10 +1680,8 @@ section.music2 { position: relative; padding-top: 14vh; padding-bottom: 14vh; ov
 <!-- IN DEVELOPMENT -->
 <section class="dev2">
   <div class="header center">
-    <div class="eyebrow">In development</div>
-    <h3>Finding the look.</h3>
+    <h3>Visual development.</h3>
     <div class="copy">
-      <p>We&rsquo;re bringing the best of the animation tests together into a single development film: a first look at how WndrKlub will look, move and feel, and how hand-drawn animation and live action balance together.</p>
       <p class="dev-caption">With animation tests by Brooke Cant, Jacob Cunningham, Joshua Shire and Lily Kromer.</p>
     </div>
   </div>
@@ -2595,37 +2588,6 @@ const DEV_FILM = '';
     <img src="${STREAM}${DEV_FILM}/thumbnails/thumbnail.jpg?time=2s&height=1080" alt="" loading="lazy">
     <span class="sb-play"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.5 6z"/></svg></span>
   </button>`;
-})();
-
-// Keyword dice: words in the copy set on small letter cubes, like the title's.
-// Screen readers get the plain word; the cubes are hidden from them.
-(function keywordDice() {
-  const r = (a, b) => a + Math.random() * (b - a);
-  document.querySelectorAll('.kw').forEach((kw) => {
-    const word = kw.textContent;
-    const cubes = [...word].map((ch) => {
-      if (ch === ' ') return '<span class="kd-gap"></span>';
-      const st = `--rz:${r(-6, 6).toFixed(1)}deg;filter:url(#pencil-${1 + Math.floor(Math.random() * 3)})`;
-      return `<span class="kd" style="${st}"><span class="kl">${ch}</span></span>`;
-    }).join('');
-    kw.innerHTML = `<span class="sr-only">${word}</span><span class="kw-dice" aria-hidden="true">${cubes}</span>`;
-  });
-})();
-
-// Episodes: the dotted path draws itself on as it scrolls into view.
-(function flowDraw() {
-  const flow = document.getElementById('flow');
-  if (!flow) return;
-  if (reduceMotion || !('IntersectionObserver' in window)) { flow.classList.add('drawn'); return; }
-  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { flow.classList.add('drawn'); io.disconnect(); } }), { threshold: 0.45 });
-  io.observe(flow);
-})();
-
-// Music: ?music=a or ?music=b picks the layout (for review).
-(function musicLayout() {
-  const sec = document.querySelector('.music2');
-  const pick = new URLSearchParams(location.search).get('music');
-  if (sec && (pick === 'a' || pick === 'b')) sec.dataset.layout = pick;
 })();
 
 // Music player (fixed, top right), streaming straight from R2
