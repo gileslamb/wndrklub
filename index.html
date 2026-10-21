@@ -1532,15 +1532,16 @@ section.bios { min-height: auto; padding: 14vh 8vw; align-items: center; }
   .bio { padding: 28px 24px 26px; }
 }
 
-/* the Curious Dreamers line over the bios, in the curiousdreamers.com hero face (Syne 800) */
-.bios-label {
+/* Created by Curious Dreamers: the name in the curiousdreamers.com hero face (Syne 800) */
+.bios h3.bios-head { max-width: none; }
+.bios-head .cd-name {
+  display: block;
   font-family: 'Syne', sans-serif;
   font-weight: 800;
-  font-size: clamp(15px, 1.3vw, 19px);
-  letter-spacing: 0.02em;
-  color: var(--ink);
-  text-align: center;
-  margin: -30px auto 40px;
+  font-size: min(1.35em, 10.5vw);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
+  margin-top: 6px;
 }
 </style>
 </head>
@@ -1812,8 +1813,7 @@ section.bios { min-height: auto; padding: 14vh 8vw; align-items: center; }
 
 <!-- CREATED BY -->
 <section class="bios">
-  <h3>Created by</h3>
-  <p class="bios-label">Created by Curious Dreamers</p>
+  <h3 class="bios-head">Created by <span class="cd-name">Curious Dreamers</span></h3>
   <div class="bio-grid">
     <article class="bio" style="--r:-0.8deg">
       <h4>Sacha Kyle</h4>
