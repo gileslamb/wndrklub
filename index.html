@@ -9,7 +9,7 @@
 <meta name="description" content="WndrKlub. An animated mixed-media series for 3 to 7 year olds.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&family=Special+Elite&display=swap" rel="stylesheet">
 <script>
 document.documentElement.classList.add('gate-on');   // the lemon gate (removed when the visitor goes in)
 if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -1480,6 +1480,57 @@ h3 strong.kw { font-weight: inherit; font-size: 1em; font-style: italic; }
 @media (max-width: 700px) {
   .cover-text .hero-label { position: static; font-size: 10px; margin-top: 14px; }
 }
+
+/* ══ Edits 5 ═════════════════════════════════════════ */
+/* hero: the support line, typed, breaking the hand-lettered lines */
+.cover-text .hero-typed {
+  font-family: 'Special Elite', 'Courier New', monospace;
+  font-size: clamp(14px, 1.15vw, 17px);
+  letter-spacing: 0.02em;
+  color: var(--ink-soft);
+  margin: 10px 0 12px;
+  transform: rotate(-0.6deg);
+  transform-origin: left;
+}
+/* How do you see the world?: text beside a montage */
+.series.with-montage h3 { font-size: clamp(46px, 6.4vw, 96px); line-height: 1; max-width: 12ch; margin-bottom: 36px; }
+.series.with-montage .split { align-items: center; }
+.montage { position: relative; aspect-ratio: 1 / 0.92; width: 100%; max-width: 640px; justify-self: center; }
+.mpic {
+  position: absolute; margin: 0;
+  background: #fbf9f3;
+  padding: 7px 7px 8px;
+  box-shadow: 0 10px 22px rgba(26, 24, 20, 0.16), 0 1px 2px rgba(26, 24, 20, 0.12);
+  transform: rotate(var(--r));
+}
+.mpic img { display: block; width: 100%; height: auto; }
+.mpic.m1 { left: 0; top: 4%; width: 64%; z-index: 1; }
+.mpic.m2 { right: 0; top: 30%; width: 62%; z-index: 2; }
+.mpic.m3 { left: 8%; bottom: 0; width: 56%; z-index: 3; }
+.mpic.taped::before {
+  content: ''; position: absolute; z-index: 2; left: 50%; top: -10px;
+  width: 70px; height: 20px; margin-left: -35px;
+  background: rgba(236, 226, 196, 0.8); box-shadow: 0 1px 2px rgba(26, 24, 20, 0.12);
+  transform: rotate(-4deg);
+}
+/* Created by */
+section.bios { min-height: auto; padding: 14vh 8vw; align-items: center; }
+.bios h3 { text-align: center; margin: 0 auto 56px; }
+.bio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; max-width: 1100px; width: 100%; }
+.bio {
+  background: #fbf9f3;
+  padding: 36px 36px 32px;
+  box-shadow: 0 14px 34px rgba(26, 24, 20, 0.1), 0 0 0 1px rgba(26, 24, 20, 0.06);
+  transform: rotate(var(--r));
+}
+.bio h4 { font-family: 'Fraunces', serif; font-weight: 700; font-size: clamp(26px, 2.4vw, 34px); letter-spacing: -0.01em; margin: 0 0 4px; }
+.bio .bio-role { font-family: 'Special Elite', 'Courier New', monospace; font-size: 15px; color: var(--heart); margin: 0 0 18px; }
+.bio p { font-size: clamp(16px, 1.15vw, 18px); line-height: 1.65; color: var(--ink-soft); margin: 0; }
+@media (max-width: 860px) {
+  .montage { max-width: 520px; margin-top: 12px; }
+  .bio-grid { grid-template-columns: 1fr; gap: 28px; }
+  .bio { padding: 28px 24px 26px; }
+}
 </style>
 </head>
 <body>
@@ -1549,8 +1600,8 @@ h3 strong.kw { font-weight: inherit; font-size: 1em; font-style: italic; }
       </div>
     </div>
     <p class="subtitle">An animated mixed-media series for 3 to 7 year olds.</p>
+    <p class="hero-typed">In development, supported by Screen Scotland.</p>
     <p class="subtitle credit">Created by Curious Dreamers.</p>
-    <p class="hero-label">In development, supported by Screen Scotland.</p>
     <button class="hero-again" type="button" hidden aria-label="Play the title again">
       <svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15.6 7.4A6.4 6.4 0 1 0 16.4 12"/><path d="M16.2 3.4l-.4 4.3-4.2-.6"/></svg>
       <span>again</span>
@@ -1563,11 +1614,18 @@ h3 strong.kw { font-weight: inherit; font-size: 1em; font-style: italic; }
 </section>
 
 <!-- THE SERIES -->
-<section class="series text-only center">
-  <div class="copy">
-    <h3>How do you see the world?</h3>
-    <p>WndrKlub encourages children to be curious, to be storytellers, to see the world from a different perspective. WndrKlub is a series of short, funny, wildly imaginative films that catch the moment an idea takes off, when one thing leads to another and the ordinary turns into a story.</p>
-    <p class="closer">It&rsquo;s all about the frame.</p>
+<section class="series with-montage">
+  <div class="split">
+    <div class="copy">
+      <h3>How do you see the world?</h3>
+      <p>WndrKlub encourages children to be curious, to be storytellers, to see the world from a different perspective. WndrKlub is a series of short, funny, wildly imaginative films that catch the moment an idea takes off, when one thing leads to another and the ordinary turns into a story.</p>
+      <p class="closer">It&rsquo;s all about the frame.</p>
+    </div>
+    <div class="montage" aria-label="Stills of the Wndr(er) in real worlds">
+      <figure class="mpic m1" style="--r:-4deg"><img src="img/world/reef-fish.webp" srcset="img/world/reef-fish.webp 720w, img/world/reef-fish@2x.webp 1440w" sizes="(max-width: 860px) 70vw, 30vw" alt="The Wndr(er) standing on coral among tropical fish" loading="lazy" width="720" height="400"></figure>
+      <figure class="mpic m2 taped" style="--r:3deg"><img src="img/tests/lily-leaf.webp" srcset="img/tests/lily-leaf.webp 960w, img/tests/lily-leaf@2x.webp 1920w" sizes="(max-width: 860px) 70vw, 30vw" alt="The Wndr(er) on a leaf in long grass" loading="lazy" width="960" height="538"></figure>
+      <figure class="mpic m3" style="--r:-2deg"><img src="img/world/jellyfish.webp" srcset="img/world/jellyfish.webp 720w, img/world/jellyfish@2x.webp 1440w" sizes="(max-width: 860px) 70vw, 30vw" alt="The Wndr(er) floating beside a jellyfish" loading="lazy" width="720" height="404"></figure>
+    </div>
   </div>
 </section>
 
@@ -1739,6 +1797,23 @@ h3 strong.kw { font-weight: inherit; font-size: 1em; font-style: italic; }
       <img src="img/tests/lily-leaf.webp" srcset="img/tests/lily-leaf.webp 960w, img/tests/lily-leaf@2x.webp 1920w" sizes="(max-width: 1180px) 92vw, 1180px" alt="From Lily Kromer&rsquo;s animation test: the Wndr(er) on a leaf in long grass" loading="lazy" width="1920" height="1076">
     </div>
   </figure>
+</section>
+
+<!-- CREATED BY -->
+<section class="bios">
+  <h3>Created by</h3>
+  <div class="bio-grid">
+    <article class="bio" style="--r:-0.8deg">
+      <h4>Sacha Kyle</h4>
+      <p class="bio-role">Creative Director &amp; Producer</p>
+      <p>Sacha Kyle is an award-winning director, writer and creative producer with over 20 years across animation, live action, comedy, drama and children&rsquo;s media, including work for BBC Drama, BBC Comedy, BBC Radio and CBeebies. She is a play specialist and education consultant, a WFTV Fellow, and was named an International Children&rsquo;s Media Fellow by the LSX Jacobs Foundation and New America. She is a BAFTA member and a Screen Ireland assessor.</p>
+    </article>
+    <article class="bio" style="--r:0.8deg">
+      <h4>Giles Lamb</h4>
+      <p class="bio-role">Composer &amp; Sound Artist</p>
+      <p>Giles Lamb is an award-winning composer and sound designer with over 30 years of work across film, television, animation, games and immersive installations. In children&rsquo;s media, his work includes The Brilliant World of Tom Gates, winner of a BAFTA Scotland, and Hushabye Lullabye, winner of two RTS Scotland awards. With a background in neuroscience and music psychology, he creates sound and music that invites children to listen, play and imagine.</p>
+    </article>
+  </div>
 </section>
 
 <footer class="colophon">
