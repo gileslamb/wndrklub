@@ -1433,6 +1433,53 @@ h3 strong.kw { font-weight: inherit; font-size: 1em; font-style: italic; }
   .word-cubes { flex-direction: column; gap: 6px; }
   .wc-dots { flex-direction: column; padding: 4px 0; }
 }
+
+/* ══ Edits 4 ═════════════════════════════════════════ */
+/* hero: the support line as a quiet label, top left under the wordmark */
+.cover-text .hero-label {
+  position: absolute;
+  top: 74px; left: 32px;
+  font-family: 'Inter', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  opacity: 0.8;
+  margin: 0;
+}
+/* How do you see the world?: centred */
+.series.text-only.center .copy { margin: 0 auto; text-align: center; }
+.series.text-only.center h3 { margin-left: auto; margin-right: auto; }
+.series.text-only.center .copy p { margin-left: auto; margin-right: auto; max-width: 54ch; }
+/* Episodes: flat comic panels, one word each */
+.wpanel {
+  padding: 18px 26px 16px;
+  background: #fff;
+  transform: rotate(var(--rz));
+  position: relative;
+}
+.wpanel::before {
+  content: ''; position: absolute; inset: 0;
+  border: 2px solid var(--ink);
+  border-radius: 2px;
+  filter: url(#pencil-2);
+}
+.wpanel span {
+  position: relative;
+  font-family: 'Fraunces', serif;
+  font-weight: 900;
+  font-variation-settings: 'opsz' 144;
+  font-size: clamp(22px, 2.3vw, 32px);
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  white-space: nowrap;
+  filter: url(#pencil-1);
+}
+.wpanel.last span { color: var(--heart); font-style: italic; }
+.word-cubes .wc-dots { padding-top: 0; }
+@media (max-width: 700px) {
+  .cover-text .hero-label { position: static; font-size: 10px; margin-top: 14px; }
+}
 </style>
 </head>
 <body>
@@ -1502,8 +1549,8 @@ h3 strong.kw { font-weight: inherit; font-size: 1em; font-style: italic; }
       </div>
     </div>
     <p class="subtitle">An animated mixed-media series for 3 to 7 year olds.</p>
-    <p class="subtitle">Created by Curious Dreamers.</p>
-    <p class="subtitle credit">In development, supported by Screen Scotland.</p>
+    <p class="subtitle credit">Created by Curious Dreamers.</p>
+    <p class="hero-label">In development, supported by Screen Scotland.</p>
     <button class="hero-again" type="button" hidden aria-label="Play the title again">
       <svg viewBox="0 0 20 20" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15.6 7.4A6.4 6.4 0 1 0 16.4 12"/><path d="M16.2 3.4l-.4 4.3-4.2-.6"/></svg>
       <span>again</span>
@@ -1516,7 +1563,7 @@ h3 strong.kw { font-weight: inherit; font-size: 1em; font-style: italic; }
 </section>
 
 <!-- THE SERIES -->
-<section class="series text-only">
+<section class="series text-only center">
   <div class="copy">
     <h3>How do you see the world?</h3>
     <p>WndrKlub encourages children to be curious, to be storytellers, to see the world from a different perspective. WndrKlub is a series of short, funny, wildly imaginative films that catch the moment an idea takes off, when one thing leads to another and the ordinary turns into a story.</p>
@@ -1598,15 +1645,15 @@ h3 strong.kw { font-weight: inherit; font-size: 1em; font-style: italic; }
     </div>
   </div>
   <ol class="word-cubes">
-    <li class="wcube" style="--rz:-4deg;--ry:-12deg;filter:url(#pencil-1)"><span>Notice.</span></li>
+    <li class="wpanel" style="--rz:-1.6deg"><span>Notice.</span></li>
     <li class="wc-dots" aria-hidden="true"><span></span><span></span><span></span></li>
-    <li class="wcube" style="--rz:3deg;--ry:10deg;filter:url(#pencil-2)"><span>Reframe.</span></li>
+    <li class="wpanel" style="--rz:1.2deg"><span>Reframe.</span></li>
     <li class="wc-dots" aria-hidden="true"><span></span><span></span><span></span></li>
-    <li class="wcube" style="--rz:-2deg;--ry:-8deg;filter:url(#pencil-3)"><span>Journey.</span></li>
+    <li class="wpanel" style="--rz:-0.8deg"><span>Journey.</span></li>
     <li class="wc-dots" aria-hidden="true"><span></span><span></span><span></span></li>
-    <li class="wcube" style="--rz:4deg;--ry:12deg;filter:url(#pencil-1)"><span>Return.</span></li>
+    <li class="wpanel" style="--rz:1.6deg"><span>Return.</span></li>
     <li class="wc-dots" aria-hidden="true"><span></span><span></span><span></span></li>
-    <li class="wcube last" style="--rz:-3deg;--ry:-10deg;filter:url(#pencil-2)"><span>Your turn.</span></li>
+    <li class="wpanel last" style="--rz:-1.2deg"><span>Your turn.</span></li>
   </ol>
   <div class="copy episodes-body">
     <p>WndrKlub introduces children to <strong class="kw">storytelling</strong> and filmmaking through the playful visual language of <strong class="kw">flipbooks</strong>, comics and storyboards, blending 2D line drawings with live-action footage. With humour and curiosity, the series explores movement, sequencing and <strong class="kw">timing</strong> in ways that feel tactile, intuitive and immediately accessible. By building stories <strong class="kw">frame by frame</strong>, children discover how images come to life, how pacing shapes a narrative, and how <strong class="kw">emotion</strong> can be conveyed through visual storytelling.</p>
@@ -1682,6 +1729,7 @@ h3 strong.kw { font-weight: inherit; font-size: 1em; font-style: italic; }
   <div class="header center">
     <h3>Visual development.</h3>
     <div class="copy">
+      <p>Early development, exploring how WndrKlub will look, move and feel, and how hand-drawn animation and live action balance together.</p>
       <p class="dev-caption">With animation tests by Brooke Cant, Jacob Cunningham, Joshua Shire and Lily Kromer.</p>
     </div>
   </div>
