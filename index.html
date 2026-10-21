@@ -9,7 +9,7 @@
 <meta name="description" content="WndrKlub. An animated mixed-media series for 3 to 7 year olds.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&family=Special+Elite&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;700&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500&family=Inter:wght@400;500;600&family=Special+Elite&family=Syne:wght@800&display=swap" rel="stylesheet">
 <script>
 document.documentElement.classList.add('gate-on');   // the lemon gate (removed when the visitor goes in)
 if (!matchMedia('(prefers-reduced-motion: reduce)').matches) {
@@ -1531,6 +1531,17 @@ section.bios { min-height: auto; padding: 14vh 8vw; align-items: center; }
   .bio-grid { grid-template-columns: 1fr; gap: 28px; }
   .bio { padding: 28px 24px 26px; }
 }
+
+/* the Curious Dreamers line over the bios, in the curiousdreamers.com hero face (Syne 800) */
+.bios-label {
+  font-family: 'Syne', sans-serif;
+  font-weight: 800;
+  font-size: clamp(15px, 1.3vw, 19px);
+  letter-spacing: 0.02em;
+  color: var(--ink);
+  text-align: center;
+  margin: -30px auto 40px;
+}
 </style>
 </head>
 <body>
@@ -1802,6 +1813,7 @@ section.bios { min-height: auto; padding: 14vh 8vw; align-items: center; }
 <!-- CREATED BY -->
 <section class="bios">
   <h3>Created by</h3>
+  <p class="bios-label">Created by Curious Dreamers</p>
   <div class="bio-grid">
     <article class="bio" style="--r:-0.8deg">
       <h4>Sacha Kyle</h4>
@@ -1820,8 +1832,7 @@ section.bios { min-height: auto; padding: 14vh 8vw; align-items: center; }
   <div class="colophon-grid">
     <div>
       <h5>WndrKlub.</h5>
-      <p>Created by Sacha Kyle and Giles Lamb.</p>
-      <p>Curious Dreamers, Glasgow.</p>
+      <p>&copy; Curious Dreamers, Glasgow</p>
     </div>
     <div>
       <h5>Contact</h5>
