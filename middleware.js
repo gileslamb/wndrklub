@@ -6,8 +6,9 @@
 // (the page itself still shows the lemon, to choose sound on or off).
 // Ported from the old site (gileslamb/wndrklub, tag legacy-site-2026-09).
 
+// Everything is behind the gate except the one image the gate page itself shows.
 export const config = {
-  matcher: ['/', '/index', '/index.html', '/__auth'],
+  matcher: ['/', '/((?!img/faces/lemon@2x\\.webp$).*)'],
 };
 
 const COOKIE = 'wk_pass';
