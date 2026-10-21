@@ -1066,6 +1066,8 @@ section.poses { min-height: auto; padding: 4vh 0 10vh; }
 .five-words li:nth-child(odd) { transform: rotate(-1.5deg); }
 .five-words li:nth-child(even) { transform: rotate(1.5deg) translateY(4px); }
 .five-words li:last-child { color: var(--heart); font-style: italic; }
+.how2 h3.episodes-head { font-size: clamp(34px, 4.6vw, 64px); max-width: 22ch; margin-bottom: 44px; }
+.how2 .episodes-body { max-width: 62ch; margin: 30px auto 0; }
 .grammar-line {
   font-family: 'Caveat', cursive;
   font-size: clamp(22px, 2.1vw, 28px);
@@ -1271,20 +1273,15 @@ section.look2 { min-height: auto; padding: 14vh 4vw 16vh; overflow: hidden; }
   <div class="split">
     <div class="copy">
       <div class="eyebrow">The series</div>
-      <h3>Everyone&rsquo;s a filmmaker. They just don&rsquo;t know it yet.</h3>
-      <p>Look at something differently and you&rsquo;re already telling a story. WndrKlub is a series of short, funny, wildly imaginative films that catch the moment an idea takes off, when one thing leads to another and the ordinary turns into a story.</p>
-      <ul class="moments">
-        <li>A balloon drifts up, and up, and pops.</li>
-        <li>A lemon becomes a whole world.</li>
-        <li>He shrinks into the grass and plays among giant insects.</li>
-      </ul>
+      <h3>How do you see the world?</h3>
+      <p>WndrKlub encourages children to be curious, to be storytellers, to see the world from a different perspective. WndrKlub is a series of short, funny, wildly imaginative films that catch the moment an idea takes off, when one thing leads to another and the ordinary turns into a story.</p>
       <p class="closer">It&rsquo;s all about the frame.</p>
       <p class="facts">Short films, 2 to 5 minutes, for 3 to 7 year olds. 2D line drawing mixed with live action and collage. In development, supported by Screen Scotland.</p>
     </div>
     <div class="shots">
       <figure class="shot" style="--r:1.8deg">
-        <img src="img/tests/lily-leaf.webp" srcset="img/tests/lily-leaf.webp 960w, img/tests/lily-leaf@2x.webp 1920w" sizes="(max-width: 860px) 90vw, 45vw" alt="A drawn Wndr(er) standing on a real leaf in long grass" loading="lazy" width="960" height="538">
-        <figcaption>from Lily Kromer&rsquo;s animation test</figcaption>
+        <img src="https://customer-3aa0vwfgpylhsylu.cloudflarestream.com/1e0f09ef391c967ca296489c47d49d4a/thumbnails/thumbnail.jpg?time=30s&amp;height=540" alt="A drawn Wndr(er) among real mushrooms and flowers" loading="lazy" width="960" height="540">
+        <figcaption>from Brooke Cant&rsquo;s animation test</figcaption>
       </figure>
       <figure class="shot" style="--r:-2.6deg">
         <img src="https://customer-3aa0vwfgpylhsylu.cloudflarestream.com/9ec574aa703835bf396985b5e0b37e10/thumbnails/thumbnail.jpg?time=3s&amp;height=540" alt="The Wndr(er) stepping through a drawn frame" loading="lazy" width="960" height="540">
@@ -1356,9 +1353,10 @@ section.look2 { min-height: auto; padding: 14vh 4vw 16vh; overflow: hidden; }
   </div>
 </section>
 
-<!-- HOW IT WORKS -->
+<!-- EPISODES -->
 <section class="how2 center">
-  <div class="eyebrow">How it works</div>
+  <div class="eyebrow">Episodes</div>
+  <h3 class="episodes-head">Panels become shots. Page turns become edits. Flipbooks become animation.</h3>
   <div class="flipbook big">
     <div class="frames">
       <img src="img/lemon_frame_1.jpg" alt="The Wndr(er) and a lemon, drawn as a flipbook">
@@ -1374,15 +1372,35 @@ section.look2 { min-height: auto; padding: 14vh 4vw 16vh; overflow: hidden; }
     <li>Return.</li>
     <li>Your turn.</li>
   </ol>
-  <p class="grammar-line">Panels become shots. Page turns become edits. Flipbooks become animation.</p>
+  <div class="copy episodes-body">
+    <p>WndrKlub introduces children to storytelling and filmmaking through the playful visual language of flipbooks, comics and storyboards, blending 2D line drawings with live-action footage. With humour and curiosity, the series explores movement, sequencing and timing in ways that feel tactile, intuitive and immediately accessible. By building stories frame by frame, children discover how images come to life, how pacing shapes a narrative, and how emotion can be conveyed through visual storytelling.</p>
+  </div>
+</section>
+
+<!-- MUSIC -->
+<section class="music">
+  <div class="split">
+    <div class="copy">
+      <div class="eyebrow">Music</div>
+      <h3>Rhythm, rhyme and playing with time.</h3>
+      <p>A drip is a beat. A creak is a tune. A wobble is a bassline. In WndrKlub, sound and picture play together, speeding up, slowing down, stopping still, until the beat, the tone, the melody and the buzz of a passing bee all lock in and the whole world starts to groove.</p>
+      <button class="listen" type="button" data-listen aria-pressed="false"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.5 6z"/></svg><span>Play the music</span></button>
+    </div>
+    <div class="shots music-shots">
+      <div class="lemon-spin music-lemon" aria-hidden="true"></div>
+      <figure class="shot" style="--r:-2.4deg">
+        <img src="img/dixie/dixie-03.webp" alt="The Wndr(er) wrestling a lemon, pose by pose" loading="lazy" width="1600" height="900">
+      </figure>
+    </div>
+  </div>
 </section>
 
 <!-- THE LOOK: an art table -->
 <section class="look2" data-layout="a">
   <div class="look-copy">
     <div class="eyebrow">The look</div>
-    <h3>Whatever comes to hand.</h3>
-    <p>Hand-drawn line, real streets, cut paper, whatever comes to hand. If a child watches and thinks &ldquo;I could make that&rdquo;, it&rsquo;s working.</p>
+    <h3>I can make that!</h3>
+    <p>Incorporating hand-drawn lines, collage and paper, WndrKlub uses the structure of comic books, flipbooks and moving storyboards to introduce filmmaking. It&rsquo;s tactile, visual, and gets straight to the heart of how stories are made. If a child watches and thinks &ldquo;I could make that!&rdquo;, it&rsquo;s working.</p>
   </div>
   <div class="table" aria-hidden="true">
     <div class="frag cell" style="--ax:3;--ay:8;--aw:24;--ar:-6deg;--ad:0.05;--bx:42;--by:2;--bw:24;--br:-4deg;--bd:0.05;--mx:0;--my:0;--mw:50;--mr:-4deg;"><span class="pic" style="background-image:url(img/space.jpg);background-size:466.47% 478.72%;background-position:3.34% 96.77%;aspect-ratio:343/188"></span></div>
@@ -1406,31 +1424,15 @@ section.look2 { min-height: auto; padding: 14vh 4vw 16vh; overflow: hidden; }
   </div>
 </section>
 
-<!-- MUSIC -->
-<section class="music">
-  <div class="split">
-    <div class="copy">
-      <div class="eyebrow">Music</div>
-      <h3>Rhythm, rhyme and playing with time.</h3>
-      <p>A drip is a beat. A creak is a tune. A wobble is a bassline. In WndrKlub, sound and picture play together, speeding up, slowing down, stopping still, until the beat, the tone, the melody and the buzz of a passing bee all lock in and the whole world starts to groove.</p>
-      <button class="listen" type="button" data-listen aria-pressed="false"><svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2.5 1.2v9.6L10.5 6z"/></svg><span>Play the music</span></button>
-    </div>
-    <div class="shots music-shots">
-      <div class="lemon-spin music-lemon" aria-hidden="true"></div>
-      <figure class="shot" style="--r:-2.4deg">
-        <img src="img/dixie/dixie-03.webp" alt="The Wndr(er) wrestling a lemon, pose by pose" loading="lazy" width="1600" height="900">
-      </figure>
-    </div>
-  </div>
-</section>
-
 <!-- BEYOND THE SCREEN -->
 <section class="beyond">
   <div class="split">
     <div class="copy">
       <div class="eyebrow">Beyond the screen</div>
-      <h3>Then it&rsquo;s their turn.</h3>
-      <p>Every episode ends on a blank page. In class, it&rsquo;s an episode, a folded piece of paper and a pencil, designed alongside Scotland&rsquo;s Film and Screen Education curriculum. In workshops, young animators help children make films of their own.</p>
+      <h3>Inspiring future Wndr(er)s</h3>
+      <p>The WndrKlub series aligns perfectly with the Screen Scotland Film and Screen Education curriculum by introducing children to the fundamentals of filmmaking through a hands-on, playful format.</p>
+      <p>Just as the curriculum emphasises sequencing, visual storytelling and media literacy, our approach teaches young learners to understand how stories are constructed, how movement and emotion are conveyed, and how images and sound work together.</p>
+      <p>By allowing children to physically build narratives frame by frame, our series encourages creative collaboration, problem-solving and critical thinking, mirroring the curriculum&rsquo;s goals of fostering both practical skills and cultural understanding.</p>
     </div>
     <div class="shots left">
       <figure class="shot" style="--r:-1.4deg">
