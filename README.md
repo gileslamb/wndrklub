@@ -1,6 +1,6 @@
 # WndrKlub. (series pitch)
 
-Draft TV-series pitch version of the [WndrKlub](https://wndrklub.org) site: an animated mixed-media series for 3 to 7 year olds. Made in Glasgow by [Curious Dreamers](https://curiousdreamers.com).
+Draft TV-series pitch version of the [WndrKlub](https://wndrklub.org) site: an animated mixed-media series for 3 to 6 year olds. Made in Glasgow by [Curious Dreamers](https://curiousdreamers.com).
 
 Not for search engines: the page carries `noindex, nofollow` and `vercel.json` sends a matching `X-Robots-Tag` header.
 
